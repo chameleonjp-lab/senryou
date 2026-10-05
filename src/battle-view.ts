@@ -257,6 +257,28 @@ export class BattleView {
     this.particleGeometry.setDrawRange(0, 0); this.bombs.count = 0;
     hero.root.visible = enemy.root.visible = false;
     this.renderer.render(this.scene, this.camera);
+    // Finish preparation draws before the first gameplay fence starts its clock.
+    // Shader compilation alone does not drain the GPU's warm-up draw queue.
+    const gl = this.renderer.getContext() as WebGL2RenderingContext;
+    const warmFence = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
+    if (!warmFence) throw new Error('描画準備の完了を確認できません');
+    gl.flush();
+    const began = performance.now();
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const poll = () => {
+          try {
+            if (this.disposed || gl.isContextLost()) { reject(new Error('描画準備が中断されました')); return; }
+            const status = gl.clientWaitSync(warmFence, 0, 0);
+            if (status === gl.ALREADY_SIGNALED || status === gl.CONDITION_SATISFIED) { resolve(); return; }
+            if (status === gl.WAIT_FAILED || performance.now() - began > 25000) { reject(new Error('描画準備が完了しませんでした')); return; }
+            requestAnimationFrame(poll);
+          } catch (error) { reject(error); }
+        };
+        poll();
+      });
+    } finally { gl.deleteSync(warmFence); }
+    if (this.disposed) return;
     this.prepared = true;
   }
 
