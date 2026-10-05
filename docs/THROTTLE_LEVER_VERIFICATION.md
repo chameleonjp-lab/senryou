@@ -55,3 +55,5 @@ PC 1280×720/Chromium/SwiftShaderで、候補と固定mainの両方がGPU完了�
 修正後のローカル検査は全122件成功、TypeScript/Vite build成功、既存Chromium smoke3件成功（phone縦/横・PC、40.8秒）。本番bundleの既存500kB警告は残ります。ログは[evidence/pr4-ci-fix](evidence/pr4-ci-fix/)へ保存。GitHub Actionsの最終head検査結果はPRのcheckと、そのhead名のartifactを正本とします。実機受入や公開の合格ではありません。
 
 固定旧mainは過去の比較対象なので、そのsmoke失敗をActions summaryとartifactへ診断として保存します。候補の全browser検査は必須のままです。比較summaryは候補失敗、未実行/skipのsmoke、証拠/レポート不足、runnerエラー、step outcomeと実結果の不一致を失敗にします。固定旧mainの失敗を候補の成功として数えません。
+
+独立担当が同じ論理状態を固定し、初期/敵機近接/動翼を動かした3視点でMSAAあり/なしを比較しました。各189 draw・256,506三角形、tick 0とhash `18660991`が一致。1280×720/DPR1でsample数4→0、GPU完了待ち中央値225.5→87.7ms。画像の平均channel差は0.125〜0.132/255、8階調超の差は画素の0.527〜0.572%で、輪郭平滑化の変化を目視確認しました。[独立測定](evidence/pr4-ci-fix/aa-review/review.json)・[画像差](evidence/pr4-ci-fix/aa-review/pixel-comparison.json)と各PNGを保存しています。実GPU/実機性能の代用合格ではありません。

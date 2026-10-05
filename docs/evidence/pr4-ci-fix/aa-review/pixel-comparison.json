@@ -1,0 +1,41 @@
+[
+  {
+    "view": "initial",
+    "size": [
+      1280,
+      720
+    ],
+    "differentPixels": 33389,
+    "differentPercent": 3.6229383680555554,
+    "differentOver8Pixels": 5273,
+    "differentOver8Percent": 0.5721571180555556,
+    "meanAbsoluteChannelDifference": 0.13180013020833334,
+    "maxChannelDifference": 182
+  },
+  {
+    "view": "enemy-close",
+    "size": [
+      1280,
+      720
+    ],
+    "differentPixels": 31092,
+    "differentPercent": 3.3736979166666665,
+    "differentOver8Pixels": 4857,
+    "differentOver8Percent": 0.5270182291666666,
+    "meanAbsoluteChannelDifference": 0.12546043113425925,
+    "maxChannelDifference": 153
+  },
+  {
+    "view": "animated-enemy",
+    "size": [
+      1280,
+      720
+    ],
+    "differentPixels": 31181,
+    "differentPercent": 3.3833550347222223,
+    "differentOver8Pixels": 4892,
+    "differentOver8Percent": 0.5308159722222222,
+    "meanAbsoluteChannelDifference": 0.12920753761574075,
+    "maxChannelDifference": 153
+  }
+]

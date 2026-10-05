@@ -1,0 +1,30 @@
+{
+  "codeCommit": "c1a192726a435bf070f5bf4add906898caeaa9db",
+  "change": "WebGL antialias false; no source geometry/material/flight/battle change",
+  "browser": "Chromium149/SwiftShader/Linux; physical hardware not measured",
+  "localUnitPass": 122,
+  "localSmokePass": 3,
+  "independentReview": "aa-review/review.json",
+  "evidenceSha256": {
+    "pc-1280x720.json": "bbdd734141755eb163fafc4c905ff7cbb5c334035e27e5739cd9c0bfb263929c",
+    "phone-portrait-393x648.json": "84215271b51efa8b40f83b9aeb1476a83b283d0d117c8f2a3e98ec82162af653",
+    "unit-tests.txt": "01bb91740569bb1e352ced1c7ba51ebab8b555badf7b1eccd9be983eeea8c93a",
+    "local-smoke.txt": "222c16048cceeb2b0de042c52154f4d9284916e946032da472e6f7f144f0f30b",
+    "phone-landscape-568x320.json": "a107125077e070757850350ba1b55faf3a63d90381083376dcd39d409604ac36",
+    "build.txt": "248b5428f081ebb8ada62dec96dbc85e94efd5739f1d471c217c8a2c515fdc8e",
+    "aa-review/pixel-comparison.json": "7f64d98503a0c3978ce7a6fd291671ed704647487c9765b27089271590142c74",
+    "aa-review/initial-aa-off.png": "c5c40ca0accc1d785a2285f50d038eec9e01737131fb515e3def8af3dc2ca1cf",
+    "aa-review/animated-enemy-aa-off.png": "e71a2e99b1e15c4a6b8a366dde995e4159057287948f7a1d2642573f932b94c3",
+    "aa-review/enemy-close-difference-x4.png": "4606a1fbcd4e2272b2fbeaeeec4afffab6aadb149a4b59b4d1a520ea68366e44",
+    "aa-review/animated-enemy-difference-x4.png": "4ab15ae7884383a8b57be3de4e1011d36f74564a86173e9a5d27b5a5501dba49",
+    "aa-review/enemy-close-aa-on.png": "0c27748f8a29bb2be09882b04ad77dc37ef2526b00b06d7522738d36e9f3fd36",
+    "aa-review/review.json": "ab8b7748f958ccab45c3c4d9793fe1772487192fd7ac324cfd0041da39cbfb51",
+    "aa-review/initial-difference-mask.png": "de01e3c37eb464438883ce1236aaf8bef06c7a008e710db05f78bc42a5aada8e",
+    "aa-review/enemy-close-aa-off.png": "6835bd08bec83f3b8cac226848e3efb6ff8168ac430bd856139c78aafa4048f9",
+    "aa-review/animated-enemy-difference-mask.png": "d0b329b6227586b74f3dd920536bc1f2226d9abf242c0a0f2e273a212c2b47dd",
+    "aa-review/initial-aa-on.png": "80bb1c495f952eed3b3815dd51f7356e3826790a5e39aab9c629f5710367e0b5",
+    "aa-review/enemy-close-difference-mask.png": "5ec2bdb8666e26688627f7a824a6c1927d626798dba1b346a6fb4ea9ea0a4020",
+    "aa-review/initial-difference-x4.png": "5da73b5d5b3b0efc3f8e75a7bd1c7a718ab774f2f2e0d12afad7f2ec72e7d213",
+    "aa-review/animated-enemy-aa-on.png": "0d51126f82984e9b0b3a9931017df7f0dd72b0dbec4b9e380fbed507832b59c6"
+  }
+}
