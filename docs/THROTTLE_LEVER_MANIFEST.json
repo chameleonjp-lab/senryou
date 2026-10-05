@@ -1,0 +1,20 @@
+{
+  "contractVersion": 1,
+  "baseCommit": "71b0e5bc9ffbe2cbd1f295160b9e8e3c40ad6650",
+  "commonHelperCheckpoint": "final-review-20261005",
+  "sha256": {
+    "docs/THROTTLE_LEVER_CONTRACT.md": "cd0e7db83c54cf349fb6a178a8abcd22bf09f78376cb4b836784faa2ae721864",
+    "src/throttle-lever.ts": "e83fe3c570581d16cb76e08ef9a039bbe9d4a50da6575366ac7e126bf3f30cf0",
+    "tests/fixtures/throttle-lever-v1.json": "416c5ac01d4d14d1f45d94385e07233090740db04382e468db1f0c64689df8ca",
+    "src/throttle-control.ts": "99b45ef5b506ee7a051f80152bf3ce1dcf7a5f521a7c446f6021e76a67163466",
+    "src/settings-storage.ts": "fa7397b27ff74686edf24aef6e524e648d1bbb764bb468ac3d783a14e53f1421",
+    "src/control-obstacles.ts": "cacd1cff5a216dc45a1c9d5eba95b261d2d3343d517290d3b4c0fd85421dac67"
+  },
+  "settingsStorageNormalizedSha256": "f27b88f010c770032ac836b58b0081cf3a1c1e40ac5335b8625ef71549bd1929",
+  "adapters": [
+    "Senryou bomb-only controls; no torpedo",
+    "Senryou-only storage namespaces",
+    "Preserves existing physical-key and pointer handover blocking",
+    "No legacy Kaisen payload relocation because Senryou never shipped it"
+  ]
+}

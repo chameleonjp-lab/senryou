@@ -1,0 +1,15 @@
+
+Running 3 tests using 1 worker
+
+(node:18952) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium-smoke] › browser-tests/smoke.spec.ts:42:3 › smoke phone-portrait-393x648: play, pause/resume, settings, rules and result (12.3s)
+  ✓  2 [chromium-smoke] › browser-tests/smoke.spec.ts:42:3 › smoke phone-landscape-568x320: play, pause/resume, settings, rules and result (11.4s)
+  ✓  3 [chromium-smoke] › browser-tests/smoke.spec.ts:42:3 › smoke pc-1280x720: play, pause/resume, settings, rules and result (15.2s)
+
+  3 passed (40.8s)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

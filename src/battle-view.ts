@@ -153,7 +153,8 @@ export class BattleView {
   private readonly ctx: CanvasRenderingContext2D | null;
 
   constructor(private readonly canvas: HTMLCanvasElement, private readonly overlay?: HTMLCanvasElement) {
-    this.renderer = new WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+    // Avoid expensive multisample resolves on constrained GPUs.
+    this.renderer = new WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
     const gl = this.renderer.getContext();
     if (!('fenceSync' in gl)) throw new Error('WebGL2 is required');
     this.queue = new RenderQueue(gl);

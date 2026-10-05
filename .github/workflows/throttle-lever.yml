@@ -1,0 +1,74 @@
+name: Senryou throttle lever checks
+on:
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: senryou-throttle-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: 71b0e5bc9ffbe2cbd1f295160b9e8e3c40ad6650
+          path: throttle-baseline
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+        working-directory: throttle-baseline
+      - run: npm test
+      - run: npm run build
+      - id: install-browsers
+        run: npx playwright install --with-deps chromium webkit
+      # Preserve inherited PR #3 evidence before the unchanged smoke tests write fresh output.
+      - name: Separate inherited smoke evidence from final-head output
+        id: fresh-smoke-evidence
+        run: mv docs/evidence/smoke "$RUNNER_TEMP/senryou-inherited-smoke"
+      - name: Candidate browser checks (required)
+        id: candidate-browser
+        run: npm run test:browser -- --config=playwright.throttle.config.ts
+        env:
+          THROTTLE_BASELINE_DIR: ${{ github.workspace }}/throttle-baseline
+      # This pinned historical checkout already fails PC smoke with SwiftShader.
+      # Keep its failure as comparison evidence; candidate checks above remain mandatory.
+      - name: Pinned baseline smoke comparison (diagnostic)
+        id: baseline-browser
+        continue-on-error: true
+        if: always() && steps.install-browsers.outcome == 'success'
+        working-directory: throttle-baseline
+        run: |
+          mv docs/evidence/smoke "$RUNNER_TEMP/senryou-baseline-inherited-smoke"
+          test ! -e playwright.throttle-baseline-smoke.config.ts
+          cp ../playwright.baseline-smoke.config.ts playwright.throttle-baseline-smoke.config.ts
+          npm run test:browser -- --config=playwright.throttle-baseline-smoke.config.ts
+        env:
+          THROTTLE_BASELINE_DIR: ${{ github.workspace }}/throttle-baseline
+      - name: Record candidate and baseline smoke observations
+        if: always() && steps.install-browsers.outcome == 'success'
+        run: node scripts/summarize-throttle-smoke.mjs
+        env:
+          CANDIDATE_BROWSER_OUTCOME: ${{ steps.candidate-browser.outcome }}
+          BASELINE_BROWSER_OUTCOME: ${{ steps.baseline-browser.outcome }}
+      - name: Preserve final-head browser evidence
+        if: always() && steps.fresh-smoke-evidence.outcome == 'success'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: senryou-throttle-${{ github.event.pull_request.head.sha }}
+          path: |
+            test-results/
+            docs/evidence/smoke/
+            throttle-baseline/test-results/
+            throttle-baseline/docs/evidence/smoke/
+          retention-days: 7
+          if-no-files-found: warn

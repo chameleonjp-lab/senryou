@@ -1,0 +1,112 @@
+{
+  "hashBefore": "18660991",
+  "hashAfter": "18660991",
+  "tickBefore": 0,
+  "tickAfter": 0,
+  "captures": [
+    {
+      "name": "initial",
+      "kind": "aa-on",
+      "calls": 189,
+      "triangles": 256506,
+      "antialias": true,
+      "samples": 4
+    },
+    {
+      "name": "initial",
+      "kind": "aa-off",
+      "calls": 189,
+      "triangles": 256506,
+      "antialias": false,
+      "samples": 0
+    },
+    {
+      "name": "enemy-close",
+      "kind": "aa-on",
+      "calls": 189,
+      "triangles": 256506,
+      "antialias": true,
+      "samples": 4
+    },
+    {
+      "name": "enemy-close",
+      "kind": "aa-off",
+      "calls": 189,
+      "triangles": 256506,
+      "antialias": false,
+      "samples": 0
+    },
+    {
+      "name": "animated-enemy",
+      "kind": "aa-on",
+      "calls": 189,
+      "triangles": 256506,
+      "antialias": true,
+      "samples": 4
+    },
+    {
+      "name": "animated-enemy",
+      "kind": "aa-off",
+      "calls": 189,
+      "triangles": 256506,
+      "antialias": false,
+      "samples": 0
+    }
+  ],
+  "timings": [
+    {
+      "kind": "aa-on",
+      "frames": [
+        {
+          "cpuMs": 2.100000001490116,
+          "completedMs": 223.10000000149012,
+          "calls": 189,
+          "triangles": 256506
+        },
+        {
+          "cpuMs": 1.6000000014901161,
+          "completedMs": 225.5,
+          "calls": 189,
+          "triangles": 256506
+        },
+        {
+          "cpuMs": 2.599999997764826,
+          "completedMs": 234.19999999925494,
+          "calls": 189,
+          "triangles": 256506
+        }
+      ]
+    },
+    {
+      "kind": "aa-off",
+      "frames": [
+        {
+          "cpuMs": 1.800000000745058,
+          "completedMs": 73,
+          "calls": 189,
+          "triangles": 256506
+        },
+        {
+          "cpuMs": 4.899999998509884,
+          "completedMs": 87.69999999925494,
+          "calls": 189,
+          "triangles": 256506
+        },
+        {
+          "cpuMs": 1.9000000022351742,
+          "completedMs": 91.59999999776483,
+          "calls": 189,
+          "triangles": 256506
+        }
+      ]
+    }
+  ],
+  "nativePixelRatio": 1,
+  "viewport": [
+    1280,
+    720
+  ],
+  "sourceHead": "c1a192726a435bf070f5bf4add906898caeaa9db",
+  "battleViewBlob": "5a22503696217dfddfe8ef42df0af4d7abf14d21",
+  "browser": "149.0.7827.55"
+}
