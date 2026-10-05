@@ -24,7 +24,7 @@ test('the complete position preview fits its scroll region while preserving the 
 test('Senryou layouts load only dedicated keys and leave the source games untouched', () => {
   const original = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
   const storage = storageFixture();
-  const source = JSON.stringify({ version: 1, controls: { ...DEFAULT_LAYOUT, bomb: { x: .2, y: .3, size: 80, opacity: .6 } } });
+  const source = JSON.stringify({ version: 2, controls: { ...DEFAULT_LAYOUT, bomb: { x: .2, y: .3, size: 80, opacity: .6 } } });
   for (const key of ['kaisen-controls-v1', 'kaisen-controls-easy-v1', 'fightflight-controls-v1', 'fightflight-controls-easy-v1', 'kaisen-keyboard-v1', 'fightflight-keyboard-v1']) storage.values.set(key, source);
   const before = new Map(storage.values);
   Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: storage });
@@ -32,12 +32,12 @@ test('Senryou layouts load only dedicated keys and leave the source games untouc
     assert.deepEqual(loadLayout('normal'), DEFAULT_LAYOUT);
     assert.deepEqual(loadLayout('easy'), DEFAULT_LAYOUT);
     assert.deepEqual(new KeyboardSettings().bindings, DEFAULT_KEY_BINDINGS);
-    assert.equal(CONTROL_NAMES.length, 5);
-    assert.equal(MODE_CONTROLS.normal.length, 5);
+    assert.equal(CONTROL_NAMES.length, 4);
+    assert.equal(MODE_CONTROLS.normal.length, 4);
     assert.deepEqual(MODE_CONTROLS.easy, ['loop', 'bomb']);
     assert.equal(persistControlSettings([
-      { key: STORAGE_KEYS.normal, value: source },
-      { key: STORAGE_KEYS.easy, value: source },
+      { key: STORAGE_KEYS.normal, value: source, maxVersion: 2 },
+      { key: STORAGE_KEYS.easy, value: source, maxVersion: 2 },
       { key: KEYBOARD_STORAGE_KEY, value: JSON.stringify({ version: 1, bindings: DEFAULT_KEY_BINDINGS }) },
     ], storage), true);
     for (const [key, value] of before) assert.equal(storage.getItem(key), value);
@@ -51,28 +51,28 @@ test('corrupt and future layouts fall back safely without writing or migrating s
   const storage = storageFixture();
   Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: storage });
   try {
-    for (const raw of ['invalid', '{}', '[]', JSON.stringify({ version: 2, controls: DEFAULT_LAYOUT })]) {
+    for (const raw of ['invalid', '{}', '[]', JSON.stringify({ version: 3, controls: DEFAULT_LAYOUT })]) {
       storage.values.set(STORAGE_KEYS.normal, raw);
       assert.deepEqual(loadLayout('normal'), DEFAULT_LAYOUT);
       assert.equal(storage.getItem(STORAGE_KEYS.normal), raw);
     }
-    storage.values.set(STORAGE_KEYS.normal, JSON.stringify({ version: 1, controls: { bomb: { x: .39, y: .72, size: 56, opacity: .88 } } }));
+    storage.values.set(STORAGE_KEYS.normal, JSON.stringify({ version: 2, controls: { bomb: { x: .39, y: .72, size: 56, opacity: .88 } } }));
     assert.deepEqual(loadLayout('normal').bomb, { x: .39, y: .72, size: 56, opacity: .88 });
-    storage.values.set(STORAGE_KEYS.normal, JSON.stringify({ version: 1, controls: { bomb: { x: -4, y: 9, size: 2, opacity: 8 } } }));
+    storage.values.set(STORAGE_KEYS.normal, JSON.stringify({ version: 2, controls: { bomb: { x: -4, y: 9, size: 2, opacity: 8 } } }));
     assert.deepEqual(loadLayout('normal').bomb, { x: 0, y: 1, size: 44, opacity: 1 });
   } finally { if (original) Object.defineProperty(globalThis, 'localStorage', original); else Reflect.deleteProperty(globalThis, 'localStorage'); }
 });
 
 test('layout and keyboard persistence roll back together when any write fails', () => {
-  const storage = storageFixture(); storage.values.set('normal', 'before');
+  const storage = storageFixture(); storage.values.set(STORAGE_KEYS.normal, 'before');
   const write = storage.setItem;
-  storage.setItem = (key, value) => { if (key === 'keys' && value === 'new keys') throw new Error('quota'); write(key, value); };
-  assert.equal(persistControlSettings([{ key: 'normal', value: 'after' }, { key: 'easy', value: 'new easy' }, { key: 'keys', value: 'new keys' }], storage), false);
-  assert.equal(storage.getItem('normal'), 'before');
-  assert.equal(storage.getItem('easy'), null);
-  assert.equal(storage.getItem('keys'), null);
-  assert.equal(persistControlSettings([{ key: 'normal', value: 'after' }], storage), true);
-  assert.equal(storage.getItem('normal'), 'after');
+  storage.setItem = (key, value) => { if (key === KEYBOARD_STORAGE_KEY && value === 'new keys') throw new Error('quota'); write(key, value); };
+  assert.equal(persistControlSettings([{ key: STORAGE_KEYS.normal, value: 'after', maxVersion: 2 }, { key: STORAGE_KEYS.easy, value: 'new easy', maxVersion: 2 }, { key: KEYBOARD_STORAGE_KEY, value: 'new keys' }], storage), false);
+  assert.equal(storage.getItem(STORAGE_KEYS.normal), 'before');
+  assert.equal(storage.getItem(STORAGE_KEYS.easy), null);
+  assert.equal(storage.getItem(KEYBOARD_STORAGE_KEY), null);
+  assert.equal(persistControlSettings([{ key: STORAGE_KEYS.normal, value: 'after', maxVersion: 2 }], storage), true);
+  assert.equal(storage.getItem(STORAGE_KEYS.normal), 'after');
 });
 
 test('unavailable storage reads cannot cause partial writes', () => {
@@ -125,7 +125,7 @@ test('save applies both drafts only after successful persistence; cancel restore
     assert.equal(dialog.returnValue, 'save');
     assert.equal(keyboard.code('bomb'), 'KeyB');
     assert.equal(JSON.parse(storage.getItem(KEYBOARD_STORAGE_KEY)!).bindings.bomb, 'KeyB');
-    assert.equal(JSON.parse(storage.getItem('senryou-controls-v1')!).controls.bomb.x, .2);
+    assert.equal(JSON.parse(storage.getItem(STORAGE_KEYS.normal)!).controls.bomb.x, .2);
     editor.draft.normal.bomb.x = .7; editor.keyDraft.bomb = 'KeyC'; editor.capturing = 'bomb';
     editor.onClosed();
     assert.equal(editor.draft.normal.bomb.x, .2); assert.equal(editor.keyDraft.bomb, 'KeyB');

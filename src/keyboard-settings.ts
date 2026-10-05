@@ -1,3 +1,4 @@
+import { readSettingsValue } from './settings-storage';
 // Source: kaisen@3d751051dc6212482a129e8da596ddd349b2f9f5. See docs/PROVENANCE.md.
 export const KEYBOARD_STORAGE_KEY = 'senryou-keyboard-v1';
 export const KEY_ACTIONS = ['left', 'right', 'up', 'down', 'fire', 'loop', 'accelerate', 'brake', 'bomb', 'pause'] as const;
@@ -137,7 +138,7 @@ export class KeyboardSettings {
 
   constructor() {
     let raw: string | null = null;
-    try { raw = localStorage.getItem(KEYBOARD_STORAGE_KEY); } catch { /* Storage is optional. */ }
+    try { raw = readSettingsValue(KEYBOARD_STORAGE_KEY, localStorage); } catch { /* Storage is optional. */ }
     this.current = parseKeyBindings(raw);
   }
 

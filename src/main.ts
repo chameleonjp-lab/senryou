@@ -26,8 +26,8 @@ game.mission.phase='paused';
 let view:BattleView|null=null, ready=false, lost=false, disposed=false;
 let accumulator=0,lastFrame=0,frameId=0,lastPilot:string|null=null, pendingLoop=false,pendingBomb=false;
 const intervals:number[]=[],updates:number[]=[];
-const buttons={fire:el<HTMLButtonElement>('fire'),loop:el<HTMLButtonElement>('loop'),accelerate:el<HTMLButtonElement>('accelerate'),
-  brake:el<HTMLButtonElement>('brake'),bomb:el<HTMLButtonElement>('bomb')};
+const buttons={fire:el<HTMLButtonElement>('fire'),loop:el<HTMLButtonElement>('loop'),throttle:el<HTMLElement>('throttle'),
+  bomb:el<HTMLButtonElement>('bomb')};
 for(const b of Object.values(buttons))b.dataset.flightControl='true';
 const keyboard=new KeyboardSettings(), presentation=new ControlInputPresentation();
 const settings=new ControlSettings(buttons,keyboard,presentation);
@@ -42,7 +42,7 @@ function instructions():void{
   const touch=presentation.value==='touch';
   el('input-guide').textContent=touch?'画面をドラッグして操縦':'キーボードで操縦';
   el('flight-tip').textContent=touch?'ドラッグで操縦':'キーで操縦';
-  el('mode-guide').textContent=mode==='easy'?'照準円内・1.2km以内へ自動射撃 · 爆弾は手動投下':'手動射撃 · 射撃・加減速は長押し';
+  el('mode-guide').textContent=mode==='easy'?'照準円内・1.2km以内へ自動射撃 · 爆弾は手動投下':'手動射撃 · 速度レバーは上で加速・下で減速、離すと速度を保持';
   el('keyboard-guide').hidden=touch;el('keyboard-guide').textContent=keyboard.describe(mode);
 }
 const unsubscribeKeyboard=keyboard.subscribe(instructions),unsubscribePresentation=presentation.subscribe(instructions);
@@ -192,13 +192,13 @@ function frame(_timestamp:number):void{
     if(delta>0){intervals.push(delta*1000);if(intervals.length>20000)intervals.shift();}
     accumulator+=delta;
     if(accumulator>.5){pause('処理が遅れたため停止しました。描画負荷を下げて再開してください');return;}
-    const sampled=controls.sample();pendingLoop ||= sampled.loop;pendingBomb ||= !!sampled.bomb;
+    const sampled=controls.sample(false);pendingLoop ||= sampled.loop;pendingBomb ||= !!sampled.bomb;
     let ticks=0;
     while(accumulator>=1/60&&ticks<8&&game.mission.phase==='running'){
-      const input={...sampled,loop:pendingLoop,bomb:pendingBomb,viewAspect:canvas.clientWidth/Math.max(1,canvas.clientHeight)};
+      const input={...sampled,throttle:controls.sampleThrottle(),loop:pendingLoop,bomb:pendingBomb,viewAspect:canvas.clientWidth/Math.max(1,canvas.clientHeight)};
       const start=performance.now();stepBattle(game,input);view?.queueEvents(game.combat.events,game.mission.id);updates.push(performance.now()-start);if(updates.length>20000)updates.shift();
       pendingLoop=false;pendingBomb=false;accumulator-=1/60;ticks++;
-      if(lastPilot!==game.mission.controlledAircraftId){controls.clear();lastPilot=game.mission.controlledAircraftId;sampled.turn=0;sampled.climb=0;sampled.fire=false;sampled.accelerate=false;sampled.brake=false;}
+      if(lastPilot!==game.mission.controlledAircraftId){controls.clear();lastPilot=game.mission.controlledAircraftId;sampled.turn=0;sampled.climb=0;sampled.fire=false;sampled.accelerate=false;sampled.brake=false;sampled.throttle=0;}
       if(game.mission.result){result();break;}
     }
     hud();sound();

@@ -11,6 +11,8 @@ export interface FlightInput {
   fire: boolean;
   loop: boolean;
   bomb?: boolean;
+  /** Optional continuous speed-adjustment axis; explicit zero overrides legacy buttons. */
+  throttle?: number;
   accelerate?: boolean;
   brake?: boolean;
   viewAspect?: number;

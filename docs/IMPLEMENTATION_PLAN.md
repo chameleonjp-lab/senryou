@@ -1,5 +1,6 @@
 # センリョウ Codex向け実装計画書
 
+> 2026-10-05追補: ゲーム本体はPR #2でmainへ採用済みです。以下の初版文書の「未実装」「文書のみ」は初版工程の記録です。今回の速度レバー変更は [共通契約](THROTTLE_LEVER_CONTRACT.md) と [差分・検証記録](THROTTLE_LEVER_VERIFICATION.md) を優先します。Normalタッチは旧5操作から4操作（射撃・宙返り・速度レバー・爆弾）、Easy2/PC10は維持します。旧v1を保持し、新タッチv2へ明示Save時だけ保存します。
 状態: 文書レビュー案。下記工程はすべて将来の実装作業であり未実施  
 対象: [chameleonjp-lab/senryou](https://github.com/chameleonjp-lab/senryou)  
 文書ブランチ基点: `1358d82e4572ee1b9da3992a63f0e7abffd91fe9`  
