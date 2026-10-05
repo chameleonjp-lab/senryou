@@ -1,0 +1,9 @@
+✔ thirty-second renewal retains balanced nearby fronts and new squads fill the least-loaded front (44.788992ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 290.120432

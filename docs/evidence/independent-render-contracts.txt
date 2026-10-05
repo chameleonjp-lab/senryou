@@ -1,0 +1,14 @@
+✔ fixed-source flight motion stays equal to the independent reference for slow/cruise/fast traces (25.589035ms)
+✔ source loop lasts five seconds, restores the attitude, cancels on a new steering revision, and keeps mode throttle (4.941047ms)
+✔ fixed camera keeps its FOV, follow offset, banking factor and projection in both modes (6.284904ms)
+✔ flight handoff adapter preserves loops, attitude, HP and magazines without implicit simulation writes (4.171126ms)
+✔ 284 active units retain identity and logical state across every visual detail mode (22.801753ms)
+✔ ground targeting uses the authoritative collider aim offsets, with no ledger mutation (10.668497ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 609.33999

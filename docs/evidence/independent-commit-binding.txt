@@ -1,0 +1,8 @@
+Source candidate: f96e9a9e17a1486e1e6b8e9df146168613f3487f
+Matched manifest files in source commit: 57
+Additional uncommitted browser/campaign harness files: 5
+browser-tests/reference-comparison.spec.ts
+browser-tests/reference-render-baseline.spec.ts
+browser-tests/smoke.spec.ts
+playwright.config.ts
+scripts/acceptance.ts

@@ -1,0 +1,1 @@
+PASS: warmup GPU fence success, WAIT_FAILED, context loss, disposal; two priming renders, nonblocking waits, exactly one fence deletion.

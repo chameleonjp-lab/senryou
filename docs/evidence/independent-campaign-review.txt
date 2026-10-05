@@ -1,0 +1,1 @@
+PASS: exact acceptance script summary expressions normalize x-mirrored points with stable property order and retain prior-tick cumulative deaths (self2/enemy1). Campaign not run.

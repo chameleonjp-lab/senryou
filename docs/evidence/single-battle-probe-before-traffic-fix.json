@@ -1,0 +1,4574 @@
+{
+  "sourceHead": "86b8dbd39679bbab9bbfbf15565fcb54b9ac3ded",
+  "kind": "single AI-only diagnostic; not 30-seed acceptance",
+  "seed": 1,
+  "mode": "easy",
+  "team": "A",
+  "ticks": 72000,
+  "wallMs": 423296,
+  "result": {
+    "rulesVersion": "senryou-rules-v1",
+    "seed": 1,
+    "outcome": "draw",
+    "reason": "時間切れ",
+    "tick": 72000,
+    "score": {
+      "kill": 7240,
+      "support": 0,
+      "capture": 0,
+      "time": 0,
+      "loss": 7770,
+      "total": -530
+    },
+    "owners": {
+      "HA": "A",
+      "P1": "A",
+      "P2": "N",
+      "P3": "N",
+      "P4": "N",
+      "P5": "B",
+      "HB": "B"
+    },
+    "remaining": {
+      "A": {
+        "infantry": 183,
+        "tank": 24,
+        "aa": 8,
+        "aircraft": 0
+      },
+      "B": {
+        "infantry": 178,
+        "tank": 24,
+        "aa": 8,
+        "aircraft": 0
+      }
+    },
+    "damage": [
+      {
+        "id": "shot-3",
+        "targetId": "A-aircraft-003",
+        "amount": 7.68,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1407
+      },
+      {
+        "id": "shot-24",
+        "targetId": "B-aircraft-003",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1428
+      },
+      {
+        "id": "shot-25",
+        "targetId": "A-aircraft-002",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1440
+      },
+      {
+        "id": "shot-29",
+        "targetId": "A-aircraft-003",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1441
+      },
+      {
+        "id": "shot-28",
+        "targetId": "B-aircraft-002",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1441
+      },
+      {
+        "id": "shot-42",
+        "targetId": "A-aircraft-003",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1450
+      },
+      {
+        "id": "shot-45",
+        "targetId": "A-aircraft-002",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1454
+      },
+      {
+        "id": "shot-48",
+        "targetId": "B-aircraft-002",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1454
+      },
+      {
+        "id": "shot-66",
+        "targetId": "A-aircraft-003",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1454
+      },
+      {
+        "id": "shot-57",
+        "targetId": "B-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1456
+      },
+      {
+        "id": "shot-59",
+        "targetId": "B-aircraft-001",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1461
+      },
+      {
+        "id": "shot-40",
+        "targetId": "B-aircraft-000",
+        "amount": 7.68,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1462
+      },
+      {
+        "id": "shot-54",
+        "targetId": "A-aircraft-001",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1466
+      },
+      {
+        "id": "shot-77",
+        "targetId": "A-aircraft-002",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1467
+      },
+      {
+        "id": "shot-98",
+        "targetId": "A-aircraft-003",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1468
+      },
+      {
+        "id": "shot-99",
+        "targetId": "B-aircraft-003",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1469
+      },
+      {
+        "id": "shot-72",
+        "targetId": "B-aircraft-000",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1470
+      },
+      {
+        "id": "shot-90",
+        "targetId": "B-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1470
+      },
+      {
+        "id": "shot-94",
+        "targetId": "A-aircraft-002",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1476
+      },
+      {
+        "id": "shot-95",
+        "targetId": "B-aircraft-002",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1476
+      },
+      {
+        "id": "shot-88",
+        "targetId": "A-aircraft-001",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1479
+      },
+      {
+        "id": "shot-108",
+        "targetId": "A-aircraft-002",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1481
+      },
+      {
+        "id": "shot-107",
+        "targetId": "A-aircraft-002",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1481
+      },
+      {
+        "id": "shot-122",
+        "targetId": "A-aircraft-003",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1481
+      },
+      {
+        "id": "shot-123",
+        "targetId": "B-aircraft-003",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1482
+      },
+      {
+        "id": "shot-124",
+        "targetId": "B-aircraft-003",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1482
+      },
+      {
+        "id": "shot-113",
+        "targetId": "A-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1482
+      },
+      {
+        "id": "shot-101",
+        "targetId": "A-aircraft-000",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1482
+      },
+      {
+        "id": "shot-118",
+        "targetId": "B-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1483
+      },
+      {
+        "id": "shot-106",
+        "targetId": "B-aircraft-004",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1491
+      },
+      {
+        "id": "shot-110",
+        "targetId": "A-aircraft-004",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1491
+      },
+      {
+        "id": "shot-141",
+        "targetId": "A-aircraft-003",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1493
+      },
+      {
+        "id": "shot-144",
+        "targetId": "B-aircraft-003",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1494
+      },
+      {
+        "id": "shot-154",
+        "targetId": "A-aircraft-003",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1494
+      },
+      {
+        "id": "shot-138",
+        "targetId": "B-aircraft-002",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1495
+      },
+      {
+        "id": "shot-156",
+        "targetId": "B-aircraft-003",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1495
+      },
+      {
+        "id": "shot-155",
+        "targetId": "B-aircraft-003",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1495
+      },
+      {
+        "id": "shot-146",
+        "targetId": "A-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1496
+      },
+      {
+        "id": "shot-150",
+        "targetId": "B-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1497
+      },
+      {
+        "id": "shot-149",
+        "targetId": "B-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1497
+      },
+      {
+        "id": "shot-158",
+        "targetId": "A-aircraft-001",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1503
+      },
+      {
+        "id": "shot-157",
+        "targetId": "A-aircraft-001",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1503
+      },
+      {
+        "id": "shot-164",
+        "targetId": "B-aircraft-001",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1504
+      },
+      {
+        "id": "shot-163",
+        "targetId": "B-aircraft-001",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1504
+      },
+      {
+        "id": "shot-134",
+        "targetId": "A-aircraft-004",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1505
+      },
+      {
+        "id": "shot-130",
+        "targetId": "B-aircraft-004",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1505
+      },
+      {
+        "id": "shot-139",
+        "targetId": "B-aircraft-000",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1506
+      },
+      {
+        "id": "shot-148",
+        "targetId": "A-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1506
+      },
+      {
+        "id": "shot-171",
+        "targetId": "A-aircraft-002",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1507
+      },
+      {
+        "id": "shot-172",
+        "targetId": "A-aircraft-002",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1507
+      },
+      {
+        "id": "shot-176",
+        "targetId": "B-aircraft-002",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1508
+      },
+      {
+        "id": "shot-177",
+        "targetId": "A-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1509
+      },
+      {
+        "id": "shot-178",
+        "targetId": "A-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1509
+      },
+      {
+        "id": "shot-160",
+        "targetId": "A-aircraft-000",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1510
+      },
+      {
+        "id": "shot-181",
+        "targetId": "B-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1510
+      },
+      {
+        "id": "shot-182",
+        "targetId": "B-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1510
+      },
+      {
+        "id": "shot-161",
+        "targetId": "A-aircraft-001",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1515
+      },
+      {
+        "id": "shot-168",
+        "targetId": "B-aircraft-001",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1516
+      },
+      {
+        "id": "shot-167",
+        "targetId": "B-aircraft-001",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1516
+      },
+      {
+        "id": "shot-180",
+        "targetId": "A-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1519
+      },
+      {
+        "id": "shot-194",
+        "targetId": "A-aircraft-002",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1519
+      },
+      {
+        "id": "shot-193",
+        "targetId": "A-aircraft-002",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1520
+      },
+      {
+        "id": "shot-185",
+        "targetId": "B-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1520
+      },
+      {
+        "id": "shot-199",
+        "targetId": "A-aircraft-002",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1521
+      },
+      {
+        "id": "shot-200",
+        "targetId": "A-aircraft-002",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1521
+      },
+      {
+        "id": "shot-204",
+        "targetId": "B-aircraft-002",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1521
+      },
+      {
+        "id": "shot-206",
+        "targetId": "A-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1523
+      },
+      {
+        "id": "shot-205",
+        "targetId": "A-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1523
+      },
+      {
+        "id": "shot-210",
+        "targetId": "B-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1523
+      },
+      {
+        "id": "shot-209",
+        "targetId": "B-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1523
+      },
+      {
+        "id": "shot-190",
+        "targetId": "A-aircraft-000",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1523
+      },
+      {
+        "id": "shot-192",
+        "targetId": "B-aircraft-000",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1524
+      },
+      {
+        "id": "shot-202",
+        "targetId": "A-aircraft-004",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1532
+      },
+      {
+        "id": "shot-198",
+        "targetId": "B-aircraft-004",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1532
+      },
+      {
+        "id": "shot-208",
+        "targetId": "A-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1533
+      },
+      {
+        "id": "shot-211",
+        "targetId": "B-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1533
+      },
+      {
+        "id": "shot-220",
+        "targetId": "A-aircraft-002",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1534
+      },
+      {
+        "id": "shot-219",
+        "targetId": "A-aircraft-002",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1534
+      },
+      {
+        "id": "shot-223",
+        "targetId": "B-aircraft-002",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1535
+      },
+      {
+        "id": "shot-224",
+        "targetId": "B-aircraft-002",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1535
+      },
+      {
+        "id": "shot-225",
+        "targetId": "A-aircraft-001",
+        "amount": 2.4,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1536
+      },
+      {
+        "id": "shot-226",
+        "targetId": "A-aircraft-001",
+        "amount": 2.4,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1536
+      },
+      {
+        "id": "shot-230",
+        "targetId": "B-aircraft-001",
+        "amount": 2.4,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1537
+      },
+      {
+        "id": "shot-229",
+        "targetId": "B-aircraft-001",
+        "amount": 2.4,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1537
+      },
+      {
+        "id": "shot-213",
+        "targetId": "A-aircraft-000",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1537
+      },
+      {
+        "id": "shot-216",
+        "targetId": "B-aircraft-000",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1538
+      },
+      {
+        "id": "shot-215",
+        "targetId": "B-aircraft-000",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1538
+      },
+      {
+        "id": "shot-217",
+        "targetId": "B-aircraft-004",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1545
+      },
+      {
+        "id": "shot-228",
+        "targetId": "A-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1546
+      },
+      {
+        "id": "shot-242",
+        "targetId": "A-aircraft-001",
+        "amount": 9.6,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1547
+      },
+      {
+        "id": "shot-241",
+        "targetId": "A-aircraft-001",
+        "amount": 9.6,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1547
+      },
+      {
+        "id": "shot-231",
+        "targetId": "B-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1547
+      },
+      {
+        "id": "shot-232",
+        "targetId": "B-aircraft-001",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1547
+      },
+      {
+        "id": "shot-249",
+        "targetId": "B-aircraft-001",
+        "amount": 8.6,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1547
+      },
+      {
+        "id": "shot-240",
+        "targetId": "A-aircraft-002",
+        "amount": 2.4,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1547
+      },
+      {
+        "id": "shot-239",
+        "targetId": "A-aircraft-002",
+        "amount": 2.4,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1548
+      },
+      {
+        "id": "shot-248",
+        "targetId": "B-aircraft-002",
+        "amount": 2.4,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1548
+      },
+      {
+        "id": "shot-247",
+        "targetId": "B-aircraft-002",
+        "amount": 2.4,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1548
+      },
+      {
+        "id": "shot-253",
+        "targetId": "A-aircraft-001",
+        "amount": 2.4,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1549
+      },
+      {
+        "id": "shot-254",
+        "targetId": "A-aircraft-001",
+        "amount": 2.4,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1549
+      },
+      {
+        "id": "shot-233",
+        "targetId": "A-aircraft-000",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1550
+      },
+      {
+        "id": "shot-236",
+        "targetId": "B-aircraft-000",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1550
+      },
+      {
+        "id": "shot-235",
+        "targetId": "B-aircraft-000",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1551
+      },
+      {
+        "id": "shot-246",
+        "targetId": "A-aircraft-001",
+        "amount": 4.88,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1558
+      },
+      {
+        "id": "shot-238",
+        "targetId": "B-aircraft-004",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1558
+      },
+      {
+        "id": "shot-244",
+        "targetId": "A-aircraft-004",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1558
+      },
+      {
+        "id": "shot-258",
+        "targetId": "B-aircraft-005",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1560
+      },
+      {
+        "id": "shot-267",
+        "targetId": "A-aircraft-002",
+        "amount": 2.4,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1561
+      },
+      {
+        "id": "shot-268",
+        "targetId": "A-aircraft-002",
+        "amount": 2.4,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1561
+      },
+      {
+        "id": "shot-271",
+        "targetId": "B-aircraft-002",
+        "amount": 2.4,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1562
+      },
+      {
+        "id": "shot-272",
+        "targetId": "B-aircraft-002",
+        "amount": 2.4,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1562
+      },
+      {
+        "id": "shot-273",
+        "targetId": "A-aircraft-002",
+        "amount": 9.6,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1563
+      },
+      {
+        "id": "shot-274",
+        "targetId": "A-aircraft-002",
+        "amount": 9.6,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1563
+      },
+      {
+        "id": "shot-275",
+        "targetId": "B-aircraft-002",
+        "amount": 9.6,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1563
+      },
+      {
+        "id": "shot-276",
+        "targetId": "B-aircraft-002",
+        "amount": 9.6,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1563
+      },
+      {
+        "id": "shot-261",
+        "targetId": "B-aircraft-004",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1570
+      },
+      {
+        "id": "shot-263",
+        "targetId": "A-aircraft-004",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1570
+      },
+      {
+        "id": "shot-264",
+        "targetId": "A-aircraft-004",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1570
+      },
+      {
+        "id": "shot-262",
+        "targetId": "B-aircraft-004",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1570
+      },
+      {
+        "id": "shot-260",
+        "targetId": "B-aircraft-005",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1571
+      },
+      {
+        "id": "shot-270",
+        "targetId": "A-aircraft-004",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1572
+      },
+      {
+        "id": "shot-266",
+        "targetId": "B-aircraft-004",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1572
+      },
+      {
+        "id": "shot-278",
+        "targetId": "B-aircraft-004",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1585
+      },
+      {
+        "id": "shot-280",
+        "targetId": "A-aircraft-004",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1585
+      },
+      {
+        "id": "shot-279",
+        "targetId": "A-aircraft-004",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1585
+      },
+      {
+        "id": "shot-277",
+        "targetId": "B-aircraft-004",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1585
+      },
+      {
+        "id": "shot-281",
+        "targetId": "B-aircraft-004",
+        "amount": 2.4,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1599
+      },
+      {
+        "id": "shot-283",
+        "targetId": "A-aircraft-004",
+        "amount": 2.4,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1599
+      },
+      {
+        "id": "shot-284",
+        "targetId": "A-aircraft-004",
+        "amount": 2.4,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 1599
+      },
+      {
+        "id": "shot-282",
+        "targetId": "B-aircraft-004",
+        "amount": 2.4,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 1599
+      },
+      {
+        "id": "shot-285",
+        "targetId": "A-aircraft-006",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 3895
+      },
+      {
+        "id": "shot-290",
+        "targetId": "B-aircraft-006",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 3895
+      },
+      {
+        "id": "shot-287",
+        "targetId": "A-aircraft-006",
+        "amount": 7.68,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 3900
+      },
+      {
+        "id": "shot-292",
+        "targetId": "B-aircraft-006",
+        "amount": 7.68,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 3901
+      },
+      {
+        "id": "shot-293",
+        "targetId": "A-aircraft-006",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 3908
+      },
+      {
+        "id": "shot-302",
+        "targetId": "A-aircraft-006",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 3935
+      },
+      {
+        "id": "shot-307",
+        "targetId": "B-aircraft-006",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 3944
+      },
+      {
+        "id": "shot-312",
+        "targetId": "B-aircraft-006",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 3949
+      },
+      {
+        "id": "shot-313",
+        "targetId": "A-aircraft-006",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 3962
+      },
+      {
+        "id": "shot-314",
+        "targetId": "A-aircraft-006",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 3962
+      },
+      {
+        "id": "shot-316",
+        "targetId": "B-aircraft-006",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 3963
+      },
+      {
+        "id": "shot-317",
+        "targetId": "A-aircraft-006",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 3975
+      },
+      {
+        "id": "shot-318",
+        "targetId": "A-aircraft-006",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 3975
+      },
+      {
+        "id": "shot-320",
+        "targetId": "B-aircraft-006",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 3976
+      },
+      {
+        "id": "shot-321",
+        "targetId": "A-aircraft-006",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 3987
+      },
+      {
+        "id": "shot-322",
+        "targetId": "A-aircraft-006",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 3987
+      },
+      {
+        "id": "shot-324",
+        "targetId": "B-aircraft-006",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 3988
+      },
+      {
+        "id": "shot-323",
+        "targetId": "B-aircraft-006",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 3988
+      },
+      {
+        "id": "shot-326",
+        "targetId": "A-aircraft-006",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 3988
+      },
+      {
+        "id": "shot-325",
+        "targetId": "A-aircraft-006",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 3989
+      },
+      {
+        "id": "shot-327",
+        "targetId": "B-aircraft-006",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 3989
+      },
+      {
+        "id": "shot-328",
+        "targetId": "B-aircraft-006",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 3990
+      },
+      {
+        "id": "shot-330",
+        "targetId": "A-aircraft-006",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 4002
+      },
+      {
+        "id": "shot-329",
+        "targetId": "A-aircraft-006",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 4002
+      },
+      {
+        "id": "shot-331",
+        "targetId": "B-aircraft-006",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 4003
+      },
+      {
+        "id": "shot-332",
+        "targetId": "B-aircraft-006",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 4003
+      },
+      {
+        "id": "shot-334",
+        "targetId": "A-aircraft-006",
+        "amount": 2.4,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 4015
+      },
+      {
+        "id": "shot-333",
+        "targetId": "A-aircraft-006",
+        "amount": 2.4,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 4015
+      },
+      {
+        "id": "shot-335",
+        "targetId": "B-aircraft-006",
+        "amount": 2.4,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 4016
+      },
+      {
+        "id": "shot-336",
+        "targetId": "B-aircraft-006",
+        "amount": 2.4,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 4016
+      },
+      {
+        "id": "shot-338",
+        "targetId": "A-aircraft-006",
+        "amount": 2.4,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 4029
+      },
+      {
+        "id": "shot-337",
+        "targetId": "A-aircraft-006",
+        "amount": 2.4,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 4029
+      },
+      {
+        "id": "shot-340",
+        "targetId": "B-aircraft-006",
+        "amount": 2.4,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 4029
+      },
+      {
+        "id": "shot-339",
+        "targetId": "B-aircraft-006",
+        "amount": 2.4,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 4030
+      },
+      {
+        "id": "shot-342",
+        "targetId": "A-aircraft-006",
+        "amount": 9.6,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 4030
+      },
+      {
+        "id": "shot-341",
+        "targetId": "A-aircraft-006",
+        "amount": 9.6,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 4031
+      },
+      {
+        "id": "shot-343",
+        "targetId": "B-aircraft-006",
+        "amount": 9.6,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 4031
+      },
+      {
+        "id": "shot-344",
+        "targetId": "B-aircraft-006",
+        "amount": 9.6,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 4031
+      },
+      {
+        "id": "shot-348",
+        "targetId": "A-aircraft-007",
+        "amount": 7.68,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 5101
+      },
+      {
+        "id": "shot-354",
+        "targetId": "A-aircraft-007",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 5108
+      },
+      {
+        "id": "shot-358",
+        "targetId": "A-aircraft-007",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 5122
+      },
+      {
+        "id": "shot-362",
+        "targetId": "A-aircraft-007",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 5135
+      },
+      {
+        "id": "shot-365",
+        "targetId": "A-aircraft-007",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 5144
+      },
+      {
+        "id": "shot-368",
+        "targetId": "B-aircraft-007",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 5144
+      },
+      {
+        "id": "shot-370",
+        "targetId": "A-aircraft-007",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 5149
+      },
+      {
+        "id": "shot-369",
+        "targetId": "A-aircraft-007",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 5149
+      },
+      {
+        "id": "shot-374",
+        "targetId": "A-aircraft-007",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 5162
+      },
+      {
+        "id": "shot-378",
+        "targetId": "A-aircraft-007",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 5175
+      },
+      {
+        "id": "shot-377",
+        "targetId": "A-aircraft-007",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 5175
+      },
+      {
+        "id": "shot-379",
+        "targetId": "B-aircraft-007",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 5176
+      },
+      {
+        "id": "shot-381",
+        "targetId": "A-aircraft-007",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 5187
+      },
+      {
+        "id": "shot-382",
+        "targetId": "A-aircraft-007",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 5187
+      },
+      {
+        "id": "shot-383",
+        "targetId": "B-aircraft-007",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 5188
+      },
+      {
+        "id": "shot-385",
+        "targetId": "A-aircraft-007",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 5189
+      },
+      {
+        "id": "shot-386",
+        "targetId": "A-aircraft-007",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 5189
+      },
+      {
+        "id": "shot-387",
+        "targetId": "B-aircraft-007",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 5189
+      },
+      {
+        "id": "shot-390",
+        "targetId": "A-aircraft-008",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 6295
+      },
+      {
+        "id": "shot-392",
+        "targetId": "A-aircraft-008",
+        "amount": 7.68,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 6301
+      },
+      {
+        "id": "shot-409",
+        "targetId": "A-aircraft-008",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 6344
+      },
+      {
+        "id": "shot-412",
+        "targetId": "B-aircraft-008",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 6345
+      },
+      {
+        "id": "shot-414",
+        "targetId": "A-aircraft-008",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 6348
+      },
+      {
+        "id": "shot-415",
+        "targetId": "B-aircraft-008",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 6349
+      },
+      {
+        "id": "shot-418",
+        "targetId": "A-aircraft-008",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 6362
+      },
+      {
+        "id": "shot-419",
+        "targetId": "B-aircraft-008",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 6362
+      },
+      {
+        "id": "shot-422",
+        "targetId": "A-aircraft-008",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 6375
+      },
+      {
+        "id": "shot-423",
+        "targetId": "B-aircraft-008",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 6376
+      },
+      {
+        "id": "shot-424",
+        "targetId": "B-aircraft-008",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 6376
+      },
+      {
+        "id": "shot-426",
+        "targetId": "A-aircraft-008",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 6387
+      },
+      {
+        "id": "shot-428",
+        "targetId": "B-aircraft-008",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 6388
+      },
+      {
+        "id": "shot-430",
+        "targetId": "A-aircraft-008",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 6389
+      },
+      {
+        "id": "shot-432",
+        "targetId": "B-aircraft-008",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 6389
+      },
+      {
+        "id": "shot-431",
+        "targetId": "B-aircraft-008",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 6389
+      },
+      {
+        "id": "shot-437",
+        "targetId": "B-aircraft-009",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 7496
+      },
+      {
+        "id": "shot-439",
+        "targetId": "B-aircraft-009",
+        "amount": 7.68,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 7501
+      },
+      {
+        "id": "shot-451",
+        "targetId": "B-aircraft-009",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 7536
+      },
+      {
+        "id": "shot-454",
+        "targetId": "A-aircraft-009",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 7544
+      },
+      {
+        "id": "shot-453",
+        "targetId": "A-aircraft-009",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 7544
+      },
+      {
+        "id": "shot-456",
+        "targetId": "B-aircraft-009",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 7545
+      },
+      {
+        "id": "shot-459",
+        "targetId": "B-aircraft-009",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 7549
+      },
+      {
+        "id": "shot-464",
+        "targetId": "B-aircraft-009",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 7563
+      },
+      {
+        "id": "shot-463",
+        "targetId": "B-aircraft-009",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 7563
+      },
+      {
+        "id": "shot-465",
+        "targetId": "A-aircraft-009",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 7575
+      },
+      {
+        "id": "shot-468",
+        "targetId": "B-aircraft-009",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 7576
+      },
+      {
+        "id": "shot-469",
+        "targetId": "A-aircraft-009",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 7587
+      },
+      {
+        "id": "shot-471",
+        "targetId": "B-aircraft-009",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 7588
+      },
+      {
+        "id": "shot-473",
+        "targetId": "A-aircraft-009",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 7589
+      },
+      {
+        "id": "shot-476",
+        "targetId": "B-aircraft-009",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 7589
+      },
+      {
+        "id": "shot-489",
+        "targetId": "A-aircraft-010",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 8722
+      },
+      {
+        "id": "shot-492",
+        "targetId": "B-aircraft-010",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 8723
+      },
+      {
+        "id": "shot-493",
+        "targetId": "A-aircraft-010",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 8735
+      },
+      {
+        "id": "shot-499",
+        "targetId": "B-aircraft-010",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 8744
+      },
+      {
+        "id": "shot-502",
+        "targetId": "A-aircraft-010",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 8748
+      },
+      {
+        "id": "shot-501",
+        "targetId": "A-aircraft-010",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 8749
+      },
+      {
+        "id": "shot-506",
+        "targetId": "A-aircraft-010",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 8762
+      },
+      {
+        "id": "shot-507",
+        "targetId": "B-aircraft-010",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 8763
+      },
+      {
+        "id": "shot-510",
+        "targetId": "A-aircraft-010",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 8775
+      },
+      {
+        "id": "shot-509",
+        "targetId": "A-aircraft-010",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 8775
+      },
+      {
+        "id": "shot-511",
+        "targetId": "B-aircraft-010",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 8776
+      },
+      {
+        "id": "shot-512",
+        "targetId": "B-aircraft-010",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 8776
+      },
+      {
+        "id": "shot-514",
+        "targetId": "A-aircraft-010",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 8787
+      },
+      {
+        "id": "shot-513",
+        "targetId": "A-aircraft-010",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 8787
+      },
+      {
+        "id": "shot-518",
+        "targetId": "A-aircraft-010",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 8789
+      },
+      {
+        "id": "shot-517",
+        "targetId": "A-aircraft-010",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 8789
+      },
+      {
+        "id": "shot-519",
+        "targetId": "B-aircraft-010",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 8789
+      },
+      {
+        "id": "shot-534",
+        "targetId": "A-aircraft-011",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 9922
+      },
+      {
+        "id": "shot-538",
+        "targetId": "A-aircraft-011",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 9935
+      },
+      {
+        "id": "shot-539",
+        "targetId": "B-aircraft-011",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 9936
+      },
+      {
+        "id": "shot-541",
+        "targetId": "A-aircraft-011",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 9944
+      },
+      {
+        "id": "shot-544",
+        "targetId": "B-aircraft-011",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 9944
+      },
+      {
+        "id": "shot-546",
+        "targetId": "A-aircraft-011",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 9948
+      },
+      {
+        "id": "shot-547",
+        "targetId": "B-aircraft-011",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 9949
+      },
+      {
+        "id": "shot-550",
+        "targetId": "A-aircraft-011",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 9962
+      },
+      {
+        "id": "shot-551",
+        "targetId": "B-aircraft-011",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 9963
+      },
+      {
+        "id": "shot-554",
+        "targetId": "A-aircraft-011",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 9975
+      },
+      {
+        "id": "shot-553",
+        "targetId": "A-aircraft-011",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 9975
+      },
+      {
+        "id": "shot-556",
+        "targetId": "B-aircraft-011",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 9976
+      },
+      {
+        "id": "shot-555",
+        "targetId": "B-aircraft-011",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 9976
+      },
+      {
+        "id": "shot-558",
+        "targetId": "A-aircraft-011",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 9987
+      },
+      {
+        "id": "shot-559",
+        "targetId": "B-aircraft-011",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 9988
+      },
+      {
+        "id": "shot-562",
+        "targetId": "A-aircraft-011",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 9989
+      },
+      {
+        "id": "shot-564",
+        "targetId": "B-aircraft-011",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 9989
+      },
+      {
+        "id": "shot-563",
+        "targetId": "B-aircraft-011",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 9990
+      },
+      {
+        "id": "shot-574",
+        "targetId": "A-aircraft-012",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 11108
+      },
+      {
+        "id": "shot-578",
+        "targetId": "A-aircraft-012",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 11122
+      },
+      {
+        "id": "shot-579",
+        "targetId": "B-aircraft-012",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 11122
+      },
+      {
+        "id": "shot-583",
+        "targetId": "B-aircraft-012",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 11136
+      },
+      {
+        "id": "shot-585",
+        "targetId": "A-aircraft-012",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 11144
+      },
+      {
+        "id": "shot-588",
+        "targetId": "B-aircraft-012",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 11145
+      },
+      {
+        "id": "shot-591",
+        "targetId": "B-aircraft-012",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 11149
+      },
+      {
+        "id": "shot-593",
+        "targetId": "A-aircraft-012",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 11162
+      },
+      {
+        "id": "shot-595",
+        "targetId": "B-aircraft-012",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 11163
+      },
+      {
+        "id": "shot-596",
+        "targetId": "B-aircraft-012",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 11163
+      },
+      {
+        "id": "shot-598",
+        "targetId": "A-aircraft-012",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 11175
+      },
+      {
+        "id": "shot-597",
+        "targetId": "A-aircraft-012",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 11175
+      },
+      {
+        "id": "shot-599",
+        "targetId": "B-aircraft-012",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 11176
+      },
+      {
+        "id": "shot-601",
+        "targetId": "A-aircraft-012",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 11187
+      },
+      {
+        "id": "shot-603",
+        "targetId": "B-aircraft-012",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 11188
+      },
+      {
+        "id": "shot-605",
+        "targetId": "A-aircraft-012",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 11189
+      },
+      {
+        "id": "shot-607",
+        "targetId": "B-aircraft-012",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 11189
+      },
+      {
+        "id": "shot-613",
+        "targetId": "B-aircraft-013",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 12296
+      },
+      {
+        "id": "shot-615",
+        "targetId": "B-aircraft-013",
+        "amount": 7.68,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 12301
+      },
+      {
+        "id": "shot-619",
+        "targetId": "B-aircraft-013",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 12309
+      },
+      {
+        "id": "shot-624",
+        "targetId": "B-aircraft-013",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 12322
+      },
+      {
+        "id": "shot-625",
+        "targetId": "A-aircraft-013",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 12335
+      },
+      {
+        "id": "shot-628",
+        "targetId": "B-aircraft-013",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 12336
+      },
+      {
+        "id": "shot-630",
+        "targetId": "A-aircraft-013",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 12344
+      },
+      {
+        "id": "shot-633",
+        "targetId": "A-aircraft-013",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 12349
+      },
+      {
+        "id": "shot-636",
+        "targetId": "B-aircraft-013",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 12349
+      },
+      {
+        "id": "shot-637",
+        "targetId": "A-aircraft-013",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 12362
+      },
+      {
+        "id": "shot-639",
+        "targetId": "B-aircraft-013",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 12363
+      },
+      {
+        "id": "shot-640",
+        "targetId": "B-aircraft-013",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 12363
+      },
+      {
+        "id": "shot-642",
+        "targetId": "A-aircraft-013",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 12375
+      },
+      {
+        "id": "shot-641",
+        "targetId": "A-aircraft-013",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 12375
+      },
+      {
+        "id": "shot-643",
+        "targetId": "B-aircraft-013",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 12376
+      },
+      {
+        "id": "shot-644",
+        "targetId": "B-aircraft-013",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 12376
+      },
+      {
+        "id": "shot-645",
+        "targetId": "A-aircraft-013",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 12387
+      },
+      {
+        "id": "shot-647",
+        "targetId": "B-aircraft-013",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 12388
+      },
+      {
+        "id": "shot-648",
+        "targetId": "B-aircraft-013",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 12388
+      },
+      {
+        "id": "shot-650",
+        "targetId": "A-aircraft-013",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 12389
+      },
+      {
+        "id": "shot-649",
+        "targetId": "A-aircraft-013",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 12389
+      },
+      {
+        "id": "shot-651",
+        "targetId": "B-aircraft-013",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 12389
+      },
+      {
+        "id": "shot-652",
+        "targetId": "B-aircraft-013",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 12389
+      },
+      {
+        "id": "shot-658",
+        "targetId": "B-aircraft-014",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 13496
+      },
+      {
+        "id": "shot-660",
+        "targetId": "B-aircraft-014",
+        "amount": 7.68,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 13501
+      },
+      {
+        "id": "shot-661",
+        "targetId": "A-aircraft-014",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 13508
+      },
+      {
+        "id": "shot-664",
+        "targetId": "B-aircraft-014",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 13509
+      },
+      {
+        "id": "shot-665",
+        "targetId": "A-aircraft-014",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 13521
+      },
+      {
+        "id": "shot-668",
+        "targetId": "B-aircraft-014",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 13523
+      },
+      {
+        "id": "shot-669",
+        "targetId": "A-aircraft-014",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 13535
+      },
+      {
+        "id": "shot-672",
+        "targetId": "B-aircraft-014",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 13536
+      },
+      {
+        "id": "shot-675",
+        "targetId": "B-aircraft-014",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 13544
+      },
+      {
+        "id": "shot-677",
+        "targetId": "A-aircraft-014",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 13549
+      },
+      {
+        "id": "shot-680",
+        "targetId": "B-aircraft-014",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 13549
+      },
+      {
+        "id": "shot-681",
+        "targetId": "A-aircraft-014",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 13562
+      },
+      {
+        "id": "shot-684",
+        "targetId": "B-aircraft-014",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 13563
+      },
+      {
+        "id": "shot-685",
+        "targetId": "A-aircraft-014",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 13575
+      },
+      {
+        "id": "shot-688",
+        "targetId": "B-aircraft-014",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 13576
+      },
+      {
+        "id": "shot-689",
+        "targetId": "A-aircraft-014",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 13587
+      },
+      {
+        "id": "shot-692",
+        "targetId": "B-aircraft-014",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 13588
+      },
+      {
+        "id": "shot-693",
+        "targetId": "A-aircraft-014",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 13589
+      },
+      {
+        "id": "shot-696",
+        "targetId": "B-aircraft-014",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 13589
+      },
+      {
+        "id": "shot-701",
+        "targetId": "A-aircraft-015",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 14767
+      },
+      {
+        "id": "shot-697",
+        "targetId": "B-aircraft-015",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 14767
+      },
+      {
+        "id": "shot-707",
+        "targetId": "A-aircraft-015",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 14780
+      },
+      {
+        "id": "shot-705",
+        "targetId": "B-aircraft-015",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 14780
+      },
+      {
+        "id": "shot-720",
+        "targetId": "A-aircraft-015",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 14816
+      },
+      {
+        "id": "shot-718",
+        "targetId": "B-aircraft-015",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 14816
+      },
+      {
+        "id": "shot-721",
+        "targetId": "B-aircraft-015",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 14820
+      },
+      {
+        "id": "shot-723",
+        "targetId": "A-aircraft-015",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 14820
+      },
+      {
+        "id": "shot-727",
+        "targetId": "A-aircraft-015",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 14834
+      },
+      {
+        "id": "shot-725",
+        "targetId": "B-aircraft-015",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 14834
+      },
+      {
+        "id": "shot-731",
+        "targetId": "A-aircraft-015",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 14847
+      },
+      {
+        "id": "shot-729",
+        "targetId": "B-aircraft-015",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 14847
+      },
+      {
+        "id": "shot-732",
+        "targetId": "A-aircraft-015",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 14847
+      },
+      {
+        "id": "shot-730",
+        "targetId": "B-aircraft-015",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 14847
+      },
+      {
+        "id": "shot-735",
+        "targetId": "A-aircraft-015",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 14859
+      },
+      {
+        "id": "shot-733",
+        "targetId": "B-aircraft-015",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 14859
+      },
+      {
+        "id": "shot-753",
+        "targetId": "A-aircraft-016",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 15937
+      },
+      {
+        "id": "shot-756",
+        "targetId": "B-aircraft-016",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 15938
+      },
+      {
+        "id": "shot-762",
+        "targetId": "A-aircraft-016",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 15950
+      },
+      {
+        "id": "shot-761",
+        "targetId": "A-aircraft-016",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 15950
+      },
+      {
+        "id": "shot-766",
+        "targetId": "A-aircraft-016",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 15964
+      },
+      {
+        "id": "shot-767",
+        "targetId": "B-aircraft-016",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 15965
+      },
+      {
+        "id": "shot-770",
+        "targetId": "A-aircraft-016",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 15977
+      },
+      {
+        "id": "shot-771",
+        "targetId": "B-aircraft-016",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 15978
+      },
+      {
+        "id": "shot-773",
+        "targetId": "A-aircraft-016",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 15989
+      },
+      {
+        "id": "shot-774",
+        "targetId": "A-aircraft-016",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 15989
+      },
+      {
+        "id": "shot-775",
+        "targetId": "B-aircraft-016",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 15990
+      },
+      {
+        "id": "shot-777",
+        "targetId": "A-aircraft-016",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 15990
+      },
+      {
+        "id": "shot-778",
+        "targetId": "A-aircraft-016",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 15991
+      },
+      {
+        "id": "shot-780",
+        "targetId": "A-infantry-005",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 17093
+      },
+      {
+        "id": "shot-779",
+        "targetId": "B-infantry-005",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 17093
+      },
+      {
+        "id": "shot-786",
+        "targetId": "A-aircraft-017",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 17167
+      },
+      {
+        "id": "shot-782",
+        "targetId": "B-aircraft-017",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 17167
+      },
+      {
+        "id": "shot-788",
+        "targetId": "A-aircraft-017",
+        "amount": 7.68,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 17172
+      },
+      {
+        "id": "shot-784",
+        "targetId": "B-aircraft-017",
+        "amount": 7.68,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 17172
+      },
+      {
+        "id": "shot-798",
+        "targetId": "A-aircraft-017",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 17194
+      },
+      {
+        "id": "shot-796",
+        "targetId": "B-aircraft-017",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 17194
+      },
+      {
+        "id": "shot-800",
+        "targetId": "B-aircraft-017",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 17207
+      },
+      {
+        "id": "shot-802",
+        "targetId": "A-aircraft-017",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 17207
+      },
+      {
+        "id": "shot-808",
+        "targetId": "B-aircraft-017",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 17220
+      },
+      {
+        "id": "shot-810",
+        "targetId": "A-aircraft-017",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 17220
+      },
+      {
+        "id": "shot-814",
+        "targetId": "A-aircraft-017",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 17234
+      },
+      {
+        "id": "shot-812",
+        "targetId": "B-aircraft-017",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 17234
+      },
+      {
+        "id": "shot-816",
+        "targetId": "B-aircraft-017",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 17247
+      },
+      {
+        "id": "shot-818",
+        "targetId": "A-aircraft-017",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 17247
+      },
+      {
+        "id": "shot-819",
+        "targetId": "B-aircraft-017",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 17259
+      },
+      {
+        "id": "shot-821",
+        "targetId": "A-aircraft-017",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 17259
+      },
+      {
+        "id": "shot-790",
+        "targetId": "A-infantry-003",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 17272
+      },
+      {
+        "id": "shot-789",
+        "targetId": "B-infantry-003",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 17272
+      },
+      {
+        "id": "shot-824",
+        "targetId": "A-infantry-004",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 17450
+      },
+      {
+        "id": "shot-823",
+        "targetId": "B-infantry-004",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 17450
+      },
+      {
+        "id": "shot-826",
+        "targetId": "A-infantry-002",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 17628
+      },
+      {
+        "id": "shot-825",
+        "targetId": "B-infantry-002",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 17628
+      },
+      {
+        "id": "shot-829",
+        "targetId": "A-infantry-000",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 17863
+      },
+      {
+        "id": "shot-830",
+        "targetId": "B-infantry-000",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 17865
+      },
+      {
+        "id": "shot-831",
+        "targetId": "A-infantry-028",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 18035
+      },
+      {
+        "id": "shot-832",
+        "targetId": "B-infantry-028",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 18037
+      },
+      {
+        "id": "shot-835",
+        "targetId": "A-infantry-001",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 18209
+      },
+      {
+        "id": "shot-836",
+        "targetId": "B-infantry-001",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 18211
+      },
+      {
+        "id": "shot-870",
+        "targetId": "A-aircraft-018",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 18364
+      },
+      {
+        "id": "shot-867",
+        "targetId": "B-aircraft-018",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 18364
+      },
+      {
+        "id": "shot-873",
+        "targetId": "B-aircraft-018",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 18377
+      },
+      {
+        "id": "shot-875",
+        "targetId": "A-aircraft-018",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 18377
+      },
+      {
+        "id": "shot-874",
+        "targetId": "B-aircraft-018",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 18377
+      },
+      {
+        "id": "shot-876",
+        "targetId": "A-aircraft-018",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 18377
+      },
+      {
+        "id": "shot-877",
+        "targetId": "B-aircraft-018",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 18389
+      },
+      {
+        "id": "shot-879",
+        "targetId": "A-aircraft-018",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 18389
+      },
+      {
+        "id": "shot-883",
+        "targetId": "A-aircraft-018",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 18391
+      },
+      {
+        "id": "shot-881",
+        "targetId": "B-aircraft-018",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 18391
+      },
+      {
+        "id": "shot-869",
+        "targetId": "B-infantry-025",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 18461
+      },
+      {
+        "id": "shot-872",
+        "targetId": "A-infantry-025",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 18461
+      },
+      {
+        "id": "shot-885",
+        "targetId": "B-infantry-027",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 18641
+      },
+      {
+        "id": "shot-886",
+        "targetId": "A-infantry-027",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 18641
+      },
+      {
+        "id": "shot-889",
+        "targetId": "A-infantry-029",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 18861
+      },
+      {
+        "id": "shot-890",
+        "targetId": "B-infantry-029",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 18863
+      },
+      {
+        "id": "shot-891",
+        "targetId": "A-infantry-026",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 19053
+      },
+      {
+        "id": "shot-892",
+        "targetId": "B-infantry-026",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 19055
+      },
+      {
+        "id": "shot-895",
+        "targetId": "A-infantry-072",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 19241
+      },
+      {
+        "id": "shot-896",
+        "targetId": "B-infantry-072",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 19243
+      },
+      {
+        "id": "shot-923",
+        "targetId": "A-aircraft-019",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 19620
+      },
+      {
+        "id": "shot-921",
+        "targetId": "B-aircraft-019",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 19620
+      },
+      {
+        "id": "shot-929",
+        "targetId": "A-aircraft-019",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 19634
+      },
+      {
+        "id": "shot-927",
+        "targetId": "B-aircraft-019",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 19634
+      },
+      {
+        "id": "shot-931",
+        "targetId": "B-aircraft-019",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 19647
+      },
+      {
+        "id": "shot-933",
+        "targetId": "A-aircraft-019",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 19647
+      },
+      {
+        "id": "shot-932",
+        "targetId": "B-aircraft-019",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 19647
+      },
+      {
+        "id": "shot-934",
+        "targetId": "A-aircraft-019",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 19647
+      },
+      {
+        "id": "shot-937",
+        "targetId": "A-aircraft-019",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 19659
+      },
+      {
+        "id": "shot-935",
+        "targetId": "B-aircraft-019",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 19659
+      },
+      {
+        "id": "shot-925",
+        "targetId": "A-infantry-076",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 19716
+      },
+      {
+        "id": "shot-926",
+        "targetId": "B-infantry-076",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 19718
+      },
+      {
+        "id": "shot-941",
+        "targetId": "A-infantry-094",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 19895
+      },
+      {
+        "id": "shot-942",
+        "targetId": "B-infantry-094",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 19897
+      },
+      {
+        "id": "shot-945",
+        "targetId": "A-infantry-073",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 20074
+      },
+      {
+        "id": "shot-946",
+        "targetId": "B-infantry-073",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 20076
+      },
+      {
+        "id": "shot-949",
+        "targetId": "A-infantry-074",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 20253
+      },
+      {
+        "id": "shot-950",
+        "targetId": "B-infantry-074",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 20255
+      },
+      {
+        "id": "shot-951",
+        "targetId": "A-infantry-075",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 20658
+      },
+      {
+        "id": "shot-952",
+        "targetId": "B-infantry-075",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 20659
+      },
+      {
+        "id": "shot-964",
+        "targetId": "A-aircraft-020",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 20710
+      },
+      {
+        "id": "shot-968",
+        "targetId": "A-aircraft-020",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 20724
+      },
+      {
+        "id": "shot-972",
+        "targetId": "A-aircraft-020",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 20737
+      },
+      {
+        "id": "shot-980",
+        "targetId": "B-aircraft-020",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 20747
+      },
+      {
+        "id": "shot-979",
+        "targetId": "B-aircraft-020",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 20747
+      },
+      {
+        "id": "shot-982",
+        "targetId": "A-aircraft-020",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 20751
+      },
+      {
+        "id": "shot-984",
+        "targetId": "B-aircraft-020",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 20751
+      },
+      {
+        "id": "shot-985",
+        "targetId": "A-aircraft-020",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 20764
+      },
+      {
+        "id": "shot-986",
+        "targetId": "A-aircraft-020",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 20764
+      },
+      {
+        "id": "shot-990",
+        "targetId": "A-aircraft-020",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 20777
+      },
+      {
+        "id": "shot-989",
+        "targetId": "A-aircraft-020",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 20777
+      },
+      {
+        "id": "shot-991",
+        "targetId": "B-aircraft-020",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 20778
+      },
+      {
+        "id": "shot-994",
+        "targetId": "A-aircraft-020",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 20789
+      },
+      {
+        "id": "shot-996",
+        "targetId": "B-aircraft-020",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 20790
+      },
+      {
+        "id": "shot-998",
+        "targetId": "A-aircraft-020",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 20790
+      },
+      {
+        "id": "shot-975",
+        "targetId": "A-infantry-090",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 20840
+      },
+      {
+        "id": "shot-976",
+        "targetId": "B-infantry-090",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 20841
+      },
+      {
+        "id": "shot-1001",
+        "targetId": "A-infantry-092",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 21020
+      },
+      {
+        "id": "shot-1002",
+        "targetId": "B-infantry-092",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 21021
+      },
+      {
+        "id": "shot-1005",
+        "targetId": "A-infantry-077",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 21203
+      },
+      {
+        "id": "shot-1006",
+        "targetId": "B-infantry-077",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 21205
+      },
+      {
+        "id": "shot-1009",
+        "targetId": "A-infantry-091",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 21500
+      },
+      {
+        "id": "shot-1011",
+        "targetId": "B-infantry-091",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 21678
+      },
+      {
+        "id": "shot-1012",
+        "targetId": "A-infantry-084",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 21692
+      },
+      {
+        "id": "shot-1013",
+        "targetId": "A-infantry-024",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 21762
+      },
+      {
+        "id": "shot-1016",
+        "targetId": "A-infantry-089",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 21871
+      },
+      {
+        "id": "shot-1018",
+        "targetId": "B-infantry-024",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 21941
+      },
+      {
+        "id": "shot-1017",
+        "targetId": "A-infantry-008",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 21948
+      },
+      {
+        "id": "shot-1027",
+        "targetId": "A-aircraft-021",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 21967
+      },
+      {
+        "id": "shot-1023",
+        "targetId": "B-aircraft-021",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 21967
+      },
+      {
+        "id": "shot-1029",
+        "targetId": "A-aircraft-021",
+        "amount": 7.68,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 21972
+      },
+      {
+        "id": "shot-1025",
+        "targetId": "B-aircraft-021",
+        "amount": 7.68,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 21972
+      },
+      {
+        "id": "shot-1033",
+        "targetId": "A-aircraft-021",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 21980
+      },
+      {
+        "id": "shot-1031",
+        "targetId": "B-aircraft-021",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 21980
+      },
+      {
+        "id": "shot-1035",
+        "targetId": "B-aircraft-021",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 21994
+      },
+      {
+        "id": "shot-1037",
+        "targetId": "A-aircraft-021",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 21994
+      },
+      {
+        "id": "shot-1045",
+        "targetId": "A-aircraft-021",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 22016
+      },
+      {
+        "id": "shot-1042",
+        "targetId": "B-aircraft-021",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 22016
+      },
+      {
+        "id": "shot-1048",
+        "targetId": "B-aircraft-021",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 22021
+      },
+      {
+        "id": "shot-1050",
+        "targetId": "A-aircraft-021",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 22021
+      },
+      {
+        "id": "shot-1019",
+        "targetId": "B-infantry-096",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 22025
+      },
+      {
+        "id": "shot-1056",
+        "targetId": "A-aircraft-021",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 22034
+      },
+      {
+        "id": "shot-1054",
+        "targetId": "B-aircraft-021",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 22034
+      },
+      {
+        "id": "shot-1060",
+        "targetId": "A-aircraft-021",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 22047
+      },
+      {
+        "id": "shot-1058",
+        "targetId": "B-aircraft-021",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 22047
+      },
+      {
+        "id": "shot-1021",
+        "targetId": "A-infantry-088",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 22050
+      },
+      {
+        "id": "shot-1064",
+        "targetId": "A-aircraft-021",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 22059
+      },
+      {
+        "id": "shot-1062",
+        "targetId": "B-aircraft-021",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 22059
+      },
+      {
+        "id": "shot-1044",
+        "targetId": "B-infantry-084",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 22115
+      },
+      {
+        "id": "shot-1052",
+        "targetId": "B-infantry-010",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 22128
+      },
+      {
+        "id": "shot-1051",
+        "targetId": "A-infantry-010",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 22128
+      },
+      {
+        "id": "shot-1066",
+        "targetId": "B-infantry-082",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 22200
+      },
+      {
+        "id": "shot-1068",
+        "targetId": "A-infantry-086",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 22231
+      },
+      {
+        "id": "shot-1069",
+        "targetId": "B-infantry-089",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 22294
+      },
+      {
+        "id": "shot-1070",
+        "targetId": "B-infantry-009",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 22371
+      },
+      {
+        "id": "shot-1072",
+        "targetId": "B-infantry-099",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 22379
+      },
+      {
+        "id": "shot-1073",
+        "targetId": "B-infantry-088",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 22472
+      },
+      {
+        "id": "shot-1074",
+        "targetId": "A-infantry-044",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 22555
+      },
+      {
+        "id": "shot-1076",
+        "targetId": "B-infantry-098",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 22558
+      },
+      {
+        "id": "shot-1077",
+        "targetId": "B-infantry-086",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 22651
+      },
+      {
+        "id": "shot-1079",
+        "targetId": "A-infantry-096",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 22688
+      },
+      {
+        "id": "shot-1080",
+        "targetId": "A-infantry-087",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 22711
+      },
+      {
+        "id": "shot-1083",
+        "targetId": "B-infantry-044",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 22848
+      },
+      {
+        "id": "shot-1084",
+        "targetId": "A-infantry-099",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 22854
+      },
+      {
+        "id": "shot-1085",
+        "targetId": "A-infantry-093",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 22865
+      },
+      {
+        "id": "shot-1086",
+        "targetId": "A-infantry-082",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 22868
+      },
+      {
+        "id": "shot-1087",
+        "targetId": "B-infantry-101",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 22875
+      },
+      {
+        "id": "shot-1088",
+        "targetId": "A-infantry-085",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 22892
+      },
+      {
+        "id": "shot-1091",
+        "targetId": "B-infantry-093",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23026
+      },
+      {
+        "id": "shot-1092",
+        "targetId": "A-infantry-098",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 23028
+      },
+      {
+        "id": "shot-1093",
+        "targetId": "B-infantry-083",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23037
+      },
+      {
+        "id": "shot-1109",
+        "targetId": "B-aircraft-022",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23107
+      },
+      {
+        "id": "shot-1111",
+        "targetId": "A-aircraft-022",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 23107
+      },
+      {
+        "id": "shot-1115",
+        "targetId": "B-aircraft-022",
+        "amount": 1.2,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23120
+      },
+      {
+        "id": "shot-1118",
+        "targetId": "A-aircraft-022",
+        "amount": 1.2,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 23120
+      },
+      {
+        "id": "shot-1098",
+        "targetId": "A-infantry-102",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 23125
+      },
+      {
+        "id": "shot-1099",
+        "targetId": "B-infantry-087",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23130
+      },
+      {
+        "id": "shot-1122",
+        "targetId": "B-aircraft-022",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23134
+      },
+      {
+        "id": "shot-1124",
+        "targetId": "A-aircraft-022",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 23134
+      },
+      {
+        "id": "shot-1125",
+        "targetId": "B-aircraft-022",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23142
+      },
+      {
+        "id": "shot-1127",
+        "targetId": "A-aircraft-022",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 23142
+      },
+      {
+        "id": "shot-1134",
+        "targetId": "B-aircraft-022",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23161
+      },
+      {
+        "id": "shot-1136",
+        "targetId": "A-aircraft-022",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 23161
+      },
+      {
+        "id": "shot-1140",
+        "targetId": "A-aircraft-022",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 23174
+      },
+      {
+        "id": "shot-1138",
+        "targetId": "B-aircraft-022",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23174
+      },
+      {
+        "id": "shot-1137",
+        "targetId": "B-aircraft-022",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23174
+      },
+      {
+        "id": "shot-1139",
+        "targetId": "A-aircraft-022",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 23174
+      },
+      {
+        "id": "shot-1148",
+        "targetId": "A-aircraft-022",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 23187
+      },
+      {
+        "id": "shot-1146",
+        "targetId": "B-aircraft-022",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23187
+      },
+      {
+        "id": "shot-1147",
+        "targetId": "B-aircraft-022",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23188
+      },
+      {
+        "id": "shot-1149",
+        "targetId": "A-aircraft-022",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 23188
+      },
+      {
+        "id": "shot-1113",
+        "targetId": "A-infantry-101",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 23202
+      },
+      {
+        "id": "shot-1112",
+        "targetId": "B-infantry-042",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23205
+      },
+      {
+        "id": "shot-1119",
+        "targetId": "B-infantry-108",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23215
+      },
+      {
+        "id": "shot-1150",
+        "targetId": "A-infantry-104",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 23300
+      },
+      {
+        "id": "shot-1151",
+        "targetId": "B-infantry-085",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23310
+      },
+      {
+        "id": "shot-1152",
+        "targetId": "A-infantry-047",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 23334
+      },
+      {
+        "id": "shot-1154",
+        "targetId": "A-infantry-083",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 23379
+      },
+      {
+        "id": "shot-1153",
+        "targetId": "B-infantry-043",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23385
+      },
+      {
+        "id": "shot-1156",
+        "targetId": "B-infantry-079",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23397
+      },
+      {
+        "id": "shot-1158",
+        "targetId": "B-infantry-081",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23580
+      },
+      {
+        "id": "shot-1159",
+        "targetId": "B-infantry-102",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23697
+      },
+      {
+        "id": "shot-1160",
+        "targetId": "A-infantry-108",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 23706
+      },
+      {
+        "id": "shot-1161",
+        "targetId": "A-infantry-106",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 23765
+      },
+      {
+        "id": "shot-1163",
+        "targetId": "A-infantry-079",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 23859
+      },
+      {
+        "id": "shot-1162",
+        "targetId": "B-infantry-045",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23868
+      },
+      {
+        "id": "shot-1164",
+        "targetId": "B-infantry-104",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 23877
+      },
+      {
+        "id": "shot-1167",
+        "targetId": "A-infantry-103",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 23941
+      },
+      {
+        "id": "shot-1168",
+        "targetId": "A-infantry-043",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 24003
+      },
+      {
+        "id": "shot-1169",
+        "targetId": "A-infantry-110",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 24043
+      },
+      {
+        "id": "shot-1170",
+        "targetId": "B-infantry-110",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 24056
+      },
+      {
+        "id": "shot-1171",
+        "targetId": "A-infantry-059",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 24121
+      },
+      {
+        "id": "shot-1172",
+        "targetId": "B-infantry-100",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 24152
+      },
+      {
+        "id": "shot-1173",
+        "targetId": "A-infantry-081",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 24226
+      },
+      {
+        "id": "shot-1177",
+        "targetId": "A-infantry-055",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 24301
+      },
+      {
+        "id": "shot-1201",
+        "targetId": "B-aircraft-023",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 24349
+      },
+      {
+        "id": "shot-1203",
+        "targetId": "A-aircraft-023",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 24349
+      },
+      {
+        "id": "shot-1178",
+        "targetId": "B-infantry-106",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 24353
+      },
+      {
+        "id": "shot-1206",
+        "targetId": "B-aircraft-023",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 24357
+      },
+      {
+        "id": "shot-1208",
+        "targetId": "A-aircraft-023",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 24357
+      },
+      {
+        "id": "shot-1212",
+        "targetId": "A-aircraft-023",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 24362
+      },
+      {
+        "id": "shot-1210",
+        "targetId": "B-aircraft-023",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 24362
+      },
+      {
+        "id": "shot-1214",
+        "targetId": "B-aircraft-023",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 24376
+      },
+      {
+        "id": "shot-1216",
+        "targetId": "A-aircraft-023",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 24376
+      },
+      {
+        "id": "shot-1179",
+        "targetId": "B-infantry-111",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 24383
+      },
+      {
+        "id": "shot-1221",
+        "targetId": "A-aircraft-023",
+        "amount": 1.8,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 24389
+      },
+      {
+        "id": "shot-1218",
+        "targetId": "B-aircraft-023",
+        "amount": 1.8,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 24389
+      },
+      {
+        "id": "shot-1223",
+        "targetId": "B-aircraft-023",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 24401
+      },
+      {
+        "id": "shot-1225",
+        "targetId": "A-aircraft-023",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 24401
+      },
+      {
+        "id": "shot-1226",
+        "targetId": "A-aircraft-023",
+        "amount": 8.64,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 24401
+      },
+      {
+        "id": "shot-1224",
+        "targetId": "B-aircraft-023",
+        "amount": 8.64,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 24401
+      },
+      {
+        "id": "shot-1189",
+        "targetId": "A-infantry-100",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 24410
+      },
+      {
+        "id": "shot-1227",
+        "targetId": "B-infantry-103",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 24533
+      },
+      {
+        "id": "shot-1229",
+        "targetId": "B-infantry-078",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 24594
+      },
+      {
+        "id": "shot-1230",
+        "targetId": "A-infantry-112",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 24628
+      },
+      {
+        "id": "shot-1233",
+        "targetId": "B-infantry-059",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 24715
+      },
+      {
+        "id": "shot-1234",
+        "targetId": "A-infantry-038",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 24784
+      },
+      {
+        "id": "shot-1235",
+        "targetId": "B-infantry-055",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 24896
+      },
+      {
+        "id": "shot-1236",
+        "targetId": "A-infantry-039",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 24969
+      },
+      {
+        "id": "shot-1237",
+        "targetId": "B-infantry-050",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 25083
+      },
+      {
+        "id": "shot-1238",
+        "targetId": "A-infantry-040",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 25153
+      },
+      {
+        "id": "shot-1239",
+        "targetId": "B-infantry-049",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 25265
+      },
+      {
+        "id": "shot-1240",
+        "targetId": "B-infantry-038",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 25376
+      },
+      {
+        "id": "shot-1241",
+        "targetId": "B-infantry-039",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 25556
+      },
+      {
+        "id": "shot-1242",
+        "targetId": "B-infantry-040",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 25731
+      },
+      {
+        "id": "shot-1243",
+        "targetId": "B-infantry-041",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 25905
+      },
+      {
+        "id": "shot-1244",
+        "targetId": "B-infantry-032",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 26099
+      },
+      {
+        "id": "shot-1245",
+        "targetId": "B-infantry-056",
+        "amount": 40,
+        "sourceTeam": "A",
+        "sourceRole": "ai",
+        "tick": 26384
+      },
+      {
+        "id": "shot-1246",
+        "targetId": "A-infantry-033",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 26882
+      },
+      {
+        "id": "shot-1247",
+        "targetId": "A-infantry-022",
+        "amount": 40,
+        "sourceTeam": "B",
+        "sourceRole": "ai",
+        "tick": 29399
+      }
+    ]
+  },
+  "hash": "63280405",
+  "damage": 560,
+  "deaths": 167,
+  "maxQuietTicks": 42601,
+  "hqApproaches": [],
+  "maxWarnings": 211,
+  "finalWarnings": 208,
+  "maxActive": 276,
+  "controlEnabled": false,
+  "controlledAircraftId": null,
+  "owners": [
+    [
+      "HA",
+      "A"
+    ],
+    [
+      "P1",
+      "A"
+    ],
+    [
+      "P2",
+      "N"
+    ],
+    [
+      "P3",
+      "N"
+    ],
+    [
+      "P4",
+      "N"
+    ],
+    [
+      "P5",
+      "B"
+    ],
+    [
+      "HB",
+      "B"
+    ]
+  ],
+  "remaining": {
+    "lost": 167,
+    "active": 267,
+    "reserve": 158
+  }
+}

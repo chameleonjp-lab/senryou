@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import { createBattle, stepBattle } from '../../src/battle/simulation.ts';
+const a = createBattle(1, 'easy', 'A', true);
+const b = createBattle(1, 'easy', 'B', true);
+assert.deepEqual(a.mission.units, b.mission.units);
+assert.deepEqual(a.mission.points, b.mission.points);
+stepBattle(a); stepBattle(b);
+assert.deepEqual(a.mission.units, b.mission.units);
+assert.deepEqual(a.mission.points, b.mission.points);
+console.log('CONFIRMED: A/B AI-only harness cases have identical absolute unit and point state at initialization and after one tick. playerTeam changes perspective; no explicit physical mirror is constructed. Not A21 acceptance.');
