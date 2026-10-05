@@ -251,6 +251,33 @@ test('invisible and nonactive individual positions never become ground firing ta
   assert.equal(selectGroundTarget(m, soldier, ai), null);
 });
 
+test('thirty-second renewal retains balanced nearby fronts and new squads fill the least-loaded front', () => {
+  const m = battlefield(), state = createGroundAI(m); updateGroundStrategy(m, state);
+  const advancing = Object.values(state.squads).filter(s => s.team === 'A' && s.role !== 'defend');
+  const previous = new Map(advancing.map(s => [s.id, { target: s.targetPointId, pathVersion: s.pathVersion }]));
+  const rows = new Map<string, number>();
+  for (const squad of advancing) {
+    const p = m.points.find(p => p.id === squad.targetPointId)!, row = rows.get(p.id) ?? 0;
+    rows.set(p.id, row + 1);
+    squad.members.forEach((id, i) => {
+      m.units.find(u => u.id === id)!.position = { x: p.position.x - 80 - row * 2, y: 12, z: p.position.z + (i - 2.5) * 2 };
+    });
+  }
+  m.tick = 1800; updateGroundStrategy(m, state);
+  for (const squad of advancing) {
+    assert.equal(squad.targetPointId, previous.get(squad.id)!.target, squad.id);
+    assert.equal(squad.pathVersion, previous.get(squad.id)!.pathVersion, squad.id);
+    assert.equal(squad.assignedTick, 1800);
+  }
+  for (const unit of m.units.filter(u => u.team === 'A' && u.kind === 'infantry' && Number(u.id.split('-').at(-1)) >= 72 && Number(u.id.split('-').at(-1)) < 90)) {
+    unit.state = 'active'; unit.position = { x: -1500, y: 12, z: Number(unit.id.split('-').at(-1)) * 2 - 162 };
+  }
+  m.tick = 1860; updateGroundStrategy(m, state);
+  const counts = ['P2', 'P3', 'P4'].map(id => Object.values(state.squads).filter(s => s.team === 'A' && s.targetPointId === id).length);
+  assert.equal(counts.reduce((a, b) => a + b, 0), 13);
+  assert.ok(Math.max(...counts) - Math.min(...counts) <= 1, JSON.stringify(counts));
+});
+
 test('ground movement and strategic assignments are mirrors for corresponding individual IDs', () => {
   const m = battlefield(73), state = createGroundAI(m);
   for (let tick = 1; tick <= 600; tick++) { m.tick = tick; updateGroundAI(m, state); }
