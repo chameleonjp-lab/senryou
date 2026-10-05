@@ -44,7 +44,9 @@ jobs:
         working-directory: throttle-baseline
         run: |
           mv docs/evidence/smoke "$RUNNER_TEMP/senryou-baseline-inherited-smoke"
-          npm run test:browser -- --config=../playwright.baseline-smoke.config.ts
+          test ! -e playwright.throttle-baseline-smoke.config.ts
+          cp ../playwright.baseline-smoke.config.ts playwright.throttle-baseline-smoke.config.ts
+          npm run test:browser -- --config=playwright.throttle-baseline-smoke.config.ts
         env:
           THROTTLE_BASELINE_DIR: ${{ github.workspace }}/throttle-baseline
       - name: Record candidate and baseline smoke observations

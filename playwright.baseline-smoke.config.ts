@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 const baseline = process.env.THROTTLE_BASELINE_DIR;
 if (!baseline) throw new Error('THROTTLE_BASELINE_DIR must name the pinned checkout');
 export default defineConfig({
+  outputDir: resolve(baseline, 'test-results/baseline-smoke'),
   testDir: resolve(baseline, 'browser-tests'), testMatch: /smoke\.spec\.ts$/, timeout: 60000,
   expect: { timeout: 20000 }, workers: 1, retries: 0,
   projects: [{ name: 'chromium-smoke', use: { browserName: 'chromium', launchOptions: {

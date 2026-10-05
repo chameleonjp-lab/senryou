@@ -45,3 +45,5 @@ FFの次CIではレバーとpauseが非重複のまま、拡大された宙返�
 ## 追加smoke診断
 
 専用CIの200% zoom検査は両engineで成功し、4寸法の同seed/tick1比較も成功。多指テストの二重cleanupを修正し、GPU遅延で停止した既存PC smokeは、同じrunner/Chromium設定/既存3ケース/固定main checkoutで再実行して比較します。baselineとcandidateのsmoke JSONとレポートは別々に保存し、保護停止・失敗を成功扱いに変えません。renderer・地形・既存smoke期待値は変更していません。
+
+初回baseline診断はconfigの別checkout参照でPlaywrightが二重読込され、baseline試験前に停止しました。configをbaselineの一時検査ファイルとしてコピーして当該依存で解決し、baseline outputDirも専用の絶対pathへ固定します。candidateの生成証拠をbaseline実行の初期化で消さず、最終artifact保持件数を再確認します。この失敗をbaseline実行済みとは扱いません。
