@@ -29,14 +29,27 @@ jobs:
         working-directory: throttle-baseline
       - run: npm test
       - run: npm run build
-      - run: npx playwright install --with-deps chromium webkit
+      - id: install-browsers
+        run: npx playwright install --with-deps chromium webkit
       # Preserve inherited PR #3 evidence before the unchanged smoke tests write fresh output.
       - name: Separate inherited smoke evidence from final-head output
         id: fresh-smoke-evidence
         run: mv docs/evidence/smoke "$RUNNER_TEMP/senryou-inherited-smoke"
-      - run: npm run test:browser -- --config=playwright.throttle.config.ts
+      - id: candidate-browser
+        run: npm run test:browser -- --config=playwright.throttle.config.ts
         env:
           THROTTLE_BASELINE_DIR: ${{ github.workspace }}/throttle-baseline
+      - name: Compare unchanged baseline smoke on the same runner and browser settings
+        if: always() && steps.install-browsers.outcome == 'success'
+        working-directory: throttle-baseline
+        run: |
+          mv docs/evidence/smoke "$RUNNER_TEMP/senryou-baseline-inherited-smoke"
+          npm run test:browser -- --config=../playwright.baseline-smoke.config.ts
+        env:
+          THROTTLE_BASELINE_DIR: ${{ github.workspace }}/throttle-baseline
+      - name: Record candidate and baseline smoke observations
+        if: always() && steps.install-browsers.outcome == 'success'
+        run: node scripts/summarize-throttle-smoke.mjs
       - name: Preserve final-head browser evidence
         if: always() && steps.fresh-smoke-evidence.outcome == 'success'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -45,5 +58,7 @@ jobs:
           path: |
             test-results/
             docs/evidence/smoke/
+            throttle-baseline/test-results/
+            throttle-baseline/docs/evidence/smoke/
           retention-days: 7
           if-no-files-found: warn

@@ -154,8 +154,9 @@ test('native touch steering and fire survive lever focus and release',async({pag
   test.skip(browserName!=='chromium','Trusted multi-touch uses Chromium CDP; WebKit native pointer/keyboard coverage remains separate');
   await controlsHarness(page);const cdp=await context.newCDPSession(page);
   const steer={x:180,y:450,id:1},moved={x:198,y:450,id:1},fire={x:52,y:332,id:2},lever={x:52,y:122,id:3};
+  let touchesActive=false;
   try {
-    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[steer]});
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[steer]});touchesActive=true;
     await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[moved]});
     await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[moved,fire]});
     await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[moved,fire,lever]});
@@ -165,9 +166,9 @@ test('native touch steering and fire survive lever focus and release',async({pag
     // Chromium WebTouch ends the named contact, not the remaining contacts.
     await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[lever]});
     const released=await read();expect(released.input.throttle).toBe(0);expect(released.input.fire).toBe(true);expect(released.owners.steerPointer).toBe(before.owners.steerPointer);
-    await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});touchesActive=false;
     const cancelled=await read();expect(cancelled.input.fire).toBe(false);expect(cancelled.input.turn).toBe(0);
-  } finally { await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});await cdp.detach();await page.evaluate(()=>(window as any).nativeControls.dispose()); }
+  } finally { if(touchesActive) await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});await cdp.detach();await page.evaluate(()=>(window as any).nativeControls.dispose()); }
 });
 for(const size of [{width:320,height:568},{width:568,height:320}])test(`hidden HUD utility obstacles survive migration ${size.width}x${size.height}`,async({page,browserName})=>{
   await page.setViewportSize(size);await page.goto('/');

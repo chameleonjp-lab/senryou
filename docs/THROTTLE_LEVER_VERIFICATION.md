@@ -41,3 +41,7 @@ GitHub ActionsはPR head SHAをcheckoutし、unit/type/build、専用の `playwr
 この実行関連候補の全単体は122/122、型/build成功。browser一覧は成功ですが本実行は最終headのCIを別判定します。中間CIの失敗は隠さず、PRに新headの結果を記録します。画像artifactは生成/保存と目視を区別し、現時点の取得・目視は未確認です。
 
 FFの次CIではレバーとpauseが非重複のまま、拡大された宙返りラベルがボタン外へ張り出してpause中心の入力を取得することを座標ログから特定。文字サイズと既存配置を保ち、装飾子のpointer-eventsを無効化してボタン本体を入力域の正本にしました。設定の拡大・多指解除・utility中心の検査は維持します。
+
+## 追加smoke診断
+
+専用CIの200% zoom検査は両engineで成功し、4寸法の同seed/tick1比較も成功。多指テストの二重cleanupを修正し、GPU遅延で停止した既存PC smokeは、同じrunner/Chromium設定/既存3ケース/固定main checkoutで再実行して比較します。baselineとcandidateのsmoke JSONとレポートは別々に保存し、保護停止・失敗を成功扱いに変えません。renderer・地形・既存smoke期待値は変更していません。
