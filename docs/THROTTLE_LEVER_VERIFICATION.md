@@ -33,3 +33,11 @@ GitHub ActionsはPR head SHAをcheckoutし、unit/type/build、専用の `playwr
 2026-10-05に新基点へ適合した候補で、`npm test` は121/121成功、`npx tsc --noEmit` と `npm run build` は成功。専用configの `--list` は45件/2 spec、原文保持した標準configの `--list` は34件/4 specで成功しました。buildの既存500kB chunk警告は残ります。一覧取得はブラウザ実行ではありません。実ブラウザは上記の未実行区分を維持し、単体成功を画面合格とは扱いません。
 
 通常のgit fetchで基点コミットを取得し、実在する `71b0e5bc9ffbe2cbd1f295160b9e8e3c40ad6650` をローカルHEADとして検査しました。新基点の地形描画・地上AI・地上navigation・4回帰を含む55変更ファイルは原文維持。標準configは変更せず、レバー用configのみを別名追加しています。専用CIの候補port 4178は継承smokeの固定URLに合わせた設定であり、ローカルブラウザ制限の迂回ではありません。
+
+## CIで検出した設定ズーム不具合への対応
+
+センリョウの実Chromium/WebKitで200%CSS zoom時に設定の保存ボタンが画面外になることを検出。同じ4作共通のviewport値を、拡大後の画面ピクセルからlayout CSS pxへ幅・高さとも変換し、rootの寸法変化にも追随する修正を追加しました。全4作へ同じhelperと倍率.5/1/2の回帰を適用。実browser gateは保存ボタン全体の可視と左右境界を確認します。
+
+この実行関連候補の全単体は122/122、型/build成功。browser一覧は成功ですが本実行は最終headのCIを別判定します。中間CIの失敗は隠さず、PRに新headの結果を記録します。画像artifactは生成/保存と目視を区別し、現時点の取得・目視は未確認です。
+
+FFの次CIではレバーとpauseが非重複のまま、拡大された宙返りラベルがボタン外へ張り出してpause中心の入力を取得することを座標ログから特定。文字サイズと既存配置を保ち、装飾子のpointer-eventsを無効化してボタン本体を入力域の正本にしました。設定の拡大・多指解除・utility中心の検査は維持します。

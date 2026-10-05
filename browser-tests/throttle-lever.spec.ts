@@ -97,7 +97,9 @@ for(const style of ['text','zoom'])test(`settings retain footer and scrolling at
   await page.goto('/');await settings(page);
   await page.addStyleTag({content: style==='zoom'?'html { zoom: 2; }':'#control-settings { font-size: 200%; } #control-settings p, #control-settings label, #control-settings button, #control-settings select { font-size: 1em !important; }'});
   await page.locator('#control-opacity').scrollIntoViewIfNeeded();await expect(page.locator('#control-opacity')).toBeInViewport();
-  await page.locator('#control-save').scrollIntoViewIfNeeded();await expect(page.locator('#control-save')).toBeInViewport();await page.screenshot({path:info.outputPath(`settings-200-${style}.png`)});
+  await page.locator('#control-save').scrollIntoViewIfNeeded();await expect(page.locator('#control-save')).toBeInViewport({ratio:1});
+  const dialog=await page.locator('#control-settings').boundingBox(),viewport=page.viewportSize()!;expect(dialog!.x).toBeGreaterThanOrEqual(0);expect(dialog!.x+dialog!.width).toBeLessThanOrEqual(viewport.width);
+  await page.screenshot({path:info.outputPath(`settings-200-${style}.png`)});
   await page.locator('#control-cancel').click();await expect(page.locator('#control-settings')).not.toBeVisible();
 });
 for(const size of sizes)test(`same-condition before-after ${size.width}x${size.height}`,async({page,browserName},info)=>{
@@ -160,7 +162,8 @@ test('native touch steering and fire survive lever focus and release',async({pag
     const read=()=>page.evaluate(()=>({input:(window as any).nativeControls.sample(false),owners:(window as any).nativeControls.peek()}));
     const before=await read();expect(before.input.turn).toBeGreaterThan(0);expect(before.input.fire).toBe(true);expect(before.input.throttle).toBe(1);
     await page.locator('#throttle').focus();const focused=await read();expect(focused.owners.steerPointer).toBe(before.owners.steerPointer);expect(focused.input.turn).toBe(before.input.turn);expect(focused.input.fire).toBe(true);
-    await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[moved,fire]});
+    // Chromium WebTouch ends the named contact, not the remaining contacts.
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[lever]});
     const released=await read();expect(released.input.throttle).toBe(0);expect(released.input.fire).toBe(true);expect(released.owners.steerPointer).toBe(before.owners.steerPointer);
     await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});
     const cancelled=await read();expect(cancelled.input.fire).toBe(false);expect(cancelled.input.turn).toBe(0);
