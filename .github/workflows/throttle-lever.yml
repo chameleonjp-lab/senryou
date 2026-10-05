@@ -35,11 +35,16 @@ jobs:
       - name: Separate inherited smoke evidence from final-head output
         id: fresh-smoke-evidence
         run: mv docs/evidence/smoke "$RUNNER_TEMP/senryou-inherited-smoke"
-      - id: candidate-browser
+      - name: Candidate browser checks (required)
+        id: candidate-browser
         run: npm run test:browser -- --config=playwright.throttle.config.ts
         env:
           THROTTLE_BASELINE_DIR: ${{ github.workspace }}/throttle-baseline
-      - name: Compare unchanged baseline smoke on the same runner and browser settings
+      # This pinned historical checkout already fails PC smoke with SwiftShader.
+      # Keep its failure as comparison evidence; candidate checks above remain mandatory.
+      - name: Pinned baseline smoke comparison (diagnostic)
+        id: baseline-browser
+        continue-on-error: true
         if: always() && steps.install-browsers.outcome == 'success'
         working-directory: throttle-baseline
         run: |
@@ -52,6 +57,9 @@ jobs:
       - name: Record candidate and baseline smoke observations
         if: always() && steps.install-browsers.outcome == 'success'
         run: node scripts/summarize-throttle-smoke.mjs
+        env:
+          CANDIDATE_BROWSER_OUTCOME: ${{ steps.candidate-browser.outcome }}
+          BASELINE_BROWSER_OUTCOME: ${{ steps.baseline-browser.outcome }}
       - name: Preserve final-head browser evidence
         if: always() && steps.fresh-smoke-evidence.outcome == 'success'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

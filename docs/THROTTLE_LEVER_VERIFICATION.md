@@ -1,6 +1,6 @@
 # 速度レバー変更の検証記録
 
-対象基点: `71b0e5bc9ffbe2cbd1f295160b9e8e3c40ad6650`（ゲーム実装の追加修正・検証PR #3採用後）。対象は速度入力、操作UI、配置設定、保存互換性とその検証だけです。ゲーム全体の受入完了や公開を意味しません。
+対象基点: `71b0e5bc9ffbe2cbd1f295160b9e8e3c40ad6650`（ゲーム実装の追加修正・検証PR #3採用後）。本PRは速度入力、操作UI、配置設定、保存互換性の検証と、PC smokeで発見したGPU描画遅延の修正を含みます。ゲーム全体の受入完了や公開を意味しません。
 
 ## 変更と継承
 
@@ -44,6 +44,14 @@ FFの次CIではレバーとpauseが非重複のまま、拡大された宙返�
 
 ## 追加smoke診断
 
-専用CIの200% zoom検査は両engineで成功し、4寸法の同seed/tick1比較も成功。多指テストの二重cleanupを修正し、GPU遅延で停止した既存PC smokeは、同じrunner/Chromium設定/既存3ケース/固定main checkoutで再実行して比較します。baselineとcandidateのsmoke JSONとレポートは別々に保存し、保護停止・失敗を成功扱いに変えません。renderer・地形・既存smoke期待値は変更していません。
+専用CIの200% zoom検査は両engineで成功し、4寸法の同seed/tick1比較も成功。多指テストの二重cleanupを修正し、GPU遅延で停止した既存PC smokeは、同じrunner/Chromium設定/既存3ケース/固定main checkoutで再実行して比較します。baselineとcandidateのsmoke JSONとレポートは別々に保存し、保護停止・失敗を成功扱いに変えません。レバーの初期候補ではrenderer・地形・既存smoke期待値を変更していませんでした。後続のCI修正は下記の単一サンプリング描画を含みます。
 
 初回baseline診断はconfigの別checkout参照でPlaywrightが二重読込され、baseline試験前に停止しました。configをbaselineの一時検査ファイルとしてコピーして当該依存で解決し、baseline outputDirも専用の絶対pathへ固定します。candidateの生成証拠をbaseline実行の初期化で消さず、最終artifact保持件数を再確認します。この失敗をbaseline実行済みとは扱いません。
+
+## PR #4のPC smoke修正
+
+PC 1280×720/Chromium/SwiftShaderで、候補と固定mainの両方がGPU完了待機1秒超の保護停止を再現しました。通常のWebGL framebufferを単一サンプリングにし、MSAA resolve負荷を除去しました。機体と地形のgeometry・材質・shader、DPR上限、カメラ、HUD、論理戦況は従来通りです。輪郭のMSAAによる平滑化は減ります。停止保護1秒/論理蓄積0.5秒、既存smoke3ケースと期待値は維持します。
+
+修正後のローカル検査は全122件成功、TypeScript/Vite build成功、既存Chromium smoke3件成功（phone縦/横・PC、40.8秒）。本番bundleの既存500kB警告は残ります。ログは[evidence/pr4-ci-fix](evidence/pr4-ci-fix/)へ保存。GitHub Actionsの最終head検査結果はPRのcheckと、そのhead名のartifactを正本とします。実機受入や公開の合格ではありません。
+
+固定旧mainは過去の比較対象なので、そのsmoke失敗をActions summaryとartifactへ診断として保存します。候補の全browser検査は必須のままです。比較summaryは候補失敗、未実行/skipのsmoke、証拠/レポート不足、runnerエラー、step outcomeと実結果の不一致を失敗にします。固定旧mainの失敗を候補の成功として数えません。
