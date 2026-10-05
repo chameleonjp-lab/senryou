@@ -1,6 +1,6 @@
 import type { CapturePoint, Mission, Team, Unit, Vec3 } from './types';
 import { CONNECTIONS } from './rules';
-import { BATTLEFIELD, terrainLineOfSight, walkableSurface } from './terrain';
+import { BATTLEFIELD, bridgeAt, UNIT_RADIUS, terrainLineOfSight, walkableSurface } from './terrain';
 import {
   createRecoveryState, createTrafficState, findGroundPath, formationOffset, groundRouteDistance, moveGroundUnit,
   requestCorridor, stableHash, teamDirection, updateRecovery, updateTraffic,
@@ -261,7 +261,10 @@ function followPath(mission: Mission, state: GroundAIState, unit: Unit, ai: Grou
   if (ai.waypointIndex >= last) goal = { ...finalGoal };
   else goal = { x: goal.x - vz / length * lateral - vx / length * formation.longitudinal,
     y: goal.y, z: goal.z + vx / length * lateral - vz / length * formation.longitudinal };
-  if (distance(unit.position, goal) < (unit.kind === 'infantry' ? 5 : 9) && ai.waypointIndex < last) {
+  const bridge = bridgeAt(goal.x, goal.z);
+  const arrivalRadius = Math.min(unit.kind === 'infantry' ? 5 : 9,
+    bridge ? Math.max(1, bridge.width / 2 - UNIT_RADIUS[unit.kind] - 1) : Infinity);
+  if (distance(unit.position, goal) < arrivalRadius && ai.waypointIndex < last) {
     ai.waypointIndex++; followPath(mission, state, unit, ai, finalGoal, others); return;
   }
   if (ai.waypointIndex >= last && distance(unit.position, goal) < 1) {

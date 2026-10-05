@@ -172,7 +172,7 @@ export function findGroundPath(kind: UnitKind, from: Vec3, targetPointId: string
   return { waypoints, routes: routeSteps, targetPointId, distance: routeLength(waypoints) };
 }
 
-export interface TrafficRequest { unitId: string; direction: -1 | 1; requestedTick: number }
+export interface TrafficRequest { unitId: string; direction: -1 | 1; requestedTick: number; lastRequestedTick?: number }
 export interface CorridorOccupant { unitId: string; direction: -1 | 1; grantedTick: number; entered: boolean; lostTick?: number }
 export interface CorridorState { direction: -1 | 0 | 1; lastDirection: -1 | 1; admitted: number; occupants: Record<string, CorridorOccupant>; queue: TrafficRequest[] }
 export interface TrafficState { corridors: Record<string, CorridorState> }
@@ -182,7 +182,11 @@ export function createTrafficState(): TrafficState { return { corridors: {} }; }
 export function requestCorridor(state: TrafficState, corridorId: string, unitId: string, direction: -1 | 1, tick: number): boolean {
   const corridor = state.corridors[corridorId] ??= { direction: 0, lastDirection: -1, admitted: 0, occupants: {}, queue: [] };
   if (corridor.occupants[unitId]) return true;
-  if (!corridor.queue.some(r => r.unitId === unitId)) corridor.queue.push({ unitId, direction, requestedTick: tick });
+  const queued = corridor.queue.find(r => r.unitId === unitId);
+  if (queued) {
+    if (queued.direction !== direction) { queued.direction = direction; queued.requestedTick = tick; }
+    queued.lastRequestedTick = tick;
+  } else corridor.queue.push({ unitId, direction, requestedTick: tick, lastRequestedTick: tick });
   corridor.queue.sort((a, b) => a.requestedTick - b.requestedTick || a.unitId.localeCompare(b.unitId));
   if (!Object.keys(corridor.occupants).length) {
     const alternate = corridor.queue.find(r => r.direction !== corridor.lastDirection);
@@ -223,14 +227,17 @@ export function updateTraffic(state: TrafficState, units: readonly Unit[], tick:
       if (bridge) {
         const dx = unit.position.x - bridge.center.x, dz = unit.position.z - bridge.center.z;
         const along = dx * Math.cos(bridge.yaw) + dz * Math.sin(bridge.yaw);
-        if (Math.abs(along) < bridge.length / 2 + UNIT_RADIUS[unit.kind]) occupant.entered = true;
-        if (occupant.entered && along * occupant.direction > bridge.length / 2 + UNIT_RADIUS[unit.kind] + 4) leaveCorridor(state, id, unitId);
+        const across = -dx * Math.sin(bridge.yaw) + dz * Math.cos(bridge.yaw);
+        const radius = UNIT_RADIUS[unit.kind];
+        if (Math.abs(along) < bridge.length / 2 + radius && Math.abs(across) < bridge.width / 2 + radius) occupant.entered = true;
+        // A retreat through the entrance clears the bridge as surely as an exit.
+        if (occupant.entered && (Math.abs(along) > bridge.length / 2 + radius + 4 || Math.abs(across) > bridge.width / 2 + radius + 4)) leaveCorridor(state, id, unitId);
         // A reservation that cannot reach the mouth must not lock a whole front forever.
         else if (!occupant.entered && tick - occupant.grantedTick > 300) leaveCorridor(state, id, unitId);
       }
     }
     corridor.queue = corridor.queue.filter(r => {
-      const u = lookup.get(r.unitId); return u?.state === 'active' && u.hp > 0;
+      const u = lookup.get(r.unitId); return u?.state === 'active' && u.hp > 0 && tick - (r.lastRequestedTick ?? r.requestedTick) < 180;
     });
   }
 }
