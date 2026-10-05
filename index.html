@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#071e2b" />
+    <meta
+      name="description"
+      content="戦闘機で地上軍を支援し、歩兵で中継拠点と敵本拠地を占領する陸上大規模戦闘。"
+    />
+    <title>センリョウ</title>
+  </head>
+  <body>
+    <main id="app" data-screen="home" data-mode="easy">
+      <canvas id="flight" tabindex="0" aria-label="陸上の航空支援と占領戦の画面"></canvas>
+      <canvas id="markers" aria-hidden="true"></canvas>
+      <div class="vignette" aria-hidden="true"></div>
+      <section id="home" class="screen home-screen" aria-labelledby="title">
+        <div class="brand-line">
+          <span class="brand-mark">S</span
+          ><span>AIR &amp; LAND / CAPTURE</span
+          ><span class="version">試作 01</span>
+        </div>
+        <div class="home-copy">
+          <p class="eyebrow">空から支え、地上で進む</p>
+          <h1 id="title">センリョウ</h1>
+          <p class="intro">
+            戦闘機で、地上軍の前進を支援。<br />歩兵で敵本拠地を占領する。
+          </p>
+        </div>
+        <div class="briefing">
+          <div class="mission-data">
+            <div>
+              <span>各軍の総戦力</span><strong>296<small>体</small></strong
+              ><em>歩240 · 戦24 · 対8 · 空24</em>
+            </div>
+            <div>
+              <span>初期出撃</span><strong>90<small>体</small></strong
+              ><em>歩72 · 戦8 · 対4 · 空6</em>
+            </div>
+            <div>
+              <span>占領拠点</span><strong>7<small>点</small></strong
+              ><em>本拠地2 + 中継5</em>
+            </div>
+          </div>
+          <fieldset class="mode-picker">
+            <legend>操作モード</legend>
+            <label><input type="radio" name="game-mode" value="easy" checked /><span>イージー</span></label>
+            <label><input type="radio" name="game-mode" value="normal" /><span>ノーマル</span></label>
+          </fieldset>
+          <button id="start" class="primary" disabled>
+            画面を準備しています
+          </button>
+          <p class="controls-guide"><span id="input-guide">画面をドラッグして操縦</span><br /><span id="mode-guide">照準円内へ自動射撃 · 弾道を見て少し先を狙う</span></p>
+          <div class="home-actions"><button id="home-rules" class="secondary">ルールと操作方法</button><button id="home-controls" class="text-button">操作設定</button></div>
+          <p id="keyboard-guide" class="keyboard-guide" hidden></p>
+          <p id="startup-error" class="error" role="alert" hidden></p>
+          <button id="reload" class="secondary" hidden>再読み込み</button>
+        </div>
+        <footer class="home-footer">
+          <span>SENRYOU / 陸上占領戦</span
+          ><button id="home-sound" class="text-button" aria-pressed="false">
+            音をオンにする
+          </button>
+        </footer>
+      </section>
+      <section id="hud" aria-label="飛行中の情報" hidden>
+        <div class="hud-top">
+          <div class="time-block">
+            <span>残り時間 · <b id="hud-mode">イージー</b></span><strong id="timer">20:00</strong>
+          </div>
+          <div class="targets" aria-label="両軍の総残存兵力。予備と出撃準備中を含みます">
+            <div class="target-tally"><span>味方総残存 A</span><b id="friendly-total">296</b><small id="force-friendly">歩240 戦24<br />対8 空24</small></div>
+            <div class="hud-actions">
+              <button id="game-sound" class="icon-button sound-button" aria-label="音をオンにする" aria-pressed="false">音 OFF</button>
+              <button id="pause" class="icon-button" aria-label="一時停止">Ⅱ</button>
+            </div>
+            <div class="target-tally"><span>敵総残存 B</span><b id="enemy-total">296</b><small id="force-enemy">歩240 戦24<br />対8 空24</small></div>
+          </div>
+        </div>
+        <div class="flight-data">
+          <div class="health-label">
+            機体 <b id="health">80</b><small>HP</small>
+          </div>
+          <div class="health-track"><i id="health-bar"></i></div>
+          <div class="instrument">
+            <span id="altitude">220m</span><span id="speed">396km/h</span>
+          </div>
+          <div class="wingmen">出撃僚機 <span id="allies-count">5</span></div>
+          <div class="score-readout">スコア <b id="score">0</b></div>
+          <div class="ammo" aria-label="残弾数">機銃 <b id="mg-ammo">288</b> · 機関砲 <b id="cannon-ammo">96</b></div>
+        </div>
+        <div class="capture-info" aria-label="拠点の所有と供給接続">
+          <div id="capture-points" class="capture-points">
+            <span data-point="HA">HA A</span><span data-point="P1">P1 A</span><span data-point="P2">P2 N</span><span data-point="P3">P3 N</span><span data-point="P4">P4 N</span><span data-point="P5">P5 B</span><span data-point="HB">HB B</span>
+          </div>
+          <p id="support-target">支援目標：前進する味方歩兵を守る</p>
+          <p id="control-status" role="status" aria-live="polite"></p>
+        </div>
+        <div id="ally-announcements" class="ally-announcements" role="status" aria-live="polite" aria-atomic="true"></div>
+        <p id="payload-status" class="payload-status"></p>
+        <p id="reload-status" class="reload-status" hidden></p>
+        <p id="warning" class="warning" role="status" hidden>
+          低空注意 · 機首を上げて
+        </p>
+        <button id="bomb" class="flight-button payload-button" aria-label="爆弾を投下"><span class="payload-name">爆弾</span><small id="bomb-ammo">残り2発</small><small id="bomb-hint">有効圏外</small></button>
+        <p id="flight-tip" class="flight-tip">触れた位置からドラッグして操縦</p>
+        <div class="bottom-controls">
+          <button id="loop" class="loop-button">
+            <span aria-hidden="true">↻</span><b>宙返り</b
+            ><small id="loop-status">すぐ使える</small>
+          </button>
+        </div>
+        <div id="normal-controls" hidden>
+          <button id="fire" class="flight-button fire-button" aria-label="射撃（長押し）">射撃</button>
+          <button id="accelerate" class="flight-button throttle-button" aria-label="加速（長押し）">加速</button>
+          <button id="brake" class="flight-button throttle-button" aria-label="減速（長押し）">減速</button>
+        </div>
+      </section>
+      <section
+        id="pause-screen"
+        class="screen modal-screen"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pause-title"
+        hidden
+      >
+        <div class="panel">
+          <p class="eyebrow">PAUSED</p>
+          <h2 id="pause-title">一時停止</h2>
+          <p id="pause-reason">作戦時間と戦況も止まっています</p>
+          <button id="pause-reload" class="primary" hidden>再読み込み</button>
+          <button id="resume" class="primary">飛行を再開</button
+          ><button id="pause-restart" class="secondary">はじめから出撃</button
+          ><button id="pause-home" class="text-button">ホームへ戻る</button>
+          <button id="pause-rules" class="secondary">ルールと操作方法</button>
+          <button id="pause-controls" class="secondary">操作設定</button>
+          <button id="pause-end" class="text-button">作戦を終了</button>
+        </div>
+      </section>
+      <section
+        id="result"
+        class="screen modal-screen"
+        aria-labelledby="result-title"
+        hidden
+      >
+        <div class="panel result-panel">
+          <p id="result-kicker" class="eyebrow">MISSION REPORT</p>
+          <h2 id="result-title">作戦終了</h2>
+          <p id="result-mode" class="mode-label">イージー</p>
+          <p id="result-reason"></p>
+          <div class="result-time">
+            <span id="result-time-label">経過時間</span
+            ><strong id="result-time">00:00.00</strong>
+          </div>
+          <p class="result-score-total">最終スコア <strong id="result-score">0</strong></p>
+          <section class="score-breakdown" aria-labelledby="score-breakdown-title">
+            <h3 id="score-breakdown-title">スコアの内訳</h3>
+            <dl id="score-breakdown">
+              <div><dt>チーム撃破 Kill</dt><dd id="result-score-kill">0</dd></div>
+              <div><dt>自機支援 Support</dt><dd id="result-score-support">0</dd></div>
+              <div><dt>チーム占領 Capture</dt><dd id="result-score-capture">0</dd></div>
+              <div><dt>時間 Time</dt><dd id="result-score-time">0</dd></div>
+              <div><dt>味方損失 Loss</dt><dd id="result-score-loss">0</dd></div>
+            </dl>
+            <p id="score-scope-note">撃破と占領はチームの成果です。支援は、自機の攻撃で実際に減らした敵HPです。味方の損失は減点します。</p>
+            <p id="score-rounding-note">内訳は小数第2位まで表示します。最終スコアは丸める前の値を合計し、最後に一度だけ整数に丸めます。表示した内訳の合計とは差が出ることがあります。</p>
+            <p id="result-score-version"></p>
+          </section>
+          <dl class="result-stats">
+            <div>
+              <dt>最終拠点所有</dt>
+              <dd id="result-ownership">A 2 · N 3 · B 2</dd>
+            </div>
+            <div>
+              <dt>味方総残存</dt>
+              <dd id="result-friendly-forces">歩240 · 戦24 · 対8 · 空24</dd>
+            </div>
+            <div>
+              <dt>敵総残存</dt>
+              <dd id="result-enemy-forces">歩240 · 戦24 · 対8 · 空24</dd>
+            </div>
+          </dl>
+          <button id="retry" class="primary">もう一度出撃</button
+          ><button id="result-home" class="secondary">ホームへ戻る</button>
+          <button id="result-controls" class="text-button">操作設定</button>
+          <p class="result-note">この試作ではオンライン送信は行いません</p>
+        </div>
+      </section>
+      <div
+        id="announcement"
+        class="announcement"
+        role="status"
+        aria-live="polite"
+      ></div>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
