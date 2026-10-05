@@ -65,7 +65,7 @@ function makeTerrainGeometry(): BufferGeometry {
   const { bounds, rivers, trenches } = BATTLEFIELD;
   const axes = (min: number, max: number, additional: number[]): number[] => {
     const values = new Set<number>([min, max]);
-    for (let value = min; value < max; value += 30) values.add(value);
+    for (let value = min; value < max; value += 60) values.add(value);
     for (const value of additional) if (value >= min && value <= max) values.add(value);
     return [...values].sort((a, b) => a - b);
   };

@@ -1,0 +1,11 @@
+✔ retreating or leaving sideways clears a bridge reservation, and an abandoned request expires (16.843045ms)
+✔ a queued turn-around updates direction and a unit beside the bridge never becomes an entered occupant (4.686517ms)
+✔ a tank aligns with a narrow bridge before advancing its projected waypoint (256.075488ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 512.05352

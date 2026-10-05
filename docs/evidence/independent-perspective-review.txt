@@ -1,0 +1,1 @@
+CONFIRMED: A/B AI-only harness cases have identical absolute unit and point state at initialization and after one tick. playerTeam changes perspective; no explicit physical mirror is constructed. Not A21 acceptance.

@@ -1,6 +1,6 @@
 import type { CapturePoint, Mission, Team, Unit, Vec3 } from './types';
 import { CONNECTIONS } from './rules';
-import { BATTLEFIELD, terrainLineOfSight, walkableSurface } from './terrain';
+import { BATTLEFIELD, bridgeAt, UNIT_RADIUS, terrainLineOfSight, walkableSurface } from './terrain';
 import {
   createRecoveryState, createTrafficState, findGroundPath, formationOffset, groundRouteDistance, moveGroundUnit,
   requestCorridor, stableHash, teamDirection, updateRecovery, updateTraffic,
@@ -112,9 +112,11 @@ export function updateGroundStrategy(mission: Mission, state: GroundAIState): vo
     const homeEmergency = home.owner !== team || home.contested || home.progressNumerator > 0;
     const counts = new Map<string, number>();
     const work = [...squads].sort((a, b) => a.id.localeCompare(b.id));
-    // Retained valid assignments count before newly allocated squads are distributed.
-    for (const squad of work) if (!defenders.has(squad.id) && !homeEmergency && assignmentValid(squad, mission) && mission.tick - squad.assignedTick < 1800) {
+    const precounted = new Set<string>();
+    // Expiring assignments remain real front loads until their own reevaluation.
+    for (const squad of work) if (!defenders.has(squad.id) && squad.role !== 'defend' && !homeEmergency && assignmentValid(squad, mission)) {
       counts.set(squad.targetPointId, (counts.get(squad.targetPointId) ?? 0) + 1);
+      precounted.add(squad.id);
     }
     for (const squad of work) {
       let target: CapturePoint | undefined;
@@ -125,6 +127,7 @@ export function updateGroundStrategy(mission: Mission, state: GroundAIState): vo
         for (const member of squadMembers(squad, mission.units)) member.targetPointId = squad.targetPointId;
         continue;
       } else {
+        if (precounted.has(squad.id)) counts.set(squad.targetPointId, Math.max(0, (counts.get(squad.targetPointId) ?? 0) - 1));
         const bestPriority = Math.min(...candidates.map(c => c.priority));
         const choices = candidates.filter(c => c.priority === bestPriority).sort((a, b) =>
           (counts.get(a.point.id) ?? 0) - (counts.get(b.point.id) ?? 0)
@@ -261,7 +264,10 @@ function followPath(mission: Mission, state: GroundAIState, unit: Unit, ai: Grou
   if (ai.waypointIndex >= last) goal = { ...finalGoal };
   else goal = { x: goal.x - vz / length * lateral - vx / length * formation.longitudinal,
     y: goal.y, z: goal.z + vx / length * lateral - vz / length * formation.longitudinal };
-  if (distance(unit.position, goal) < (unit.kind === 'infantry' ? 5 : 9) && ai.waypointIndex < last) {
+  const bridge = bridgeAt(goal.x, goal.z);
+  const arrivalRadius = Math.min(unit.kind === 'infantry' ? 5 : 9,
+    bridge ? Math.max(1, bridge.width / 2 - UNIT_RADIUS[unit.kind] - 1) : Infinity);
+  if (distance(unit.position, goal) < arrivalRadius && ai.waypointIndex < last) {
     ai.waypointIndex++; followPath(mission, state, unit, ai, finalGoal, others); return;
   }
   if (ai.waypointIndex >= last && distance(unit.position, goal) < 1) {

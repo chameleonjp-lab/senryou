@@ -1,0 +1,57 @@
+[WebServer] (node:13071) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:13084) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:13108) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 3:15:06 AM [vite] (client) [console.warn] THREE.WebGLRenderer: KHR_parallel_shader_compile extension not supported.
+  ✓  1 [chromium] › browser-tests/smoke.spec.ts:42:3 › smoke phone-portrait-393x648: play, pause/resume, settings, rules and result (11.4s)
+[WebServer] 3:15:18 AM [vite] (client) [console.warn] THREE.WebGLRenderer: KHR_parallel_shader_compile extension not supported.
+  ✓  2 [chromium] › browser-tests/smoke.spec.ts:42:3 › smoke phone-landscape-568x320: play, pause/resume, settings, rules and result (12.0s)
+[WebServer] 3:15:30 AM [vite] (client) [console.warn] THREE.WebGLRenderer: KHR_parallel_shader_compile extension not supported.
+  ✘  3 [chromium] › browser-tests/smoke.spec.ts:42:3 › smoke pc-1280x720: play, pause/resume, settings, rules and result (9.8s)
+
+
+  1) [chromium] › browser-tests/smoke.spec.ts:42:3 › smoke pc-1280x720: play, pause/resume, settings, rules and result 
+
+    Error: easy mission stopped unexpectedly: {"screen":"paused","ready":false,"lost":false,"mode":"easy","hash":"1277a8dc","diagnostics":{"queue":{"status":"pending","failure":null,"pendingMs":518,"lastCompletedPendingMs":1085.4000000003725,"completedFrameIntervalMs":1113,"submittedCount":6,"completedCount":5,"skippedCount":313},"calls":211,"triangles":261426,"geometries":69,"textures":4,"detailed":29,"detailPool":29,"detailedCapacity":96,"instances":151,"active":180,"unitViewCapacity":284,"particles":0,"particleCapacity":128,"visualTracerCapacity":1024,"bombCount":0,"lod":"normal","tracers":{"segments":0,"capacity":1024,"corePx":1.5,"outlinePx":2.5,"tailSeconds":0.045,"depthTest":true,"resolution":[1280,720]}},"intervals":[7.1000000005587935,9.299999999813735,15.400000000372529,55,46.69999999925494,24.90000000037253,14.5,18.40000000037253,11.899999999441206,17.299999999813735,11.300000000745058,23.59999999962747,16.59999999962747,15.800000000745058,47,98.19999999925494,37.60000000055879,19.399999999441206,107,45.40000000037253,45.90000000037253,41.5,24.399999999441206,15.900000000372529,22.200000000186265,26.59999999962747,18.59999999962747,19.600000000558794,25.700000000186265,37.799999999813735,11.799999999813735,16.200000000186265,16.700000000186265,21.199999999254942,51.200000000186265,178.5,35.90000000037253,29.200000000186265,17,51.89999999944121,25.799999999813735,50.5,21.90000000037253,28.799999999813735,41.700000000186265,32.200000000186265,22,12.599999999627471,32.799999999813735,17.90000000037253,15.400000000372529,16.399999999441206,52.5,42.10000000055879,22.699999999254942,49,41.5,60.5,40.60000000055879,84.09999999962747],"updates":[46.700000000186265,12.299999999813735,20.700000000186265,6.400000000372529,5.2999999998137355,5.2000000001862645,6.2000000001862645,6.7999999998137355,8.100000000558794,6.900000000372529,6.400000000372529,6.199999999254942,5.5,8.900000000372529,4,7,5.199999999254942,4.099999999627471,6.599999999627471,7.2000000001862645,3.7000000001862645,9,10.199999999254942,5.1000000005587935,5.2000000001862645,5.3999999994412065,5.2000000001862645,6.6000000005587935,8.100000000558794,4.599999999627471,6.900000000372529,11.299999999813735,3.599999999627471,3.6000000005587935,13.599999999627471,4,7.1000000005587935,3.3999999994412065,3.2999999998137355,8.200000000186265,3.2000000001862645,4.099999999627471,5.2000000001862645,3.6000000005587935,3.2999999998137355,3.2000000001862645,6.7999999998137355,3.2000000001862645,5.7999999998137355,4,4.2999999998137355,3.2999999998137355,3.5,3.2000000001862645,3.400000000372529,4.099999999627471,3.2000000001862645,3.599999999627471,3.5,5.900000000372529,5.2999999998137355,4.900000000372529,4.2000000001862645,4.7000000001862645,4.2999999998137355,4.2999999998137355,4.900000000372529,3.7999999998137355,4.099999999627471,4.1000000005587935,4.2999999998137355,4.1000000005587935,3.7999999998137355,4.2999999998137355,3.900000000372529,4.599999999627471,3.699999999254942,3.699999999254942,7.1000000005587935,3.7000000001862645,9.099999999627471,4.400000000372529,8.300000000745058,4.099999999627471,6.400000000372529,8.700000000186265,4.2000000001862645,5.5,10,8.700000000186265,11.799999999813735,6,13.600000000558794,11.099999999627471,7.2999999998137355,5.300000000745058,10.5,6.599999999627471,12.199999999254942,10.5,5,6.3999999994412065,6.7000000001862645,5.099999999627471,12.400000000372529,12.200000000186265,20.600000000558794,7.1000000005587935,11,8.599999999627471,8.200000000186265,11,8.700000000186265,10.799999999813735,6.2999999998137355,6.400000000372529,8.700000000186265,10.299999999813735,6.1000000005587935,7.7999999998137355,7.3999999994412065,6.7000000001862645,6.2999999998137355],"mission":{"phase":"paused","tick":123,"result":null},"reloadVisible":true}
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "playing"
+    Received: "paused"
+
+      124 |       Object.assign(running ?? {}, { reloadVisible });
+      125 |       evidence.easyRun = running;
+    > 126 |       expect(running.screen, `easy mission stopped unexpectedly: ${JSON.stringify(running)}`).toBe("playing");
+          |                                                                                               ^
+      127 |       expect(running.mission.phase).toBe("running");
+      128 |       expect(reloadVisible, `renderer requested reload during easy mission: ${JSON.stringify(running)}`).toBe(false);
+      129 |
+        at /workspace/senryou/browser-tests/smoke.spec.ts:126:95
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/smoke-smoke-pc-1280x720-pl-86a58-e-settings-rules-and-result-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/smoke-smoke-pc-1280x720-pl-86a58-e-settings-rules-and-result-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/smoke-smoke-pc-1280x720-pl-86a58-e-settings-rules-and-result-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/smoke-smoke-pc-1280x720-pl-86a58-e-settings-rules-and-result-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › browser-tests/smoke.spec.ts:42:3 › smoke pc-1280x720: play, pause/resume, settings, rules and result 
+  2 passed (35.2s)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

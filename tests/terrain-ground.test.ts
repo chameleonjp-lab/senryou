@@ -149,6 +149,66 @@ test('stuck recovery backs up, reroutes, then bans the blocked route for thirty 
   updateRecovery(state, position, 1300, false); assert.equal(state.stuckSince, null); assert.equal(state.reason, '');
 });
 
+test('retreating or leaving sideways clears a bridge reservation, and an abandoned request expires', () => {
+  const m = battlefield(), traffic = createTrafficState(), bridge = BATTLEFIELD.bridges[0];
+  const a = m.units.find(u => u.id === 'A-infantry-000')!, b = m.units.find(u => u.id === 'B-infantry-000')!;
+  a.position = { ...bridge.center };
+  assert.equal(requestCorridor(traffic, bridge.id, a.id, 1, 0), true);
+  updateTraffic(traffic, m.units, 1);
+  assert.equal(traffic.corridors[bridge.id].occupants[a.id].entered, true);
+  assert.equal(requestCorridor(traffic, bridge.id, b.id, -1, 2), false);
+  a.position.x -= Math.cos(bridge.yaw) * (bridge.length / 2 + 20);
+  a.position.z -= Math.sin(bridge.yaw) * (bridge.length / 2 + 20);
+  updateTraffic(traffic, m.units, 3);
+  assert.equal(traffic.corridors[bridge.id].occupants[a.id], undefined);
+  assert.equal(requestCorridor(traffic, bridge.id, b.id, -1, 4), true);
+  b.position = { ...bridge.center };
+  updateTraffic(traffic, m.units, 5);
+  b.position.x -= Math.sin(bridge.yaw) * 40; b.position.z += Math.cos(bridge.yaw) * 40;
+  updateTraffic(traffic, m.units, 6);
+  assert.equal(traffic.corridors[bridge.id].occupants[b.id], undefined);
+  a.position = { ...bridge.center };
+  requestCorridor(traffic, bridge.id, a.id, 1, 7);
+  requestCorridor(traffic, bridge.id, b.id, -1, 8);
+  updateTraffic(traffic, m.units, 188);
+  assert.equal(traffic.corridors[bridge.id].queue.some(r => r.unitId === b.id), false);
+});
+
+test('a queued turn-around updates direction and a unit beside the bridge never becomes an entered occupant', () => {
+  const m = battlefield(), traffic = createTrafficState(), bridge = BATTLEFIELD.bridges[0];
+  const a = m.units.find(u => u.id === 'A-infantry-000')!, b = m.units.find(u => u.id === 'B-infantry-000')!;
+  requestCorridor(traffic, bridge.id, a.id, 1, 0);
+  assert.equal(requestCorridor(traffic, bridge.id, b.id, -1, 1), false);
+  assert.equal(requestCorridor(traffic, bridge.id, b.id, 1, 2), true);
+  a.position = { ...bridge.center, x: bridge.center.x - Math.sin(bridge.yaw) * 100,
+    z: bridge.center.z + Math.cos(bridge.yaw) * 100 };
+  updateTraffic(traffic, m.units, 3);
+  assert.equal(traffic.corridors[bridge.id].occupants[a.id].entered, false);
+});
+
+test('a tank aligns with a narrow bridge before advancing its projected waypoint', () => {
+  const m = battlefield(), state = createGroundAI(m), tank = m.units.find(u => u.id === 'A-tank-001')!;
+  for (const u of m.units) {
+    const escort = u.team === 'A' && u.kind === 'infantry' && Number(u.id.split('-').at(-1)) < 18;
+    if (u !== tank && !escort) { u.state = 'lost'; u.hp = u.hpFixed = 0; }
+    if (escort && Number(u.id.split('-').at(-1)) >= 12) u.position = { x: -400 + Number(u.id.split('-').at(-1)) * 3, y: 12, z: 150 };
+  }
+  tank.position = { x: -656.141, y: 12, z: 142 };
+  const path = { targetPointId: 'P3', distance: 700,
+    waypoints: [{ ...tank.position }, { x: tank.position.x, y: 12, z: 150 }, { x: -535, y: 12, z: 150 }, { x: 0, y: 12, z: 0 }],
+    routes: [{ routeId: 'P1-P3:1', startIndex: 0, endIndex: 3 }] };
+  state.units[tank.id] = { waypointIndex: 1, path, pathVersion: 0, targetPointId: 'P3', recovery: createRecoveryState(tank.position, 0),
+    contact: null, combatStopSince: null, lastPlanTick: 0, escortSquadId: null, assignedTick: 0 };
+  m.tick = 1; updateGroundAI(m, state);
+  assert.equal(state.units[tank.id].waypointIndex, 1);
+  let furthestX = tank.position.x;
+  for (m.tick = 2; m.tick <= 900; m.tick++) {
+    updateGroundAI(m, state); furthestX = Math.max(furthestX, tank.position.x);
+    assert.equal(walkableSurface(tank.position.x, tank.position.z, 'tank').walkable, true);
+  }
+  assert.ok(furthestX > -650, `tank stayed at the bank: ${JSON.stringify({position:tank.position, heading:tank.heading, ai:state.units[tank.id]})}`);
+});
+
 test('rerouting from a bridge retraces a legal road instead of cutting through deep water', () => {
   const bridge = BATTLEFIELD.bridges.find(b => b.id === 'bridge-P1-P2:1')!;
   const path = findGroundPath('tank', bridge.center, 'HA', { seed: 4, unitId: 'A-tank-000' })!;
@@ -189,6 +249,33 @@ test('invisible and nonactive individual positions never become ground firing ta
   m.tick = 182; selectGroundTarget(m, soldier, ai); assert.equal(ai.contact, null);
   enemy.position = { x: -1900, y: 12, z: 0 }; enemy.state = 'pending';
   assert.equal(selectGroundTarget(m, soldier, ai), null);
+});
+
+test('thirty-second renewal retains balanced nearby fronts and new squads fill the least-loaded front', () => {
+  const m = battlefield(), state = createGroundAI(m); updateGroundStrategy(m, state);
+  const advancing = Object.values(state.squads).filter(s => s.team === 'A' && s.role !== 'defend');
+  const previous = new Map(advancing.map(s => [s.id, { target: s.targetPointId, pathVersion: s.pathVersion }]));
+  const rows = new Map<string, number>();
+  for (const squad of advancing) {
+    const p = m.points.find(p => p.id === squad.targetPointId)!, row = rows.get(p.id) ?? 0;
+    rows.set(p.id, row + 1);
+    squad.members.forEach((id, i) => {
+      m.units.find(u => u.id === id)!.position = { x: p.position.x - 80 - row * 2, y: 12, z: p.position.z + (i - 2.5) * 2 };
+    });
+  }
+  m.tick = 1800; updateGroundStrategy(m, state);
+  for (const squad of advancing) {
+    assert.equal(squad.targetPointId, previous.get(squad.id)!.target, squad.id);
+    assert.equal(squad.pathVersion, previous.get(squad.id)!.pathVersion, squad.id);
+    assert.equal(squad.assignedTick, 1800);
+  }
+  for (const unit of m.units.filter(u => u.team === 'A' && u.kind === 'infantry' && Number(u.id.split('-').at(-1)) >= 72 && Number(u.id.split('-').at(-1)) < 90)) {
+    unit.state = 'active'; unit.position = { x: -1500, y: 12, z: Number(unit.id.split('-').at(-1)) * 2 - 162 };
+  }
+  m.tick = 1860; updateGroundStrategy(m, state);
+  const counts = ['P2', 'P3', 'P4'].map(id => Object.values(state.squads).filter(s => s.team === 'A' && s.targetPointId === id).length);
+  assert.equal(counts.reduce((a, b) => a + b, 0), 13);
+  assert.ok(Math.max(...counts) - Math.min(...counts) <= 1, JSON.stringify(counts));
 });
 
 test('ground movement and strategic assignments are mirrors for corresponding individual IDs', () => {

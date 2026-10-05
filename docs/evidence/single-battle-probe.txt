@@ -1,0 +1,13 @@
+{"tick":6000,"wallSeconds":33,"owners":[["HA","A"],["P1","A"],["P2","N"],["P3","N"],["P4","N"],["P5","B"],["HB","B"]],"damage":186,"deaths":16,"warnings":0}
+{"tick":12000,"wallSeconds":71,"owners":[["HA","A"],["P1","A"],["P2","N"],["P3","N"],["P4","N"],["P5","B"],["HB","B"]],"damage":269,"deaths":26,"warnings":0}
+{"tick":18000,"wallSeconds":108,"owners":[["HA","A"],["P1","A"],["P2","N"],["P3","N"],["P4","N"],["P5","B"],["HB","B"]],"damage":404,"deaths":82,"warnings":14}
+{"tick":24000,"wallSeconds":148,"owners":[["HA","A"],["P1","A"],["P2","N"],["P3","N"],["P4","N"],["P5","B"],["HB","B"]],"damage":696,"deaths":231,"warnings":19}
+{"tick":30000,"wallSeconds":187,"owners":[["HA","A"],["P1","A"],["P2","N"],["P3","B"],["P4","B"],["P5","B"],["HB","B"]],"damage":776,"deaths":268,"warnings":16}
+{"tick":36000,"wallSeconds":223,"owners":[["HA","A"],["P1","A"],["P2","N"],["P3","B"],["P4","B"],["P5","B"],["HB","B"]],"damage":841,"deaths":317,"warnings":43}
+{"tick":42000,"wallSeconds":254,"owners":[["HA","A"],["P1","A"],["P2","B"],["P3","B"],["P4","B"],["P5","B"],["HB","B"]],"damage":937,"deaths":398,"warnings":47}
+{"tick":48000,"wallSeconds":275,"owners":[["HA","A"],["P1","A"],["P2","B"],["P3","B"],["P4","B"],["P5","B"],["HB","B"]],"damage":984,"deaths":439,"warnings":58}
+{"tick":54000,"wallSeconds":290,"owners":[["HA","A"],["P1","A"],["P2","B"],["P3","B"],["P4","B"],["P5","B"],["HB","B"]],"damage":1020,"deaths":467,"warnings":57}
+{"tick":60000,"wallSeconds":302,"owners":[["HA","A"],["P1","A"],["P2","B"],["P3","B"],["P4","B"],["P5","B"],["HB","B"]],"damage":1027,"deaths":474,"warnings":48}
+{"tick":66000,"wallSeconds":313,"owners":[["HA","A"],["P1","A"],["P2","B"],["P3","B"],["P4","N"],["P5","B"],["HB","B"]],"damage":1041,"deaths":488,"warnings":40}
+{"tick":72000,"wallSeconds":322,"owners":[["HA","A"],["P1","A"],["P2","B"],["P3","B"],["P4","A"],["P5","B"],["HB","B"]],"damage":1067,"deaths":502,"warnings":22}
+{"ticks":72000,"wallMs":322495,"outcome":"draw","reason":"時間切れ","damage":1067,"deaths":502,"maxQuietTicks":2295,"hqApproaches":[],"finalWarnings":22}

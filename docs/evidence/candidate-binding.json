@@ -1,0 +1,24 @@
+{
+  "sourceCommit": "f96e9a9e17a1486e1e6b8e9df146168613f3487f",
+  "unitTests": {
+    "pass": 100,
+    "fail": 0
+  },
+  "productionBuild": "passed",
+  "browserSourceCommit": "86b8dbd39679bbab9bbfbf15565fcb54b9ac3ded",
+  "browserSmoke": {
+    "passed": 2,
+    "failed": 1,
+    "runtime": "Chromium/SwiftShader; physical hardware unverified"
+  },
+  "acceptance": "not passed; see VERIFICATION.md",
+  "publication": "not published; Pages API404; P9 hardware gate unmet",
+  "evidenceSha256": {
+    "unit-tests.txt": "ee202cb61d7aeaabb4430507aed412fcb3989b041fc7d34c0193e07f00a869be",
+    "build.txt": "295e800ed0a6ec6e4222d1620ddc49a7561e93cc7cf3f1c0fe1e168d7993ca9a",
+    "browser-smoke.txt": "69bff6f09ffab3ad4cac284ba100793c44202b855fc2b0c001f5fa284db1ba0b",
+    "single-battle-probe.json": "a10538dbb056bae7cbecc61a3a3706d0354c01a1eaea9b10452d8e529844bcfa",
+    "final-source-manifest.sha256": "56d0301d00262ff6985d22153e3b05b061a1457674cab5120665fb96bef3cffb",
+    "review-source-manifest.sha256": "56d0301d00262ff6985d22153e3b05b061a1457674cab5120665fb96bef3cffb"
+  }
+}
