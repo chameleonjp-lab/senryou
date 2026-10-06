@@ -1,6 +1,8 @@
-import { expect, test, type Browser, type Page } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { assertNoForbiddenTraffic, installNetworkGuard, SMOKE_ORIGIN } from "./network-guard";
+import { createAssetManifest } from "./asset-manifest.mjs";
 
 const OUT = path.join(process.cwd(), "docs/evidence/smoke");
 const VIEWPORTS = [
@@ -49,12 +51,7 @@ for (const vp of VIEWPORTS) {
       deviceScaleFactor: 1,
       serviceWorkers: "block",
     });
-    const blockedExternal: string[] = [];
-    await context.route("**/*", async (route) => {
-      const url = new URL(route.request().url());
-      if (url.hostname === "127.0.0.1" || url.hostname === "localhost") await route.continue();
-      else { blockedExternal.push(url.host); await route.abort(); }
-    });
+    const blockedExternal = await installNetworkGuard(context, createAssetManifest());
     const page = await context.newPage();
     const pageErrors: string[] = [];
     const consoleErrors: string[] = [];
@@ -62,16 +59,16 @@ for (const vp of VIEWPORTS) {
     page.on("console", (message) => { if (message.type() === "error") consoleErrors.push(message.text()); });
     const evidence: Record<string, unknown> = {
       viewport: vp,
-      browser: "Playwright 1.61.1 / Chromium 149.0.7827.55 / SwiftShader",
+      browser: `Playwright 1.61.1 / Chromium ${browser.version()} / SwiftShader`,
       operatingSystem: "Linux container",
-      externalNetwork: "non-loopback requests blocked before transmission",
+      externalNetwork: "only exact manifest-file GET requests, including observed metadata-bound optimizer imports, are allowed at the original local development origin; exact observed Vite HMR stays inert without upstream connection; all other HTTP and WebSockets are blocked before transmission",
       actions: [],
       pageErrors,
       consoleErrors,
       blockedExternal,
     };
     try {
-      await page.goto("http://127.0.0.1:4178/", { waitUntil: "domcontentloaded" });
+      await page.goto(`${SMOKE_ORIGIN}/`, { waitUntil: "domcontentloaded" });
       await ready(page);
       await expect(page.locator("#start")).toBeEnabled();
       await screenshot(page, vp.id, "home");
@@ -154,7 +151,6 @@ for (const vp of VIEWPORTS) {
       expect(await page.evaluate(() => (window as any).__senryou.snapshot().screen)).toBe("playing");
       (evidence.actions as unknown[]).push("result → home → select normal → start");
       expect(pageErrors).toEqual([]);
-      await writeFile(path.join(OUT, `${vp.id}.json`), `${JSON.stringify(evidence, null, 2)}\n`);
     } catch (error) {
       evidence.failure = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
       evidence.finalState = await snapshot(page).catch(() => null);
@@ -163,10 +159,24 @@ for (const vp of VIEWPORTS) {
         startupError: document.querySelector("#startup-error")?.textContent?.trim() ?? null,
         pauseReloadVisible: !document.querySelector<HTMLElement>("#pause-reload")?.hidden,
       })).catch(() => null);
-      await writeFile(path.join(OUT, `${vp.id}.json`), `${JSON.stringify(evidence, null, 2)}\n`);
       throw error;
     } finally {
-      await context.close();
+      try {
+        await context.close();
+      } catch (error) {
+        evidence.failure ??= error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+        throw error;
+      } finally {
+        // Check after teardown, independently of pageErrors and even after a UI/close failure.
+        try {
+          assertNoForbiddenTraffic(blockedExternal);
+        } catch (error) {
+          evidence.networkFailure = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+          throw error;
+        } finally {
+          await writeFile(path.join(OUT, `${vp.id}.json`), `${JSON.stringify(evidence, null, 2)}\n`);
+        }
+      }
     }
   });
 }
