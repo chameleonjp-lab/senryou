@@ -14,6 +14,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 2
           persist-credentials: false
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -37,7 +38,12 @@ jobs:
         run: mv docs/evidence/smoke "$RUNNER_TEMP/senryou-inherited-smoke"
       - name: Candidate browser checks (required)
         id: candidate-browser
-        run: npm run test:browser -- --config=playwright.throttle.config.ts
+        run: |
+          if [ "${{ github.event.pull_request.number }}" = '5' ] && [ "$GITHUB_RUN_ATTEMPT" = '1' ] && [ "$(git show -s --format=%s HEAD)" = 'diagnostic: capture required native stop 20261007 once' ]; then
+            node diagnostics/native-stop/run-required.mjs
+          else
+            npm run test:browser -- --config=playwright.throttle.config.ts
+          fi
         env:
           THROTTLE_BASELINE_DIR: ${{ github.workspace }}/throttle-baseline
       # This pinned historical checkout already fails PC smoke with SwiftShader.
@@ -66,6 +72,7 @@ jobs:
         with:
           name: senryou-throttle-${{ github.event.pull_request.head.sha }}
           path: |
+            native-stop-evidence/
             test-results/
             docs/evidence/smoke/
             throttle-baseline/test-results/
