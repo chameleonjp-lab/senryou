@@ -57,3 +57,66 @@ jobs:
           path: paired-diagnostic-evidence/
           retention-days: 7
           if-no-files-found: error
+  native-capture:
+    # One separate first-poll capture. Existing paired job and required CI stay intact.
+    if: github.event.pull_request.number == 5 && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - id: native-once
+        name: Check exact native marker and sole parent
+        shell: bash
+        run: |
+          if [ "$(git show -s --format=%s HEAD)" = 'diagnostic: senryou first native stop 20261006-1115 once' ] && [ "$(git show -s --format=%P HEAD)" = 'bca509526930bd9dd06b43ccd1f02bc48e8a2cca' ]; then
+            echo 'run=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'run=false' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        if: steps.native-once.outputs.run == 'true'
+        with:
+          ref: 71b0e5bc9ffbe2cbd1f295160b9e8e3c40ad6650
+          path: throttle-baseline
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        if: steps.native-once.outputs.run == 'true'
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - if: steps.native-once.outputs.run == 'true'
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - if: steps.native-once.outputs.run == 'true'
+        run: npm ci --ignore-scripts --no-audit --no-fund
+        working-directory: throttle-baseline
+      - if: steps.native-once.outputs.run == 'true'
+        run: npm test
+      - if: steps.native-once.outputs.run == 'true'
+        run: npm run build
+      - if: steps.native-once.outputs.run == 'true'
+        id: native-install-browsers
+        run: npx playwright install --with-deps chromium webkit
+      - name: Separate inherited smoke evidence from final-head output
+        if: steps.native-once.outputs.run == 'true'
+        id: native-fresh-smoke-evidence
+        run: mv docs/evidence/smoke "$RUNNER_TEMP/senryou-inherited-smoke"
+      - name: Full required browser workload with one native stop capture
+        if: steps.native-once.outputs.run == 'true'
+        run: node diagnostics/native-stop/run.mjs
+        env:
+          THROTTLE_BASELINE_DIR: ${{ github.workspace }}/throttle-baseline
+      - name: Preserve native stop and full browser evidence
+        if: always() && steps.native-once.outputs.run == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: senryou-native-stop-${{ github.event.pull_request.head.sha }}
+          path: |
+            native-stop-evidence/
+            test-results/
+            docs/evidence/smoke/
+          retention-days: 7
+          if-no-files-found: error

@@ -1,0 +1,227 @@
+[
+  {
+    "title": "native slider keyup clears prior global handover blocking before a fresh press",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "lever preview and Cancel 320x568",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "Normal live lever geometry and Easy 320x568",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "lever preview and Cancel 393x852",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "Normal live lever geometry and Easy 393x852",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "lever preview and Cancel 568x320",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "Normal live lever geometry and Easy 568x320",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "lever preview and Cancel 852x393",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "Normal live lever geometry and Easy 852x393",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "native pointer, focused short keys, PC binding, pause and release retain target speed",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "legacy bytes survive Save twice, reload, Cancel, future guard and session-only use",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "settings retain footer and scrolling at 200 percent text",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "settings retain footer and scrolling at 200 percent zoom",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "same-condition before-after 320x568",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "same-condition before-after 393x852",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "same-condition before-after 568x320",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "same-condition before-after 852x393",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "native DOM input matches 200 percent zoom endpoints and clears focused PC keys",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "native touch steering and fire survive lever focus and release",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "hidden HUD utility obstacles survive migration 320x568",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "hidden HUD utility obstacles survive migration 568x320",
+    "projectName": "chromium",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "native slider keyup clears prior global handover blocking before a fresh press",
+    "projectName": "webkit-ui",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "lever preview and Cancel 320x568",
+    "projectName": "webkit-ui",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "Normal live lever geometry and Easy 320x568",
+    "projectName": "webkit-ui",
+    "expectedStatus": "skipped"
+  },
+  {
+    "title": "lever preview and Cancel 393x852",
+    "projectName": "webkit-ui",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "Normal live lever geometry and Easy 393x852",
+    "projectName": "webkit-ui",
+    "expectedStatus": "skipped"
+  },
+  {
+    "title": "lever preview and Cancel 568x320",
+    "projectName": "webkit-ui",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "Normal live lever geometry and Easy 568x320",
+    "projectName": "webkit-ui",
+    "expectedStatus": "skipped"
+  },
+  {
+    "title": "lever preview and Cancel 852x393",
+    "projectName": "webkit-ui",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "Normal live lever geometry and Easy 852x393",
+    "projectName": "webkit-ui",
+    "expectedStatus": "skipped"
+  },
+  {
+    "title": "native pointer, focused short keys, PC binding, pause and release retain target speed",
+    "projectName": "webkit-ui",
+    "expectedStatus": "skipped"
+  },
+  {
+    "title": "legacy bytes survive Save twice, reload, Cancel, future guard and session-only use",
+    "projectName": "webkit-ui",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "settings retain footer and scrolling at 200 percent text",
+    "projectName": "webkit-ui",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "settings retain footer and scrolling at 200 percent zoom",
+    "projectName": "webkit-ui",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "same-condition before-after 320x568",
+    "projectName": "webkit-ui",
+    "expectedStatus": "skipped"
+  },
+  {
+    "title": "same-condition before-after 393x852",
+    "projectName": "webkit-ui",
+    "expectedStatus": "skipped"
+  },
+  {
+    "title": "same-condition before-after 568x320",
+    "projectName": "webkit-ui",
+    "expectedStatus": "skipped"
+  },
+  {
+    "title": "same-condition before-after 852x393",
+    "projectName": "webkit-ui",
+    "expectedStatus": "skipped"
+  },
+  {
+    "title": "native DOM input matches 200 percent zoom endpoints and clears focused PC keys",
+    "projectName": "webkit-ui",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "native touch steering and fire survive lever focus and release",
+    "projectName": "webkit-ui",
+    "expectedStatus": "skipped"
+  },
+  {
+    "title": "hidden HUD utility obstacles survive migration 320x568",
+    "projectName": "webkit-ui",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "hidden HUD utility obstacles survive migration 568x320",
+    "projectName": "webkit-ui",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "smoke phone-portrait-393x648: play, pause/resume, settings, rules and result",
+    "projectName": "chromium-smoke",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "smoke phone-landscape-568x320: play, pause/resume, settings, rules and result",
+    "projectName": "chromium-smoke",
+    "expectedStatus": "passed"
+  },
+  {
+    "title": "smoke pc-1280x720: play, pause/resume, settings, rules and result",
+    "projectName": "chromium-smoke",
+    "expectedStatus": "passed"
+  }
+]
