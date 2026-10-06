@@ -61,7 +61,7 @@ for (const vp of VIEWPORTS) {
       viewport: vp,
       browser: `Playwright 1.61.1 / Chromium ${browser.version()} / SwiftShader`,
       operatingSystem: "Linux container",
-      externalNetwork: "only exact manifest-file GET requests are allowed at the local acceptance origin; exact observed Vite HMR stays inert without upstream connection; all other HTTP and WebSockets are blocked before transmission",
+      externalNetwork: "only exact manifest-file GET requests, including observed metadata-bound optimizer imports, are allowed at the original local development origin; exact observed Vite HMR stays inert without upstream connection; all other HTTP and WebSockets are blocked before transmission",
       actions: [],
       pageErrors,
       consoleErrors,

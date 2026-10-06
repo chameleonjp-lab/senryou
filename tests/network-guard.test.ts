@@ -29,9 +29,9 @@ test('only exact-origin GET manifest assets and expected resource types pass', (
     [SMOKE_ORIGIN + '/src/game.ts?payload=fixture', 'GET', 'script'],
     [SMOKE_ORIGIN + '/src/game.ts#payload', 'GET', 'script'],
     ['http://127.0.0.1:59999/src/game.ts', 'GET', 'script'],
-    ['http://localhost:4179/src/game.ts', 'GET', 'script'],
-    ['https://127.0.0.1:4179/src/game.ts', 'GET', 'script'],
-    ['http://fixture:fixture@127.0.0.1:4179/src/game.ts', 'GET', 'script'],
+    ['http://localhost:4178/src/game.ts', 'GET', 'script'],
+    ['https://127.0.0.1:4178/src/game.ts', 'GET', 'script'],
+    ['http://fixture:fixture@127.0.0.1:4178/src/game.ts', 'GET', 'script'],
     ['not a URL', 'GET', 'script'],
   ]) assert.equal(isStaticAssetRequest(url, method, resourceType, assets), false, `${method} ${url}`);
 });
@@ -54,21 +54,21 @@ test('recursive manifest lists physical nested source and complete existing depe
   assert.equal(manifest.has('/src/battle/unlisted.ts'), false);
 });
 
-test('acceptance server retains the existing DEV oracle and exact unoptimized module addresses', async () => {
+test('acceptance retains the original DEV server, optimizer and smoke oracle', async () => {
   const root = fileURLToPath(new URL('..', import.meta.url));
-  const config = await resolveConfig({ root, configFile: root + '/vite.browser-tests.config.ts' }, 'serve');
+  const config = await resolveConfig({ root, configFile: root + '/vite.config.ts' }, 'serve');
   assert.equal(config.env.DEV, true);
   assert.equal(config.env.PROD, false);
-  assert.equal(config.optimizeDeps.noDiscovery, true);
-  assert.deepEqual(config.optimizeDeps.include, []);
-  assert.equal((config.server.ws as any).clientPort, 4179);
+  assert.equal(config.optimizeDeps.noDiscovery, false);
+  assert.ok(!config.optimizeDeps.include?.length);
+  assert.equal(config.cacheDir, root.replace(/\/$/, '') + '/node_modules/.vite');
   const main = await readFile(new URL('../src/main.ts', import.meta.url), 'utf8');
   assert.match(main, /if\(import\.meta\.env\.DEV\)\{/);
   assert.match(main, /Object\.defineProperty\(window,'__senryou'/);
   for (const name of ['playwright.config.ts', 'playwright.throttle.config.ts']) {
     const configSource = await readFile(new URL('../' + name, import.meta.url), 'utf8');
-    assert.match(configSource, /vite\.js --config vite\.browser-tests\.config\.ts --host 127\.0\.0\.1 --port 4179 --strictPort/);
-    assert.doesNotMatch(configSource, /vite\.js preview/);
+    assert.match(configSource, /npm run dev -- --(?:host 127\.0\.0\.1 --)?port 4178 --strictPort/);
+    assert.doesNotMatch(configSource, /4179|vite\.browser-tests|vite\.js preview/);
   }
 });
 
@@ -111,20 +111,22 @@ test('HTTP abort, redirect rejection and WebSocket interception never forward fo
   assert.deepEqual(await invoke(SMOKE_ORIGIN + '/src/game.ts'), ['fetch-local-only', 'fulfill', 'dispose']);
   assert.deepEqual(await invoke(SMOKE_ORIGIN + '/favicon.ico', 'GET', 200, 'image'), ['fulfill']);
   assertNoForbiddenTraffic(blockedExternal);
+  assert.deepEqual(await invoke(SMOKE_ORIGIN + '/@vite/client', 'GET', 404, 'script', 'const wsToken = "error-token";'), ['fetch-local-only', 'abort', 'dispose']);
+  assert.deepEqual(await invokeSocket('ws://127.0.0.1:4178/?token=error-token'), ['close']);
   // A guessed token is denied before the client has actually been served.
-  assert.deepEqual(await invokeSocket('ws://127.0.0.1:4179/?token=fixture-token'), ['close']);
+  assert.deepEqual(await invokeSocket('ws://127.0.0.1:4178/?token=fixture-token'), ['close']);
   assert.deepEqual(await invoke(SMOKE_ORIGIN + '/@vite/client', 'GET', 200, 'script', 'const wsToken = "fixture-token";'), ['fetch-local-only', 'fulfill', 'dispose']);
   const beforeHmr = blockedExternal.length;
-  assert.deepEqual(await invokeSocket('ws://127.0.0.1:4179/?token=fixture-token'), ['inert']);
+  assert.deepEqual(await invokeSocket('ws://127.0.0.1:4178/?token=fixture-token'), ['inert']);
   assert.equal(blockedExternal.length, beforeHmr);
-  for (const url of ['wss://network-probe.invalid/socket', 'ws://127.0.0.1:4179/socket', 'ws://127.0.0.1:4179/?token=wrong-token', 'ws://127.0.0.1:4179/', 'ws://127.0.0.1:4179/?token=fixture-token&payload=fixture']) {
+  for (const url of ['wss://network-probe.invalid/socket', 'ws://127.0.0.1:4178/socket', 'ws://127.0.0.1:4178/?token=wrong-token', 'ws://127.0.0.1:4178/', 'ws://127.0.0.1:4178/?token=fixture-token&payload=fixture']) {
     assert.deepEqual(await invokeSocket(url), ['close']);
   }
   assert.deepEqual(await invoke('https://network-probe.invalid/collect'), ['abort']);
   assert.deepEqual(await invoke(SMOKE_ORIGIN + '/', 'POST'), ['abort']);
   assert.deepEqual(await invoke(SMOKE_ORIGIN + '/api/collect'), ['abort']);
   assert.deepEqual(await invoke(SMOKE_ORIGIN + '/src/game.ts', 'GET', 302), ['fetch-local-only', 'abort', 'dispose']);
-  assert.equal(blockedExternal.length, 10);
+  assert.equal(blockedExternal.length, 12);
   // A handled application rejection need not create a pageerror; the network gate still rejects.
   const pageErrors: string[] = [];
   await Promise.reject(new Error('synthetic handled error')).catch(() => {});
@@ -133,7 +135,7 @@ test('HTTP abort, redirect rejection and WebSocket interception never forward fo
 });
 
 test('unrecognized served Vite HMR tokens fail closed', () => {
-  assert.equal(viteHmrDiagnosticUrl('const wsToken = "known-token_123";'), 'ws://127.0.0.1:4179/?token=known-token_123');
+  assert.equal(viteHmrDiagnosticUrl('const wsToken = "known-token_123";'), 'ws://127.0.0.1:4178/?token=known-token_123');
   for (const source of ['', 'const wsToken = "";', 'const wsToken = "bad token";', 'const wsToken = window.token;']) {
     assert.throws(() => viteHmrDiagnosticUrl(source), /no recognized HMR token/);
   }

@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import { dirname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
+import { optimizerManifest } from './optimizer-manifest.mjs';
 
 const require = createRequire(import.meta.url);
 const defaultRoot = fileURLToPath(new URL('..', import.meta.url));
@@ -38,10 +39,14 @@ export function createAssetManifest(root = defaultRoot) {
   const threeRoot = realpathSync(resolve(dirname(require.resolve('three')), '..'));
   const threeEntry = resolve(threeRoot, 'build/three.module.js');
   const pendingThree = new Set();
+  const dependencySources = new Map();
   const addBareThree = specifier => {
-    if (specifier === 'three') pendingThree.add(threeEntry);
-    else if (specifier.startsWith('three/addons/')) pendingThree.add(resolve(threeRoot, 'examples/jsm', specifier.slice('three/addons/'.length)));
+    let file;
+    if (specifier === 'three') file = threeEntry;
+    else if (specifier.startsWith('three/addons/')) file = resolve(threeRoot, 'examples/jsm', specifier.slice('three/addons/'.length));
     else throw new Error(`Unlisted dependency in browser acceptance: ${specifier}`);
+    dependencySources.set(specifier, realpathSync(file));
+    pendingThree.add(file);
   };
   const sourceDir = resolve(root, 'src');
   // Senryou also imports nested source modules such as src/battle/simulation.ts.
@@ -78,5 +83,12 @@ export function createAssetManifest(root = defaultRoot) {
   register('/@vite/client', resolve(viteRoot, 'dist/client/client.mjs'), ['script']);
   const envFile = realpathSync(resolve(viteRoot, 'dist/client/env.mjs'));
   register(fileUrl(envFile), envFile, ['script']);
+  // Keep the original Vite optimizer. Cache entries are admitted only after a
+  // known served module imports that exact URL and current metadata proves it.
+  Object.assign(manifest, optimizerManifest(manifest, {
+    depsCacheDir: resolve(root, 'node_modules/.vite/deps'),
+    cacheUrlPrefix: '/node_modules/.vite/deps/',
+    dependencySources,
+  }));
   return manifest;
 }
