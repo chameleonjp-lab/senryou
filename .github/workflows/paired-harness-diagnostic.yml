@@ -1,0 +1,59 @@
+name: Senryou one-time paired harness diagnostic
+on:
+  pull_request:
+    types: [synchronize]
+permissions:
+  contents: read
+jobs:
+  paired-diagnostic:
+    # A changed-head diagnostic only. Required throttle-lever.yml is untouched.
+    if: github.event.pull_request.number == 5 && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - id: one-time
+        name: Check exact one-time diagnostic marker and parent
+        shell: bash
+        run: |
+          if [ "$(git show -s --format=%s HEAD)" = 'diagnostic: senryou paired harness 20261006-0905 once' ] && [ "$(git rev-parse HEAD^)" = '4dd59b2ee493baace036d2a36490d3597872fd5f' ]; then
+            echo 'run=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'run=false' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        if: steps.one-time.outputs.run == 'true'
+        with:
+          ref: 71b0e5bc9ffbe2cbd1f295160b9e8e3c40ad6650
+          path: throttle-baseline
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        if: steps.one-time.outputs.run == 'true'
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install exact locked dependencies
+        if: steps.one-time.outputs.run == 'true'
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Prepare unchanged idle baseline server dependencies
+        if: steps.one-time.outputs.run == 'true'
+        working-directory: throttle-baseline
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Install one shared Chromium build
+        if: steps.one-time.outputs.run == 'true'
+        run: npx playwright install --with-deps chromium
+      - name: Run exactly one ordered pair and retain either failure
+        if: steps.one-time.outputs.run == 'true'
+        run: node scripts/run-paired-harness.mjs
+      - name: Preserve paired diagnostic evidence
+        if: always() && steps.one-time.outputs.run == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: senryou-paired-diagnostic-${{ github.event.pull_request.head.sha }}
+          path: paired-diagnostic-evidence/
+          retention-days: 7
+          if-no-files-found: error
