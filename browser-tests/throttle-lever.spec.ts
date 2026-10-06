@@ -16,22 +16,61 @@ async function start(page:Page) {
   await ready(page); await page.locator('input[value="normal"]').check(); await page.locator('#start').click();
   await expect(page.locator('#app')).toHaveAttribute('data-screen','playing');
 }
-test('native slider keyup clears prior global handover blocking before a fresh press', async ({page}) => {
+test('native slider keyup clears prior global handover blocking before a fresh press', async ({page}, info) => {
   await page.route('**/throttle-focus-harness', route => route.fulfill({contentType:'text/html',body:'<!doctype html><html><body><div id="app"><div id="surface" tabindex="0"></div><button id="fire">Fire</button><button id="loop">Loop</button><button id="bomb">Bomb</button><div id="throttle" role="slider" tabindex="0" style="width:64px;height:128px"></div></div></body></html>'}));
   await page.goto('/throttle-focus-harness');
   await page.evaluate(async () => {
     const { FlightControls } = await import('/src/input.ts');
+    // Test-only, bounded evidence. Preserve the original clear() call/receiver/result.
+    const evidence: any = { schema: 1, scope: 'webkit-initial-input-release', events: [], dropped: 0 };
+    const record = (kind: string, extra: Record<string, unknown> = {}) => {
+      if (evidence.events.length >= 128) { evidence.dropped += 1; return; }
+      evidence.events.push({ kind, at: performance.now(), activeElement: document.activeElement?.id ?? '',
+        documentFocused: document.hasFocus(), hidden: document.hidden,
+        viewport: [innerWidth, innerHeight, visualViewport?.width ?? null, visualViewport?.height ?? null], ...extra });
+    };
+    const capture = (event: Event) => record('event', { type: event.type, trusted: event.isTrusted,
+      target: (event.target as HTMLElement | null)?.id ?? '',
+      code: event instanceof KeyboardEvent ? event.code : null,
+      repeat: event instanceof KeyboardEvent ? event.repeat : null });
+    const observed = ['blur', 'focus', 'pagehide', 'resize', 'orientationchange', 'keydown', 'keyup'];
+    for (const type of observed) window.addEventListener(type, capture, true);
+    document.addEventListener('visibilitychange', capture, true);
+    visualViewport?.addEventListener('resize', capture, true);
+    const originalClear = FlightControls.prototype.clear;
+    FlightControls.prototype.clear = function (...args: []) {
+      const self = this as any;
+      record('clear-before', { keys: [...self.keys], physicalKeys: [...self.physicalKeys], blockedKeys: [...self.blockedKeys],
+        stack: new Error('clear caller').stack?.split('\n').slice(0, 8).join('\n') ?? '' });
+      const result = Reflect.apply(originalClear, this, args);
+      record('clear-after', { keys: [...self.keys], physicalKeys: [...self.physicalKeys], blockedKeys: [...self.blockedKeys] });
+      return result;
+    };
+    (window as any).inputReleaseEvidence = evidence;
+    (window as any).finishInputReleaseEvidence = () => {
+      record('finish', { keys: [...((window as any).focusControls?.keys ?? [])] });
+      FlightControls.prototype.clear = originalClear;
+      for (const type of observed) window.removeEventListener(type, capture, true);
+      document.removeEventListener('visibilitychange', capture, true);
+      visualViewport?.removeEventListener('resize', capture, true);
+      return evidence;
+    };
     const get = (id:string) => document.getElementById(id)!;
     (window as any).focusControls = new FlightControls(get('surface'), {fire:get('fire') as HTMLButtonElement,loop:get('loop') as HTMLButtonElement,bomb:get('bomb') as HTMLButtonElement,throttle:get('throttle')}, () => true);
   });
-  const climb = () => page.evaluate(() => (window as any).focusControls.sample(false).climb);
-  await page.locator('#surface').focus(); await page.keyboard.down('ArrowUp'); expect(await climb()).toBe(1);
-  await page.locator('#throttle').focus(); expect(await climb()).toBe(0);
-  // The real keyup targets the slider and is stopped there in bubble phase.
-  await page.keyboard.up('ArrowUp');
-  await page.locator('#surface').focus(); await page.keyboard.down('ArrowUp'); expect(await climb()).toBe(1);
-  await page.keyboard.up('ArrowUp'); expect(await climb()).toBe(0);
-  await page.evaluate(() => (window as any).focusControls.dispose());
+  try {
+    const climb = () => page.evaluate(() => (window as any).focusControls.sample(false).climb);
+    await page.locator('#surface').focus(); await page.keyboard.down('ArrowUp'); expect(await climb()).toBe(1);
+    await page.locator('#throttle').focus(); expect(await climb()).toBe(0);
+    // The real keyup targets the slider and is stopped there in bubble phase.
+    await page.keyboard.up('ArrowUp');
+    await page.locator('#surface').focus(); await page.keyboard.down('ArrowUp'); expect(await climb()).toBe(1);
+    await page.keyboard.up('ArrowUp'); expect(await climb()).toBe(0);
+    await page.evaluate(() => (window as any).focusControls.dispose());
+  } finally {
+    const evidence = await page.evaluate(() => (window as any).finishInputReleaseEvidence?.() ?? { unavailable: true });
+    await info.attach('input-release-evidence', { body: JSON.stringify(evidence, null, 2), contentType: 'application/json' });
+  }
 });
 for (const size of sizes) {
   test(`lever preview and Cancel ${size.width}x${size.height}`, async({page},info)=>{
@@ -194,3 +233,4 @@ for(const size of [{width:320,height:568},{width:568,height:320}])test(`hidden H
     }
   }
 });
+
