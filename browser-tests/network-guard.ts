@@ -1,41 +1,39 @@
 import assert from 'node:assert/strict';
-import { readdir } from 'node:fs/promises';
-import path from 'node:path';
 import type { BrowserContext } from '@playwright/test';
 
 export const SMOKE_ORIGIN = 'http://127.0.0.1:4179';
 
-/** Only files in the built artifact can be fetched from the controlled preview. */
-export async function staticAssetPaths(directory: string): Promise<Set<string>> {
-  const paths = new Set<string>(['/']);
-  async function visit(relative: string) {
-    for (const entry of await readdir(path.join(directory, relative), { withFileTypes: true })) {
-      const name = path.posix.join(relative, entry.name);
-      if (entry.isDirectory()) await visit(name);
-      else if (entry.isFile()) paths.add('/' + name);
-    }
-  }
-  await visit('');
-  assert(paths.has('/index.html'), 'Build the candidate before running smoke');
-  return paths;
-}
+export type AssetManifest = ReadonlyMap<string, { physicalFile: string | null; resourceTypes: readonly string[] }>;
 
-export function isStaticAssetRequest(rawUrl: string, method: string, assetPaths: ReadonlySet<string>): boolean {
+export function isStaticAssetRequest(rawUrl: string, method: string, resourceType: string, manifest: AssetManifest): boolean {
   try {
     const url = new URL(rawUrl);
-    return method === 'GET' && url.origin === SMOKE_ORIGIN
-      && !url.username && !url.password && !url.search && assetPaths.has(url.pathname);
+    return method === 'GET' && rawUrl === `${SMOKE_ORIGIN}${url.pathname}` && url.origin === SMOKE_ORIGIN
+      && !url.username && !url.password && !url.search && !url.hash
+      && manifest.get(url.pathname)?.resourceTypes.includes(resourceType) === true;
   } catch {
     return false;
   }
 }
 
+export function viteHmrDiagnosticUrl(clientSource: string): string {
+  const token = clientSource.match(/^const wsToken = "([a-zA-Z0-9_-]+)";$/m)?.[1];
+  if (!token) throw new Error('The served Vite client has no recognized HMR token');
+  return `ws://127.0.0.1:4179/?token=${token}`;
+}
+
 /** Install before creating pages; service workers must also be blocked by the context. */
-export async function installNetworkGuard(context: BrowserContext, assetPaths: ReadonlySet<string>): Promise<string[]> {
+export async function installNetworkGuard(context: BrowserContext, manifest: AssetManifest): Promise<string[]> {
   const blockedExternal: string[] = [];
+  let hmrDiagnostic: string | undefined;
   await context.route('**/*', async route => {
     const request = route.request();
-    if (isStaticAssetRequest(request.url(), request.method(), assetPaths)) {
+    const url = new URL(request.url());
+    if (isStaticAssetRequest(request.url(), request.method(), request.resourceType(), manifest)) {
+      if (url.pathname === '/favicon.ico') {
+        await route.fulfill({ status: 204, body: '' });
+        return;
+      }
       // route.continue() can follow redirects without re-entering this guard.
       const response = await route.fetch({ maxRedirects: 0 });
       try {
@@ -43,6 +41,7 @@ export async function installNetworkGuard(context: BrowserContext, assetPaths: R
           blockedExternal.push(`${request.method()} ${request.url()} -> HTTP ${response.status()} redirect`);
           await route.abort('blockedbyclient');
         } else {
+          if (url.pathname === '/@vite/client') hmrDiagnostic = viteHmrDiagnosticUrl(await response.text());
           await route.fulfill({ response });
         }
       } finally {
@@ -54,6 +53,12 @@ export async function installNetworkGuard(context: BrowserContext, assetPaths: R
     }
   });
   await context.routeWebSocket('**/*', async socket => {
+    if (hmrDiagnostic !== undefined && socket.url() === hmrDiagnostic) {
+      // Exact observed Vite diagnostics stay inert and open. Closing here makes
+      // Vite reconnect and can raise an unrelated pageerror. Never connect/send.
+      socket.onMessage(() => {});
+      return;
+    }
     blockedExternal.push(`WEBSOCKET ${socket.url()}`);
     // A routed socket never connects upstream unless connectToServer() is called.
     await socket.close({ code: 1008, reason: 'Smoke forbids application communication' });

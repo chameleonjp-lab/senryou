@@ -1,7 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { assertNoForbiddenTraffic, installNetworkGuard, SMOKE_ORIGIN, staticAssetPaths } from "./network-guard";
+import { assertNoForbiddenTraffic, installNetworkGuard, SMOKE_ORIGIN } from "./network-guard";
+import { createAssetManifest } from "./asset-manifest.mjs";
 
 const OUT = path.join(process.cwd(), "docs/evidence/smoke");
 const VIEWPORTS = [
@@ -50,7 +51,7 @@ for (const vp of VIEWPORTS) {
       deviceScaleFactor: 1,
       serviceWorkers: "block",
     });
-    const blockedExternal = await installNetworkGuard(context, await staticAssetPaths(path.join(process.cwd(), "dist")));
+    const blockedExternal = await installNetworkGuard(context, createAssetManifest());
     const page = await context.newPage();
     const pageErrors: string[] = [];
     const consoleErrors: string[] = [];
@@ -60,7 +61,7 @@ for (const vp of VIEWPORTS) {
       viewport: vp,
       browser: `Playwright 1.61.1 / Chromium ${browser.version()} / SwiftShader`,
       operatingSystem: "Linux container",
-      externalNetwork: "only GET requests for built static assets at the exact preview origin are allowed; all other HTTP and all WebSockets are blocked before transmission",
+      externalNetwork: "only exact manifest-file GET requests are allowed at the local acceptance origin; exact observed Vite HMR stays inert without upstream connection; all other HTTP and WebSockets are blocked before transmission",
       actions: [],
       pageErrors,
       consoleErrors,

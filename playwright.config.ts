@@ -31,8 +31,8 @@ export default defineConfig({
   },
   webServer: [
     {
-      // Smoke blocks all WebSockets, so serve the built artifact without Vite HMR.
-      command: "npm run build && node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 4179 --strictPort",
+      // Retain the DEV-only smoke oracle; HMR is intercepted as an inert mock.
+      command: "node node_modules/vite/bin/vite.js --config vite.browser-tests.config.ts --host 127.0.0.1 --port 4179 --strictPort",
       cwd: "/workspace/senryou",
       url: "http://127.0.0.1:4179",
       reuseExistingServer: false,
