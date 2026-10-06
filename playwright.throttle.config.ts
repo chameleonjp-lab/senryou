@@ -11,6 +11,8 @@ export default defineConfig({
   reporter: [['list'], ['json', { outputFile: 'test-results/browser-results.json' }]],
   use: { baseURL: 'http://127.0.0.1:4178', viewport: { width: 393, height: 852 }, hasTouch: true, deviceScaleFactor: 1, screenshot: 'only-on-failure', trace: 'retain-on-failure' },
   webServer: [
+    // Smoke observes the production artifact, with no development/HMR WebSocket exception.
+    { command: 'npm run build && node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 4179 --strictPort', url: 'http://127.0.0.1:4179', reuseExistingServer: false },
     { command: 'npm run dev -- --port 4178 --strictPort', url: 'http://127.0.0.1:4178', reuseExistingServer: !process.env.CI },
     ...(process.env.THROTTLE_BASELINE_DIR ? [{ command: 'npm run dev -- --port 4177 --strictPort', cwd: process.env.THROTTLE_BASELINE_DIR, url: 'http://127.0.0.1:4177', reuseExistingServer: false }] : []),
   ],

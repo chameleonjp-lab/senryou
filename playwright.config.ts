@@ -31,6 +31,14 @@ export default defineConfig({
   },
   webServer: [
     {
+      // Smoke blocks all WebSockets, so serve the built artifact without Vite HMR.
+      command: "npm run build && node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 4179 --strictPort",
+      cwd: "/workspace/senryou",
+      url: "http://127.0.0.1:4179",
+      reuseExistingServer: false,
+      timeout: 30000,
+    },
+    {
       command: "npm run dev -- --host 127.0.0.1 --port 4176 --strictPort",
       cwd: "/workspace/kaisen",
       url: "http://127.0.0.1:4176",
