@@ -1,0 +1,49 @@
+name: Senryou scoped acceptance rebuild
+on:
+  push:
+    branches: [test/browser-acceptance-rebuild-20261007]
+permissions:
+  contents: read
+jobs:
+  scoped-acceptance:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/test/browser-acceptance-rebuild-20261007'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      FORCE_COLOR: '0'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - run: git rev-parse HEAD
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm test
+      - run: npm run build
+      - name: Check scoped registry and unchanged legacy discovery
+        shell: bash
+        run: |
+          npx playwright test --config=playwright.acceptance.config.ts --list --reporter=list > "$RUNNER_TEMP/acceptance-list.txt"
+          npx playwright test --config=playwright.config.ts --list --reporter=list > "$RUNNER_TEMP/legacy-list.txt"
+          cat "$RUNNER_TEMP/acceptance-list.txt" "$RUNNER_TEMP/legacy-list.txt"
+          node --import tsx --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import { readFileSync } from 'node:fs';
+          import { createHash } from 'node:crypto';
+          import { CASES } from './browser-tests/acceptance/contracts.ts';
+          const list=readFileSync(process.env.RUNNER_TEMP+'/acceptance-list.txt','utf8');
+          const ids=list.split('\n').filter(l=>l.includes(' › ')).map(l=>l.split(' › ').at(-1));
+          assert.deepEqual(ids.sort(),CASES.map(c=>c.id).sort());
+          const old=readFileSync(process.env.RUNNER_TEMP+'/legacy-list.txt');
+          assert.equal(createHash('sha256').update(old).digest('hex'),'b1e3f402b4cecb3f3ef67474314b80f4a115a88379cbafd1f17605662c206288');
+          JS
+      - run: npx playwright install --with-deps chromium
+      - name: Run scoped acceptance once with bounded group budget
+        run: timeout --signal=INT --kill-after=30s 20m npx playwright test --config=playwright.acceptance.config.ts
+      - name: Preserve raw JSON and fail-closed summary in logs
+        if: always()
+        run: node --import tsx diagnostics/acceptance/print-report.ts
