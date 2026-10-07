@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { runCase, start, advanceFrame, clickDom, readState, EnvironmentBlocker } from './harness';
 import { checkedWindowBounds, equalWindowBounds, withRestoredWindow, type WindowBounds, type WindowRestoration } from './native-window-restoration';
+import { text200, verifyText200 } from './observe-dom';
 import { prepareApp } from '../native-frame-driver';
 import { deliveredResize, deliveredNativeBlur, withNativeFocus, type ResizeWitness, type FocusWitness } from './native-environment-witness';
 
@@ -23,6 +24,15 @@ test('S.pointer.resize',async({browser},info)=>runCase(browser,info,'S.pointer.r
   const b=await page.locator('#throttle').boundingBox();if(!b)throw new Error('Missing lever');await page.mouse.move(b.x+b.width+30,Math.max(1,b.y-20));
   expect(await page.locator('#throttle').evaluate((el,id)=>el.hasPointerCapture(id),pointerId)).toBe(true);
   await advanceFrame(page,17);const s=await readState(page);expect(s.inputs.at(-1).input.throttle).toBe(1);expect(s.targetSpeed).toBeGreaterThan(110.3);evidence.observations.outside=s;
+  // Actual loop input changes the cooldown label while the lever remains held.
+  // A label update must not move the captured control or change its axis.
+  const beforeBox=await page.locator('#throttle').boundingBox();expect(beforeBox).not.toBeNull();
+  await page.keyboard.press('KeyL');await advanceFrame(page,17);
+  const held=await readState(page),afterBox=await page.locator('#throttle').boundingBox();
+  expect(held.inputs.at(-1).input.loop).toBe(true);expect(held.inputs.at(-1).input.throttle).toBe(1);
+  expect(await page.locator('#throttle').evaluate((el,id)=>el.hasPointerCapture(id),pointerId)).toBe(true);
+  expect(afterBox).toEqual(beforeBox);await expect(page.locator('#loop-status')).toContainText('待ち');
+  evidence.observations.heldLabelUpdate={beforeBox,afterBox,state:held};
  });
  await h.check('resize-release',async()=>{
   const before=await readState(page),expected={width:1000,height:700};
@@ -49,6 +59,15 @@ test('S.pointer.resize',async({browser},info)=>runCase(browser,info,'S.pointer.r
   const adjusted=await readState(page);expect(adjusted.inputs.at(-1).input.throttle).toBe(1);expect(adjusted.targetSpeed).toBeGreaterThan(before.targetSpeed);
   await advanceFrame(page,17);const released=await readState(page);expect(released.inputs.at(-1).input.throttle).toBe(0);expect(released.targetSpeed).toBe(adjusted.targetSpeed);
   evidence.observations.fresh={before,adjusted,released};
+  const heldBox=await page.locator('#throttle').boundingBox();if(!heldBox)throw new Error('Missing lever before font enlargement');
+  await page.mouse.move(heldBox.x+heldBox.width/2,heldBox.y+2);await page.mouse.down();await advanceFrame(page,17);
+  const held=await readState(page);expect(held.inputs.at(-1).input.throttle).toBe(1);
+  const events=await page.evaluate(()=>(window as unknown as {__acceptancePointerEvents:{id:number;trusted:boolean}[]}).__acceptancePointerEvents);const fontPointer=events.at(-1)!.id;
+  expect(events.at(-1)!.trusted).toBe(true);expect(await page.locator('#throttle').evaluate((el,id)=>el.hasPointerCapture(id),fontPointer)).toBe(true);
+  const scale=await text200(page);await expect.poll(()=>page.locator('#throttle').evaluate((el,id)=>el.hasPointerCapture(id),fontPointer),{timeout:5000}).toBe(false);
+  const measured=await verifyText200(page);await advanceFrame(page,17);const fontCleared=await readState(page);
+  expect(fontCleared.inputs.at(-1).input.throttle).toBe(0);expect(fontCleared.targetSpeed).toBe(held.targetSpeed);
+  await page.mouse.up();evidence.observations.fontEnlargement={scale,measured,fontPointer,held,fontCleared};
  });
 }));
 

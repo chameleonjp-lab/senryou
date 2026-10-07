@@ -1,4 +1,6 @@
-import { measureHudObstacles, controlLayoutSize, settingsViewportSize, type ControlObstacle } from './control-obstacles';
+import { placeControlFootprints, layoutRefreshPolicy } from './control-footprints';
+import { controlLayoutSize, settingsViewportSize, type ControlObstacle } from './control-obstacles';
+import {measureHudGeometry} from './hud-geometry';
 // Shared throttle-lever settings; adapted to Senryou bomb-only controls and dedicated storage.
 import { persistSettingsBatch, readSettingsValue, hasSettingsRecovery } from './settings-storage';
 import type { SenryouControlButtons } from './input';
@@ -153,6 +155,13 @@ export class ControlSettings {
   private dragControl: ControlName | null = null;
   private storageUnavailable = false;
   private utilityObstacles: ControlObstacle[] = [];
+  private contentDimensions:Record<string,{width:number;height:number}> = {};
+  private geometryReady=false;
+  private readonly heldPointers=new Map<number,HTMLElement>();
+  private pendingLayout=false;
+  private environmentKey='';
+  private layoutCache=new Map<string,Record<ControlName,ControlPlacement & {blocked:boolean}>>();
+  private legacyPeerPins:Record<GameMode,boolean>={normal:false,easy:false};
   private recoveryPending = false;
   private saveFailedAwaitingUse = false;
   private keyDraft: KeyBindings;
@@ -163,11 +172,12 @@ export class ControlSettings {
     return this.dialog.open;
   }
 
-  constructor(private readonly buttons: SenryouControlButtons, private readonly keyboard = new KeyboardSettings(), private readonly inputPresentation?: ControlInputPresentation) {
+  constructor(private readonly buttons: SenryouControlButtons, private readonly keyboard = new KeyboardSettings(), private readonly inputPresentation?: ControlInputPresentation, private readonly clearForEnvironmentChange:()=>void=()=>{}) {
     this.keyDraft = keyboard.bindings;
     this.app = document.getElementById('app') ?? document.body;
     try { this.recoveryPending = hasSettingsRecovery(localStorage); } catch { /* Storage is optional. */ }
     this.saved = { normal: loadLayout('normal'), easy: loadLayout('easy') };
+    for(const mode of MODES)try{const raw=localStorage.getItem(LEGACY_STORAGE_KEYS[mode]);this.legacyPeerPins[mode]=readSettingsValue(STORAGE_KEYS[mode],localStorage)===null&&!!raw&&JSON.parse(raw).version===1;}catch{/* Corrupt legacy input is not a migration. */}
     this.draft = this.copyLayouts(this.saved);
     this.dialog = this.createDialog();
     this.preview = this.dialog.querySelector<HTMLElement>('#control-preview')!;
@@ -190,10 +200,17 @@ export class ControlSettings {
     this.safeProbe.setAttribute('aria-hidden', 'true');
     this.app.append(this.safeProbe);
     this.bindEvents();
-    this.utilityObstacles = measureHudObstacles(this.app);
+    this.environmentKey=this.readEnvironmentKey();
+    this.measureGeometry();
     this.apply(this.saved[this.activeMode], this.activeMode);
+    for(const button of Object.values(this.buttons))if(button){
+      button.addEventListener('pointerdown',event=>{this.heldPointers.set((event as PointerEvent).pointerId,button);},{signal:this.abort.signal});
+      button.addEventListener('lostpointercapture',event=>this.afterPointerRelease((event as PointerEvent).pointerId),{signal:this.abort.signal});
+    }
+    for(const type of ['pointerup','pointercancel'] as const)window.addEventListener(type,event=>this.afterPointerRelease(event.pointerId),{signal:this.abort.signal});
     this.observer = new ResizeObserver(() => this.refreshLayout());
     this.observer.observe(this.app);
+    for(const element of this.app.querySelectorAll<HTMLElement>('[data-flight-control],.hud-readouts,#warning,#reload-status,#payload-status,#ally-announcements,#flight-tip'))this.observer.observe(element);
     if (document.documentElement && document.documentElement !== this.app) this.observer.observe(document.documentElement);
     window.visualViewport?.addEventListener('resize', this.refreshLayout, { signal: this.abort.signal });
   }
@@ -360,8 +377,8 @@ export class ControlSettings {
   private save(): void {
     if (this.capturing) this.cancelKeyCapture();
     const rect = this.app ? controlLayoutSize(this.app) : null;
-    if (this.app) this.utilityObstacles = measureHudObstacles(this.app);
-    if (rect && this.allowedModes.includes('normal') && safeThrottlePlacement(this.draft.normal, rect.width, rect.height, this.readInsets(), this.utilityObstacles).blocked) {
+    if (this.app) this.measureGeometry();
+    if (rect && this.allowedModes.includes('normal') && this.renderPlacements(this.draft.normal,'normal').throttle.blocked) {
       const note = this.dialog.querySelector<HTMLElement>('#control-storage-note')!;
       note.hidden = false; note.textContent = '速度レバーの配置が重なっています。大きさや位置を調整してから保存してください。';
       note.scrollIntoView({ block: 'nearest' }); return;
@@ -567,7 +584,7 @@ export class ControlSettings {
       option.hidden = option.disabled;
     }
     const storageNote = this.dialog.querySelector<HTMLElement>('#control-storage-note')!;
-    const conflict = this.layoutMode === 'normal' && safeThrottlePlacement(this.draft.normal, rect.width, rect.height, this.readInsets(), this.utilityObstacles).blocked;
+    const conflict = this.layoutMode === 'normal' && this.renderPlacements(this.draft.normal,'normal').throttle.blocked;
     storageNote.hidden = !this.storageUnavailable && !this.recoveryPending && !conflict;
     if (conflict) storageNote.textContent = '速度レバーを配置できません。大きさや位置を調整してください。';
     else if (this.recoveryPending) storageNote.textContent = '前回の設定保存を復元する必要があります。控えの設定で表示しています。保存するで復元を再試行できます。';
@@ -598,8 +615,9 @@ export class ControlSettings {
     const previewRect = controlLayoutSize(this.preview);
     if (!appRect.width || !previewRect.width) return;
     const scale = previewRect.width / appRect.width;
+    const rendered=this.renderPlacements(this.draft[this.layoutMode],this.layoutMode);
     for (const name of CONTROL_NAMES) {
-      const control = name === 'throttle' ? safeThrottlePlacement(this.draft[this.layoutMode], appRect.width, appRect.height, this.readInsets(), this.utilityObstacles) : this.draft[this.layoutMode][name];
+      const control = rendered[name];
       const element = this.preview.querySelector<HTMLElement>(`.preview-control[data-control="${name}"]`);
       if (!element) continue;
       element.hidden = !MODE_CONTROLS[this.layoutMode].includes(name);
@@ -612,7 +630,7 @@ export class ControlSettings {
       }
       element.style.setProperty('--control-x', `${clamp(control.x, position.minX, position.maxX) * 100}%`);
       element.style.setProperty('--control-y', `${clamp(control.y, position.minY, position.maxY) * 100}%`);
-      const dimensions = controlDimensions(name, control.size, appRect.width, appRect.height, this.readInsets());
+      const dimensions = this.renderDimensions(name, control.size);
       const diameter = dimensions.width * scale;
       element.style.setProperty('--control-height', `${dimensions.height * scale}px`);
       const labelStyle = previewLabelStyle(diameter, CONTROL_LABELS[name].length);
@@ -629,8 +647,9 @@ export class ControlSettings {
   private apply(layout: ControlLayout, mode: GameMode): void {
     const rect = controlLayoutSize(this.app);
     if (!rect.width || !rect.height) return;
+    const rendered=this.renderPlacements(layout,mode);
     for (const name of CONTROL_NAMES) {
-      const control = name === 'throttle' ? safeThrottlePlacement(layout, rect.width, rect.height, this.readInsets(), this.utilityObstacles) : layout[name];
+      const control = rendered[name];
       const position = this.bounds(name, rect.width, rect.height, 1, 8, control.size);
       const element = this.buttons[name]!;
       if (name === 'throttle') {
@@ -645,17 +664,47 @@ export class ControlSettings {
       }
       element.style.setProperty('--control-x', `${clamp(control.x, position.minX, position.maxX) * 100}%`);
       element.style.setProperty('--control-y', `${clamp(control.y, position.minY, position.maxY) * 100}%`);
-      const dimensions = controlDimensions(name, control.size, rect.width, rect.height, this.readInsets());
+      const dimensions = this.renderDimensions(name, control.size);
       element.style.setProperty('--control-size', `${dimensions.width}px`);
       element.style.setProperty('--control-height', `${dimensions.height}px`);
       element.style.setProperty('--control-opacity', String(control.opacity));
     }
   }
 
+  private measureGeometry(mode:GameMode=this.activeMode):void {
+    const measured=measureHudGeometry(this.app,mode);
+    this.utilityObstacles=measured.obstacles;this.contentDimensions=measured.controls;this.geometryReady=measured.complete;
+  }
+
+  private renderDimensions(name:ControlName,size:number):{width:number;height:number} {
+    const rect=controlLayoutSize(this.app),base=controlDimensions(name,size,rect.width,rect.height,this.readInsets());
+    const content=this.contentDimensions[name];
+    return {width:Math.max(base.width,content?.width??0),height:Math.max(base.height,content?.height??0)};
+  }
+
+  private renderPlacements(layout:ControlLayout,mode:GameMode):Record<ControlName,ControlPlacement & {blocked:boolean}> {
+    this.measureGeometry(mode);
+    const rect=controlLayoutSize(this.app),insets=this.readInsets();
+    const key=JSON.stringify([mode,layout,this.environmentKey,this.contentDimensions]);
+    const cached=this.layoutCache.get(key);if(cached)return cached;
+    const items=MODE_CONTROLS[mode].map(name=>{
+      const item=layout[name],size=this.renderDimensions(name,item.size);
+      const legacy=this.legacyPeerPins[mode]&&name!=='throttle';
+      const old=rectangularBounds(size,rect.width,rect.height,insets);
+      return {id:name,x:(legacy?clamp(item.x,old.minX,old.maxX):item.x)*rect.width,y:(legacy?clamp(item.y,old.minY,old.maxY):item.y)*rect.height,...size};
+    });
+    const result=placeControlFootprints(items,{...rect,top:insets.top+8,right:insets.right+8,bottom:insets.bottom+8,left:insets.left+8},this.utilityObstacles,4,this.legacyPeerPins[mode]?['fire','loop','bomb']:[]);
+    const fits=result.fits&&this.geometryReady;
+    this.app.dataset.controlLayoutFits=String(fits);
+    const rendered=Object.fromEntries(CONTROL_NAMES.map(name=>{const p=result.placements.find(p=>p.id===name);return [name,{...layout[name],x:p?p.x/rect.width:layout[name].x,y:p?p.y/rect.height:layout[name].y,blocked:name==='throttle'&&!fits}];})) as Record<ControlName,ControlPlacement & {blocked:boolean}>;
+    if(this.layoutCache.size>=16)this.layoutCache.delete(this.layoutCache.keys().next().value!);
+    this.layoutCache.set(key,rendered);return rendered;
+  }
+
   private bounds(name: ControlName, width: number, height: number, scale: number, margin: number, buttonSize = this.draft[this.layoutMode][name].size): { minX: number; maxX: number; minY: number; maxY: number } {
     const insets = this.readInsets();
     const rect = controlLayoutSize(this.app);
-    const dimensions = controlDimensions(name, buttonSize, rect.width, rect.height, insets);
+    const dimensions = this.renderDimensions(name, buttonSize);
     return rectangularBounds({ width: dimensions.width * scale, height: dimensions.height * scale }, width, height, { top: insets.top * scale, right: insets.right * scale, bottom: insets.bottom * scale, left: insets.left * scale }, margin);
   }
 
@@ -678,8 +727,24 @@ export class ControlSettings {
     return { normal: copyLayout(layouts.normal), easy: copyLayout(layouts.easy) };
   }
 
+  private readEnvironmentKey():string {
+    const rect=controlLayoutSize(this.app);
+    const fonts=[this.app,...this.app.querySelectorAll<HTMLElement>('#hud [data-flight-control],#hud [data-flight-control] *')].map(e=>{const s=getComputedStyle(e);return [e.id,s.fontSize,s.lineHeight];});
+    return JSON.stringify([rect,this.readInsets(),fonts]);
+  }
+  private afterPointerRelease(id:number):void {
+    this.heldPointers.delete(id);
+    if(this.pendingLayout)queueMicrotask(()=>{if(!this.abort.signal.aborted)this.refreshLayout();});
+  }
   private refreshLayout = (): void => {
-    this.utilityObstacles = measureHudObstacles(this.app);
+    const next=this.readEnvironmentKey();
+    const held=[...this.heldPointers].some(([id,element])=>element.hasPointerCapture(id));
+    const policy=layoutRefreshPolicy(this.environmentKey,next,held);
+    if(policy==='defer'||(this.dragPointer!==null&&next===this.environmentKey)){this.pendingLayout=true;return;}
+    if(policy==='clear-and-apply'){this.clearForEnvironmentChange();this.heldPointers.clear();}
+    if(next!==this.environmentKey){this.layoutCache.clear();this.environmentKey=next;}
+    this.pendingLayout=false;
+    this.measureGeometry();
     this.apply(this.saved[this.activeMode], this.activeMode);
     const viewport = settingsViewportSize(this.app, window.visualViewport?.width ?? window.innerWidth, window.visualViewport?.height ?? window.innerHeight);
     this.dialog?.style.setProperty('--settings-viewport-width', `${viewport.width}px`);

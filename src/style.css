@@ -1123,3 +1123,66 @@ p {
 /* Decorative button text must not extend the input hit area beyond the button.
  * In enlarged text, an overflow label must not steal the adjacent Pause control. */
 #hud #fire > *, #hud #loop > *, #hud #bomb > *, #hud #torpedo > * { pointer-events: none; }
+
+/* Content-sized HUD lanes: text enlargement reflows information instead of
+ * colliding with independent fixed top offsets. No text or hit area is reduced. */
+.hud-readouts {
+  position: absolute;
+  top: calc(12px + var(--safe-top));
+  left: max(12px, env(safe-area-inset-left));
+  right: max(12px, env(safe-area-inset-right));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px calc(27vmin + 16px);
+  pointer-events: none;
+}
+.hud-readouts .hud-top {
+  position: static; grid-column: 1 / -1;
+  display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px;
+}
+.hud-readouts .time-block { flex: 1 0 max-content; padding: 0; }
+.hud-readouts .targets {
+  flex: 1 1 218px; min-width: min-content; max-width: 100%; margin: 0;
+  grid-template-columns: minmax(min-content, 1fr) max-content minmax(min-content, 1fr);
+}
+.hud-readouts .target-tally { min-width: 0; }
+.hud-readouts .target-tally small { max-width: 8em; overflow-wrap: normal; }
+#app .hud-actions #game-sound, #app .hud-actions #pause {
+  width: auto; height: auto; min-width: 44px; min-height: 44px;
+  padding: 4px; flex: 0 0 auto; white-space: nowrap;
+}
+.hud-readouts .flight-data, .hud-readouts .capture-info {
+  position: static; min-width: 0; width: auto; align-self: start;
+}
+.hud-readouts .flight-data { grid-column: 1; }
+.hud-readouts .capture-info { grid-column: 2; }
+.hud-readouts .instrument { flex-wrap: wrap; gap: 2px 8px; }
+.hud-readouts .health-label { flex-wrap: wrap; }
+.hud-readouts .capture-points { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* A label's full painted footprint belongs to its control. Grow the real
+ * button rather than clipping text or shrinking its font/hit area. */
+#app #hud #loop, #app #hud #bomb, #app #hud #fire {
+  width: max-content; height: auto;
+  min-width: var(--control-size); min-height: var(--control-height, var(--control-size));
+  padding: 3px 6px; white-space: nowrap;
+}
+#app #hud #loop > *, #app #hud #bomb > * { flex-shrink: 0; white-space: nowrap; }
+
+/* Preview hit boxes use the same measured rectangle as the live label. */
+#control-settings .preview-control { height: var(--control-height, var(--control-size)); }
+
+/* Alerts stay in their information lane, outside the central sight, and grow
+ * that lane when present. Their text/roles are unchanged and never clipped. */
+.hud-readouts #warning, .hud-readouts #reload-status,
+.hud-readouts #payload-status, .hud-readouts #ally-announcements {
+  position: static; transform: none; width: auto; max-width: none;
+  margin: 6px 0 0; text-align: left; white-space: normal; overflow-wrap: anywhere;
+}
+.hud-readouts #payload-status:empty, .hud-readouts #ally-announcements:empty { margin: 0; }
+#app #hud #loop small { line-height: 1.25; }
+
+.hud-readouts .flight-data { width: 100%; max-width: max(118px, 9em); }
+.hud-readouts .capture-info { width: 100%; max-width: max(146px, 9em); justify-self: end; }
+
+#app #hud #loop small { font-variant-numeric: tabular-nums; }

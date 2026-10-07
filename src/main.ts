@@ -30,7 +30,7 @@ const buttons={fire:el<HTMLButtonElement>('fire'),loop:el<HTMLButtonElement>('lo
   bomb:el<HTMLButtonElement>('bomb')};
 for(const b of Object.values(buttons))b.dataset.flightControl='true';
 const keyboard=new KeyboardSettings(), presentation=new ControlInputPresentation();
-const settings=new ControlSettings(buttons,keyboard,presentation);
+const settings=new ControlSettings(buttons,keyboard,presentation,()=>{controls.clear();pendingLoop=false;pendingBomb=false;});
 let rules:RulesGuide;
 const controls=new FlightControls(canvas,buttons,()=>screen==='playing'&&game.mission.phase==='running'&&game.mission.playerStatus==='flying'&&!settings.isOpen&&!rules?.isOpen,keyboard);
 const audio=new BattleAudio();

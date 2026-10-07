@@ -68,6 +68,7 @@
         </footer>
       </section>
       <section id="hud" aria-label="飛行中の情報" hidden>
+        <div class="hud-readouts">
         <div class="hud-top">
           <div class="time-block">
             <span>残り時間 · <b id="hud-mode">イージー</b></span><strong id="timer">20:00</strong>
@@ -92,6 +93,11 @@
           <div class="wingmen">出撃僚機 <span id="allies-count">5</span></div>
           <div class="score-readout">スコア <b id="score">0</b></div>
           <div class="ammo" aria-label="残弾数">機銃 <b id="mg-ammo">288</b> · 機関砲 <b id="cannon-ammo">96</b></div>
+        <p id="payload-status" class="payload-status"></p>
+        <p id="reload-status" class="reload-status" hidden></p>
+        <p id="warning" class="warning" role="status" hidden>
+          低空注意 · 機首を上げて
+        </p>
         </div>
         <div class="capture-info" aria-label="拠点の所有と供給接続">
           <div id="capture-points" class="capture-points">
@@ -99,13 +105,9 @@
           </div>
           <p id="support-target">支援目標：前進する味方歩兵を守る</p>
           <p id="control-status" role="status" aria-live="polite"></p>
-        </div>
         <div id="ally-announcements" class="ally-announcements" role="status" aria-live="polite" aria-atomic="true"></div>
-        <p id="payload-status" class="payload-status"></p>
-        <p id="reload-status" class="reload-status" hidden></p>
-        <p id="warning" class="warning" role="status" hidden>
-          低空注意 · 機首を上げて
-        </p>
+        </div>
+        </div>
         <button id="bomb" class="flight-button payload-button" aria-label="爆弾を投下"><span class="payload-name">爆弾</span><small id="bomb-ammo">残り2発</small><small id="bomb-hint">有効圏外</small></button>
         <p id="flight-tip" class="flight-tip">触れた位置からドラッグして操縦</p>
         <div class="bottom-controls">
