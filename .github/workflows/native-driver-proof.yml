@@ -1,0 +1,54 @@
+name: Senryou isolated native driver proof
+on:
+  push:
+    branches: [test/native-driver-proof-20261007]
+permissions:
+  contents: read
+jobs:
+  native-driver-proof:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/test/native-driver-proof-20261007'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FORCE_COLOR: '0'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Record exact checked-out commit
+        run: git rev-parse HEAD
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm test
+      - run: npm run build
+      - name: Verify isolated and unchanged standard discovery
+        shell: bash
+        run: |
+          npx playwright test --config=playwright.driver-proof.config.ts --list --reporter=list > "$RUNNER_TEMP/proof-collection.txt"
+          npx playwright test --config=playwright.config.ts --list --reporter=list > "$RUNNER_TEMP/standard-collection.txt"
+          cat "$RUNNER_TEMP/proof-collection.txt" "$RUNNER_TEMP/standard-collection.txt"
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import { readFileSync } from 'node:fs';
+          import { createHash } from 'node:crypto';
+          const proof = readFileSync(process.env.RUNNER_TEMP + '/proof-collection.txt', 'utf8');
+          const standard = readFileSync(process.env.RUNNER_TEMP + '/standard-collection.txt');
+          assert.match(proof, /\nTotal: 1 test in 1 file\n$/);
+          assert.match(proof, /driver-proof\.case\.ts:/);
+          assert.match(standard.toString(), /\nTotal: 34 tests in 4 files\n$/);
+          assert.doesNotMatch(standard.toString(), /driver-proof/);
+          // Exact pinned-base discovery, including all names, source lines and projects.
+          assert.equal(createHash('sha256').update(standard).digest('hex'),
+            'b1e3f402b4cecb3f3ef67474314b80f4a115a88379cbafd1f17605662c206288');
+          JS
+      - run: npx playwright install --with-deps chromium
+      - name: Run native driver once (failure remains failure)
+        id: native-proof
+        run: npx playwright test --config=playwright.driver-proof.config.ts
+      - name: Print complete JSON evidence even on failure
+        if: always()
+        run: node diagnostics/native-driver-proof/print-evidence.mjs
