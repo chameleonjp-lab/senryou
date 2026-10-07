@@ -10,6 +10,8 @@ export const ENVELOPES={
  sources:['src/main.ts hud(): formatting and three-warning join','src/battle/rules.ts CAP: 4 enemy AA, 272 total active ground units','src/battle/weapons.ts: aircraft reload 360/60 = 6s; bomb reload 1200/60 = 20s','src/battle/scoring.ts: respawn 300/60 = 5s','src/battle/ground-nav.ts: longest recovery message','src/battle/projectiles.ts: prediction 1800 * 1/120 = 15s','src/flight.ts: LOOP_COOLDOWN=2'],
 };
 
+export const STYLE_PROPERTIES=['font-family','font-size','font-weight','font-style','font-stretch','font-variant','font-variant-numeric','line-height','letter-spacing','word-spacing','text-transform','text-indent','text-align','white-space','overflow-wrap','word-break','hyphens','box-sizing','padding-top','padding-right','padding-bottom','padding-left','margin-top','margin-right','margin-bottom','margin-left','border-top-width','border-right-width','border-bottom-width','border-left-width','border-top-style','border-right-style','border-bottom-style','border-left-style','border-top-color','border-right-color','border-bottom-color','border-left-color','color','text-shadow','font-kerning','font-feature-settings','font-variation-settings','font-synthesis','direction','writing-mode','text-orientation'] as const;
+export function styleDifferences(before:Record<string,string>,after:Record<string,string>):string[]{return STYLE_PROPERTIES.filter(k=>typeof before[k]!=='string'||typeof after[k]!=='string'||before[k]!==after[k]);}
 const object=(v:unknown):Record<string,unknown>|null=>v!==null&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,unknown>:null;
 const array=(v:unknown):unknown[]=>Array.isArray(v)?v:[];
 const rect=(v:unknown):boolean=>{const r=object(v);return !!r&&['x','y','width','height'].every(k=>typeof r[k]==='number'&&Number.isFinite(r[k]))&&Number(r.width)>=0&&Number(r.height)>=0;};
@@ -24,9 +26,21 @@ export function inspectDiagnostic(value:unknown){
   for(const name of SCENARIOS){
    const scenarios=array(r.scenarios).map(object).filter((s):s is Record<string,unknown>=>!!s&&s.name===name);
    if(scenarios.length!==1){issues.push(`missing-measurement:${id}:${name}`);continue;}
-   const s=scenarios[0],nodes=array(s.nodes).map(object),controls=array(s.controls).map(object),sight=object(s.sight),viewport=object(s.viewport);
+   const s=scenarios[0];
+   if(name!=='current'){const identities=array(s.styleIdentity).map(object);for(const id of ['warning','reload-status','payload-status','control-status']){const found=identities.filter(x=>x?.id===id);if(found.length!==1||!object(found[0]?.before)||!object(found[0]?.after)||styleDifferences(found[0]!.before as Record<string,string>,found[0]!.after as Record<string,string>).length)issues.push(`clone-style-drift:${r.id}:${name}:${id}`);}}
+   if(!Array.isArray(s.visualConflicts)||s.copiedFitIsCloneVerdict!==false)issues.push(`missing-visual-classification:${id}:${name}`);
+   const nodes=array(s.nodes).map(object),controls=array(s.controls).map(object),sight=object(s.sight),viewport=object(s.viewport);
    if(!nodes.length||s.nodeCount!==nodes.length||nodes.some(n=>!n||typeof n.id!=='string'||typeof n.text!=='string'||typeof n.hiddenByAncestor!=='boolean'||typeof n.fontSize!=='string'||!rect(n.box)||!rect(n.clientBox)||!Array.isArray(n.fragments)||!Array.isArray(n.textNodes)||!Array.isArray(n.clipAncestors)))issues.push(`incomplete-node-geometry:${id}:${name}`);
    for(const required of ['warning','reload-status','payload-status','control-status','ally-announcements','loop-status','bomb-ammo','bomb-hint'])if(nodes.filter(n=>n?.id===required).length!==1)issues.push(`missing-node:${id}:${name}:${required}`);
+   if(name!=='current'){
+    const envelope=name==='flying-envelope'?ENVELOPES.flying:ENVELOPES.waiting;
+    const requiredText:Record<string,string>={'warning':envelope.warning,'reload-status':envelope.reload,'payload-status':envelope.payload,'control-status':envelope.status,'loop-status':ENVELOPES.controls.loop,'bomb-ammo':ENVELOPES.controls.bombAmmo,'bomb-hint':ENVELOPES.controls.bombHint};
+    for(const [target,text]of Object.entries(requiredText))if(text){
+     const n=nodes.find(n=>n?.id===target),box=object(n?.box),fragments=array(n?.fragments).map(object),textNodes=array(n?.textNodes).map(object);
+     const positive=(r:unknown)=>rect(r)&&Number(object(r)?.width)>0&&Number(object(r)?.height)>0;
+     if(!n||n.text!==text||n.display==='none'||n.visibility!=='visible'||!['visible-equivalent','fully-clipped'].includes(String(n.visualState))||!positive(box)||!fragments.length||!fragments.every(f=>positive(f?.rect)&&rect(f?.visibleRect))||!textNodes.length||textNodes.some(t=>t?.zeroRange!==false||typeof t.rangeCount!=='number'||t.rangeCount<1))issues.push(`unmeasured-envelope-text:${id}:${name}:${target}`);
+    }
+   }
    for(const required of ['pause','game-sound','fire','loop','throttle','bomb'])if(controls.filter(c=>c?.id===required&&rect(c.box)&&typeof c.hidden==='boolean').length!==1)issues.push(`missing-control:${id}:${name}:${required}`);
    if(!sight||!['x','y','radius','margin'].every(k=>typeof sight[k]==='number'&&Number.isFinite(sight[k]))||Number(sight.radius)<=0||viewport?.width!==profile.width||viewport?.height!==profile.height||!Array.isArray(s.conflicts))issues.push(`missing-frame-geometry:${id}:${name}`);
   }

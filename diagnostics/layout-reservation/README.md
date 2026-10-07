@@ -42,3 +42,38 @@ a small index records byte/SHA and base64 JSON pointers. Images/traces are not
 saved. Source and evidence are preserved in the existing private recovery folder,
 excluding CI setup/checkout logs. Actual CI duration and recovered byte hashes
 will be recorded after the single run, not predicted here.
+
+## Style-preserving diagnostic revision
+
+The first measurement remains unchanged and separately preserved. In this
+revision, every moved notification first receives its envelope text in the
+original parent. Computed font family/size/weight, line height, spacing,
+white-space, padding, margin, borders and related paint properties are recorded
+and fixed on the detached node before reparenting. A before/after difference
+fails the diagnostic; those metrics cannot be used as a required-height claim.
+
+All raw nodes and raw geometric conflicts remain available. A separate visual
+classification intersects client overflow clips and supported inset clip paths.
+An offscreen clone uses host opacity zero only for measurement isolation; this
+artificial host opacity is explicitly ignored for equivalent visibility, while
+real CSS visibility:hidden (including a blocked lever) is not ignored. Hidden
+accessibility descriptions keep their full text and ARIA relationships. Unknown
+clip shapes remain uncertain, not silently successful. Fully clipped nonhidden
+text and unavailable required controls are explicit findings.
+
+The product's copied flag is now named liveSourceControlLayoutFits and is never
+a clone verdict. Circle relations include nearest distance, actual/margin
+penetration and overlap rectangle. The 0.05 CSS-pixel diagnostic classification
+tolerance distinguishes subpixel contacts from true overlap; no original raw
+measurement or formal acceptance threshold is changed.
+
+src/layout-diagnostic-math.ts is imported only by this diagnostic and its unit
+test, never by product runtime. It uses the existing exact source-file manifest
+route; no network-guard permission is widened. Product source/UI from the first
+candidate is unchanged in this revision and remains unaccepted.
+
+Nonempty envelope text requires exact text and positive raw range geometry. A
+known viewport clip may leave a zero visible intersection: that is a measured
+overflow finding, not missing measurement and never product acceptance. Hidden
+or display:none envelopes, absent raw ranges and unsupported clip shapes fail
+measurement completeness.
