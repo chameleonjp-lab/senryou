@@ -1,12 +1,15 @@
 import { expect, test, type Page } from '@playwright/test';
 import { runCase, clickDom, openSettings, rangeKey, storageState } from './harness';
 import { prepareApp } from '../native-frame-driver';
+import { appliedControlOpacity } from './control-opacity-observation';
 async function normalEditor(page:Page) {
   await clickDom(page,'input[name="game-mode"][value="normal"]');await openSettings(page);await clickDom(page,'#control-editor-touch');
 }
 async function changeOpacity(page:Page) {await rangeKey(page,'#control-opacity','Home');await page.keyboard.press('ArrowRight');expect(await page.locator('#control-opacity').inputValue()).toBe('21');}
 async function reload(page:Page) {await page.reload({waitUntil:'domcontentloaded'});await prepareApp(page);}
-const activeOpacity=(page:Page)=>page.locator('#fire').evaluate(e=>(e as HTMLElement).style.opacity);
+const activeOpacity=async(page:Page)=>appliedControlOpacity(await page.locator('#fire').evaluate(e=>({
+ customProperty:(e as HTMLElement).style.getPropertyValue('--control-opacity'),computedOpacity:getComputedStyle(e).opacity,
+})));
 
 test('C.v2.persist',async({browser},info)=>runCase(browser,info,'C.v2.persist',async h=>{
  const {page,evidence}=h;const before=await storageState(page);await normalEditor(page);
@@ -55,7 +58,7 @@ const futureRaw=JSON.stringify({version:99,controls:{fire:{x:.6,y:.6,size:100,op
 test('C.future.session',async({browser},info)=>runCase(browser,info,'C.future.session',async h=>{
  const {page,evidence}=h;await normalEditor(page);const oldActive=await activeOpacity(page);
  await h.check('future-raw-preserved',async()=>{
-  expect(await page.locator('#control-opacity').inputValue()).toBe('90');expect((await storageState(page))['senryou-controls-v2']).toBe(futureRaw);
+  expect(await page.locator('#control-opacity').inputValue()).toBe('90');expect(oldActive).toBe(.9);expect((await storageState(page))['senryou-controls-v2']).toBe(futureRaw);
  });
  await h.check('failed-save-old-active',async()=>{
   await changeOpacity(page);await clickDom(page,'#control-save');await expect(page.locator('#control-settings')).toBeVisible();
@@ -63,7 +66,7 @@ test('C.future.session',async({browser},info)=>runCase(browser,info,'C.future.se
   expect(await activeOpacity(page)).toBe(oldActive);expect((await storageState(page))['senryou-controls-v2']).toBe(futureRaw);
  });
  await h.check('explicit-session',async()=>{
-  await clickDom(page,'#control-save');await expect(page.locator('#control-settings')).not.toBeVisible();expect(Number(await activeOpacity(page))).toBe(.21);
+  await clickDom(page,'#control-save');await expect(page.locator('#control-settings')).not.toBeVisible();expect(await activeOpacity(page)).toBe(.21);
   expect((await storageState(page))['senryou-controls-v2']).toBe(futureRaw);evidence.observations.sessionOpacity=await activeOpacity(page);
  });
  await h.check('reload-old',async()=>{
