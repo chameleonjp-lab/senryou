@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { runCase, start, advanceFrame, clickDom, readState, EnvironmentBlocker } from './harness';
+import { checkedWindowBounds, equalWindowBounds, withRestoredWindow, type WindowBounds, type WindowRestoration } from './native-window-restoration';
 import { prepareApp } from '../native-frame-driver';
 import { deliveredResize, deliveredNativeBlur, withNativeFocus, type ResizeWitness, type FocusWitness } from './native-environment-witness';
 
@@ -52,38 +53,57 @@ test('S.pointer.resize',async({browser},info)=>runCase(browser,info,'S.pointer.r
 }));
 
 test('S.blur',async({browser},info)=>runCase(browser,info,'S.blur',async h=>{
- const {page,evidence}=h,restorations:{page:string;restored:boolean;error?:string}[]=[];
- evidence.observations.focusRestorations=restorations;
- evidence.observations.focusSetup='Only this case disables Playwright 1.61.1 forced-focus emulation; native tab activation must then supply real focus/blur';
+ const {page,evidence}=h,restorations:{page:string;restored:boolean;error?:string}[]=[],windowRestorations:WindowRestoration[]=[];
+ evidence.observations.focusRestorations=restorations;evidence.observations.windowRestorations=windowRestorations;
+ evidence.observations.focusSetup='S.blur only: disable verified Playwright forced-focus override; minimize the real browser window through CDP and restore its original bounds/state';
+ evidence.observations.nativeWindowNote='Minimize may also dispatch visibilitychange; this proves neither isolated blur-only causality nor physical OS interaction';
  const primary=await page.context().newCDPSession(page);
  await withNativeFocus(primary,async()=>{
   await page.bringToFront();
   try{await expect.poll(()=>page.evaluate(()=>document.hasFocus()),{timeout:5000}).toBe(true);}
   catch{throw new EnvironmentBlocker('Native page focus did not become active after framework focus override was disabled');}
+  let original:WindowBounds,windowId:number;
+  try{const target=await primary.send('Browser.getWindowForTarget');windowId=target.windowId;original=checkedWindowBounds(target.bounds);}
+  catch(error){throw new EnvironmentBlocker('Native window bounds are unavailable: '+String(error));}
+  evidence.observations.originalWindow={windowId,bounds:original};
+  // The pinned headless-shell ignores fullscreen-to-minimized. Do not normalize a different starting environment silently.
+  if(original.windowState!=='normal')throw new EnvironmentBlocker('Native window must initially be normal for the bounded minimize probe');
   await start(page,'normal');await page.locator('#flight').focus();await page.keyboard.down('KeyW');await advanceFrame(page,17);
-  const before=await readState(page);expect(before.inputs.at(-1).input.throttle).toBe(1);
-  let other:import('@playwright/test').Page|undefined;
-  try {
-   await h.check('native-blur',async()=>{
-    const beforeFocus=await page.evaluate(()=>({hasFocus:document.hasFocus(),visibilityState:document.visibilityState}));
-    evidence.observations.beforeFocus=beforeFocus;
-    if(!beforeFocus.hasFocus)throw new EnvironmentBlocker('Native focus was absent before the tab action');
-    await page.evaluate(()=>{const events:FocusWitness[]=[];Object.defineProperty(window,'__acceptanceBlur',{value:events});window.addEventListener('blur',event=>events.push({sequence:events.length+1,trusted:event.isTrusted,hasFocus:document.hasFocus(),visibilityState:document.visibilityState}));});
-    other=await page.context().newPage();const secondary=await page.context().newCDPSession(other);
-    await withNativeFocus(secondary,async()=>{
-     await other!.bringToFront();
+  const before=await readState(page);expect(before.inputs.at(-1).input.throttle).toBe(1);evidence.observations.beforeMinimize=before;
+  try{
+   await withRestoredWindow({
+    setBounds:bounds=>primary.send('Browser.setWindowBounds',{windowId,bounds}),
+    verifyRestored:async expected=>{
+     let actual:WindowBounds|undefined;
+     await expect.poll(async()=>{const result=await primary.send('Browser.getWindowBounds',{windowId});actual=checkedWindowBounds(result.bounds);return equalWindowBounds(actual,expected);},{timeout:5000,intervals:[20,50,100,250]}).toBe(true);
+     return actual!;
+    },
+   },original,async()=>{
+    await h.check('native-blur',async()=>{
+     const beforeFocus=await page.evaluate(()=>({hasFocus:document.hasFocus(),visibilityState:document.visibilityState}));evidence.observations.beforeFocus=beforeFocus;
+     if(!beforeFocus.hasFocus)throw new EnvironmentBlocker('Native focus was absent before the window action');
+     await page.evaluate(()=>{
+      const proof:{events:FocusWitness[];visibility:{trusted:boolean;state:string}[]}={events:[],visibility:[]};Object.defineProperty(window,'__acceptanceWindowBlur',{value:proof});
+      window.addEventListener('blur',event=>proof.events.push({sequence:proof.events.length+1,trusted:event.isTrusted,hasFocus:document.hasFocus(),visibilityState:document.visibilityState}));
+      document.addEventListener('visibilitychange',event=>proof.visibility.push({trusted:event.isTrusted,state:document.visibilityState}));
+     });
+     try{await primary.send('Browser.setWindowBounds',{windowId,bounds:{windowState:'minimized'}});}
+     catch(error){throw new EnvironmentBlocker('Native minimize command is unavailable: '+String(error));}
      try{await expect.poll(async()=>{
-      const proof=await page.evaluate(()=>({events:(window as unknown as {__acceptanceBlur:FocusWitness[]}).__acceptanceBlur,hasFocus:document.hasFocus(),visibilityState:document.visibilityState}));
-      evidence.observations.blurDelivery=proof;return deliveredNativeBlur(beforeFocus.hasFocus,proof.events,proof.hasFocus);
+      const bounds=(await primary.send('Browser.getWindowBounds',{windowId})).bounds;
+      const proof=await page.evaluate(()=>({...(window as unknown as {__acceptanceWindowBlur:{events:FocusWitness[];visibility:{trusted:boolean;state:string}[]}}).__acceptanceWindowBlur,hasFocus:document.hasFocus(),visibilityState:document.visibilityState}));
+      evidence.observations.blurDelivery={windowId,bounds,...proof};
+      return bounds.windowState==='minimized'&&deliveredNativeBlur(beforeFocus.hasFocus,proof.events,proof.hasFocus);
      },{timeout:5000,intervals:[20,50,100,250]}).toBe(true);}
-     catch{throw new EnvironmentBlocker('Native tab action did not deliver trusted blur plus actual focus loss with the framework override disabled');}
-     evidence.observations.nativeTabNote='Tab visibility may change with focus; this does not claim isolated window-blur-only causality';
-     await page.bringToFront();
-     try{await expect.poll(()=>page.evaluate(()=>document.hasFocus()),{timeout:5000}).toBe(true);}
-     catch{throw new EnvironmentBlocker('Native focus did not return for explicit recovery');}
-     await page.keyboard.up('KeyW');
-    },result=>{restorations.push({page:'other',...result});if(!result.restored)evidence.errors.push('Other-page focus override restoration failed: '+result.error);});
-   });
+     catch{throw new EnvironmentBlocker('Native minimized window did not deliver trusted blur plus actual focus loss');}
+     // Read the product before restore, so a later restore/resize cannot manufacture the observed pause.
+     const stopped=await readState(page);evidence.observations.minimizedProduct=stopped;
+     expect(stopped.screen).toBe('paused');expect(stopped.phase).toBe('paused');expect(stopped.tick).toBe(before.tick);expect(stopped.targetSpeed).toBe(before.targetSpeed);expect(stopped.inputs).toEqual(before.inputs);
+    });
+   },result=>{windowRestorations.push(result);if(!result.restored)evidence.errors.push('Native window restoration failed: '+result.error);});
+   await page.bringToFront();
+   try{await expect.poll(async()=>{const proof=await page.evaluate(()=>({hasFocus:document.hasFocus(),visibilityState:document.visibilityState}));evidence.observations.restoredFocus=proof;return proof.hasFocus&&proof.visibilityState==='visible';},{timeout:5000}).toBe(true);}
+   catch{throw new EnvironmentBlocker('Native focus/visibility did not return after exact window restoration');}
    await h.check('pause',async()=>{expect((await readState(page)).screen).toBe('paused');});
    await h.check('input-cleared',async()=>{
     const paused=await readState(page);await advanceFrame(page,100);const frozen=await readState(page);expect(frozen.tick).toBe(paused.tick);expect(frozen.hash).toBe(paused.hash);evidence.observations.frozen={paused,frozen};
@@ -92,7 +112,7 @@ test('S.blur',async({browser},info)=>runCase(browser,info,'S.blur',async h=>{
     await clickDom(page,'#resume');await advanceFrame(page,0);await advanceFrame(page,17);const resumed=await readState(page);
     expect(resumed.screen).toBe('playing');expect(resumed.inputs.at(-1).input.throttle).toBe(0);expect(resumed.targetSpeed).toBe(before.targetSpeed);evidence.observations.resumed=resumed;
    });
-  } finally {if(other&&!other.isClosed())await other.close();}
+  }finally{await page.keyboard.up('KeyW');}
  },result=>{restorations.push({page:'primary',...result});if(!result.restored)evidence.errors.push('Primary-page focus override restoration failed: '+result.error);});
 }));
 

@@ -42,8 +42,10 @@ jobs:
           assert.equal(createHash('sha256').update(old).digest('hex'),'b1e3f402b4cecb3f3ef67474314b80f4a115a88379cbafd1f17605662c206288');
           JS
       - run: npx playwright install --with-deps chromium
-      - name: Run scoped acceptance once with bounded group budget
-        run: timeout --signal=INT --kill-after=30s 20m npx playwright test --config=playwright.acceptance.config.ts
+      - name: Diagnose S.blur only with bounded group budget
+        run: timeout --signal=INT --kill-after=30s 20m npx playwright test --config=playwright.acceptance.config.ts --grep 'S\.blur$'
       - name: Preserve raw JSON and fail-closed summary in logs
         if: always()
-        run: node --import tsx diagnostics/acceptance/print-report.ts
+        run: |
+          echo 'DIAGNOSTIC_SCOPE: S.blur only; 12 unexecuted cases remain missing; this run cannot establish full-suite success'
+          node --import tsx diagnostics/acceptance/print-report.ts
