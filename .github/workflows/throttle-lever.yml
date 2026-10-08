@@ -1,19 +1,23 @@
 name: Senryou throttle lever checks
 on:
   pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: senryou-throttle-${{ github.event.pull_request.number }}
+  group: senryou-throttle-${{ github.event.pull_request.number || github.ref_name }}
   cancel-in-progress: true
 jobs:
   verify:
+    # This is the exact complement of ui-only.yml's job condition. Only the same-repo
+    # dedicated branch targeting main skips this legacy gameplay/GPU workload.
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name != github.repository || github.event.pull_request.head.ref != 'codex/senryou-ui-only-20261008' || github.event.pull_request.base.ref != 'main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.pull_request.head.sha }}
           fetch-depth: 2
           persist-credentials: false
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -70,7 +74,7 @@ jobs:
         if: always() && steps.fresh-smoke-evidence.outcome == 'success'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: senryou-throttle-${{ github.event.pull_request.head.sha }}
+          name: senryou-throttle-${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.pull_request.head.sha }}
           path: |
             native-stop-evidence/
             test-results/
