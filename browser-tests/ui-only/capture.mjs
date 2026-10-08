@@ -72,10 +72,16 @@ try{
  const settle=()=>bounded(page.evaluate(async()=>{await document.fonts.ready;await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}),budgets.settleMs,'fonts/frame settling');
  const canvasState=()=>page.locator('#markers').evaluate(canvas=>{const c=canvas.getContext('2d'),d=c.getImageData(0,0,canvas.width,canvas.height).data;let painted=0;for(let i=3;i<d.length;i+=4)if(d[i])painted++;return {width:canvas.width,height:canvas.height,paintedPixels:painted};});
  const state=()=>page.evaluate(()=>({...window.__senryouUiOnly.snapshot(),telemetry:window.__senryouUiOnly.telemetry}));
+ const resetScrollPositions=()=>page.evaluate(()=>{
+  window.scrollTo(0,0);
+  const elements=[document.documentElement,document.body,...document.querySelectorAll('*')];let resetCount=0;
+  for(const element of elements)if(element.scrollTop!==0||element.scrollLeft!==0){element.scrollTop=0;element.scrollLeft=0;resetCount++;}
+  return {scrollY:window.scrollY,documentTop:document.documentElement.scrollTop,bodyTop:document.body.scrollTop,resetCount};
+ });
  for(const [id,width,height,fixture,mode,enlarge] of rows){
   const item={id,fixture,mode,viewport:{width,height},domTextScale:enlarge?2:1,status:'not-run',batchIdentity:report.batchIdentity,sourceHashesFingerprint:report.sourceHashesFingerprint,centerHitPolicy:'observational-only; false does not fail capture',imageReviewed:false};report.screens.push(item);
   try{
-   await page.setViewportSize({width,height});await page.evaluate(({fixture,mode})=>window.__senryouUiOnly.show(fixture,mode),{fixture,mode});
+   await page.setViewportSize({width,height});await page.evaluate(({fixture,mode})=>window.__senryouUiOnly.show(fixture,mode),{fixture,mode});item.scrollReset=await resetScrollPositions();
    if(enlarge)item.textScale=await text200(page);await settle();if(enlarge)item.textScaleVerification=await verifyText200(page);
    item.state=await state();item.canvas=await canvasState();
    const playing=item.state.screen==='playing'||item.state.screen==='paused';
@@ -84,9 +90,13 @@ try{
    if(item.state.telemetry.webglRequests!==0)throw new Error('Unexpected WebGL request');
    item.visibleControls=await page.evaluate(()=>[...document.querySelectorAll('button,[role="slider"],select')].filter(e=>e.checkVisibility({checkOpacity:true,checkVisibilityCSS:true})).map(e=>{const r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return {id:e.id,label:e.getAttribute('aria-label')||e.textContent.trim(),disabled:!!e.disabled,x:r.x,y:r.y,width:r.width,height:r.height,centerHit:hit===e||e.contains(hit)};}));
    item.screenshot=id+'.png';const screenshotPath=resolve(output,item.screenshot);await page.screenshot({path:screenshotPath});item.screenshotSha256=fileSha256(screenshotPath);report.screenshotCount++;
-   const scrollOwner=fixture.startsWith('settings-')?'#control-settings .settings-main':fixture==='rules'?'#rules-content':fixture.startsWith('result-')?'#result':fixture.includes('error')?null:fixture==='pause'?'#pause-screen':fixture==='home'?'#home':null;
-   if(scrollOwner&&await page.locator(scrollOwner).evaluate(e=>e.scrollHeight>e.clientHeight+1)){
-    await page.locator(scrollOwner).evaluate(e=>e.scrollTop=e.scrollHeight);await settle();item.bottomScreenshot=id+'-bottom.png';const bottomScreenshotPath=resolve(output,item.bottomScreenshot);await page.screenshot({path:bottomScreenshotPath});item.bottomScreenshotSha256=fileSha256(bottomScreenshotPath);report.screenshotCount++;
+   const scrollOwner=fixture.startsWith('settings-')?'#control-settings .settings-main':fixture==='rules'?'#rules-content':fixture.startsWith('result-')?'#result':fixture==='startup-error'?'#home':fixture==='paused-error'?'#pause-screen':fixture==='pause'?'#pause-screen':fixture==='home'?'#home':null;
+   const requiresEndCapture=fixture.startsWith('result-')||fixture.includes('error');
+   if(scrollOwner){
+    const scrollMetrics=await page.locator(scrollOwner).evaluate(e=>{const beforeTop=e.scrollTop;e.scrollTop=e.scrollHeight;return {target:e.id||e.className,beforeTop,afterTop:e.scrollTop,scrollHeight:e.scrollHeight,clientHeight:e.clientHeight,bottomReached:e.scrollTop+e.clientHeight>=e.scrollHeight-1};});
+    if(requiresEndCapture||scrollMetrics.scrollHeight>scrollMetrics.clientHeight+1){
+     await settle();item.bottomScroll=scrollMetrics;item.bottomScreenshot=id+'-bottom.png';const bottomScreenshotPath=resolve(output,item.bottomScreenshot);await page.screenshot({path:bottomScreenshotPath});item.bottomScreenshotSha256=fileSha256(bottomScreenshotPath);report.screenshotCount++;
+    }
    }
    item.status='captured-needs-visual-review';
   }catch(error){item.status='failed';item.error=String(error);}
