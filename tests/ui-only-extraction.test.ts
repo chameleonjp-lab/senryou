@@ -40,11 +40,14 @@ test('UI-only and legacy workflows hand off on the same repository, branch, and 
  const ui=readFileSync(new URL('../.github/workflows/ui-only.yml',import.meta.url),'utf8');
  const branch="'codex/senryou-ui-only-20261008'";
  assert.ok(legacy.includes(`head.repo.full_name != github.repository || github.event.pull_request.head.ref != ${branch} || github.event.pull_request.base.ref != 'main'`));
+ assert.ok(legacy.includes(`github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == ${branch} && github.event.pull_request.base.ref == 'main'`));
+ assert.ok(legacy.includes('uses: ./.github/workflows/ui-only.yml'));
  assert.ok(legacy.includes('workflow_dispatch:'));
  assert.ok(legacy.includes("github.event_name == 'workflow_dispatch' ||"));
  assert.ok(legacy.includes('github.event_name == \'workflow_dispatch\' && github.sha'));
  assert.ok(ui.includes(`head.repo.full_name == github.repository && github.event.pull_request.head.ref == ${branch} && github.event.pull_request.base.ref == 'main'`));
- assert.ok(ui.includes('pull_request: {}'));
+ assert.ok(ui.includes('workflow_call:'));
+ assert.doesNotMatch(ui,/^\s+pull_request:/m);
  assert.doesNotMatch(ui,/^\s+paths:/m);
 });
 

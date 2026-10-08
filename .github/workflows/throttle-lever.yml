@@ -8,6 +8,9 @@ concurrency:
   group: senryou-throttle-${{ github.event.pull_request.number || github.ref_name }}
   cancel-in-progress: true
 jobs:
+  ui-only:
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/senryou-ui-only-20261008' && github.event.pull_request.base.ref == 'main'
+    uses: ./.github/workflows/ui-only.yml
   verify:
     # This is the exact complement of ui-only.yml's job condition. Only the same-repo
     # dedicated branch targeting main skips this legacy gameplay/GPU workload.
