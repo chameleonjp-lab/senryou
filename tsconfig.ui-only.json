@@ -1,0 +1,1 @@
+{"extends":"./tsconfig.json","compilerOptions":{"baseUrl":".","paths":{"/*":["./*"],"virtual:senryou-ui":["browser-tests/ui-only/generated/ui.ts"],"virtual:senryou-canvas":["browser-tests/ui-only/generated/canvas.ts"]}},"include":["browser-tests/ui-only/entry.ts","browser-tests/ui-only/samples.ts","browser-tests/ui-only/generated/*.ts"]}

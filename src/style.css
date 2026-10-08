@@ -1123,3 +1123,120 @@ p {
 /* Decorative button text must not extend the input hit area beyond the button.
  * In enlarged text, an overflow label must not steal the adjacent Pause control. */
 #hud #fire > *, #hud #loop > *, #hud #bomb > *, #hud #torpedo > * { pointer-events: none; }
+
+/* Content-sized HUD lanes: text enlargement reflows information instead of
+ * colliding with independent fixed top offsets. No text or hit area is reduced. */
+.hud-readouts {
+  position: absolute;
+  top: calc(12px + var(--safe-top));
+  left: max(12px, env(safe-area-inset-left));
+  right: max(12px, env(safe-area-inset-right));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px calc(27vmin + 16px);
+  pointer-events: none;
+}
+.hud-readouts .hud-top {
+  position: static; grid-column: 1 / -1;
+  display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px;
+}
+.hud-readouts .time-block { flex: 1 0 max-content; padding: 0; }
+.hud-readouts .targets {
+  flex: 1 1 218px; min-width: min-content; max-width: 100%; margin: 0;
+  grid-template-columns: minmax(min-content, 1fr) max-content minmax(min-content, 1fr);
+}
+.hud-readouts .target-tally { min-width: 0; }
+.hud-readouts .target-tally small { max-width: 8em; overflow-wrap: normal; }
+#app .hud-actions #game-sound, #app .hud-actions #pause {
+  width: auto; height: auto; min-width: 44px; min-height: 44px;
+  padding: 4px; flex: 0 0 auto; white-space: nowrap;
+}
+.hud-readouts .flight-data, .hud-readouts .capture-info {
+  position: static; min-width: 0; width: auto; align-self: start;
+}
+.hud-readouts .flight-data { grid-column: 1; }
+.hud-readouts .capture-info { grid-column: 2; }
+.hud-readouts .instrument { flex-wrap: wrap; gap: 2px 8px; }
+.hud-readouts .health-label { flex-wrap: wrap; }
+.hud-readouts .capture-points { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* A label's full painted footprint belongs to its control. Grow the real
+ * button rather than clipping text or shrinking its font/hit area. */
+#app #hud #loop, #app #hud #bomb, #app #hud #fire {
+  width: max-content; height: auto;
+  min-width: var(--control-size); min-height: var(--control-height, var(--control-size));
+  padding: 3px 6px; white-space: nowrap;
+}
+#app #hud #loop > *, #app #hud #bomb > * { flex-shrink: 0; white-space: nowrap; }
+
+/* Preview hit boxes use the same measured rectangle as the live label. */
+#control-settings .preview-control { height: var(--control-height, var(--control-size)); }
+
+/* Alerts stay in their information lane, outside the central sight, and grow
+ * that lane when present. Their text/roles are unchanged and never clipped. */
+.hud-readouts #warning, .hud-readouts #reload-status,
+.hud-readouts #payload-status, .hud-readouts #ally-announcements {
+  position: static; transform: none; width: auto; max-width: none;
+  margin: 6px 0 0; text-align: left; white-space: normal; overflow-wrap: anywhere;
+}
+.hud-readouts #payload-status:empty, .hud-readouts #ally-announcements:empty { margin: 0; }
+#app #hud #loop small { line-height: 1.25; }
+
+.hud-readouts .flight-data { width: 100%; max-width: max(118px, 9em); }
+.hud-readouts .capture-info { width: 100%; max-width: max(146px, 9em); justify-self: end; }
+
+#app #hud #loop small { font-variant-numeric: tabular-nums; }
+
+/* State-family notification slots: flying variants share stable occupancy;
+ * waiting/spectating reuse one slot rather than stacking impossible warnings. */
+.hud-notice-top, .hud-notice-shared {
+  position: absolute; left: max(8px, env(safe-area-inset-left)); right: max(8px, env(safe-area-inset-right));
+  pointer-events: none; display: grid; gap: 2px; align-content: start;
+}
+.hud-notice-top { top: calc(8px + var(--safe-top)); min-height: var(--hud-notice-top-height, 0px); }
+.hud-notice-shared { bottom: calc(8px + var(--safe-bottom)); min-height: var(--hud-notice-shared-height, 0px); }
+#hud .hud-notice-top > *, #hud .hud-notice-shared > * {
+  position: static; transform: none; width: auto; max-width: none; margin: 0;
+  padding: 0; border-width: 0; border-radius: 0; text-align: left;
+  white-space: normal; overflow-wrap: anywhere; background: none;
+}
+#hud #warning { font-size: 12px; line-height: 1.25; }
+#hud #reload-status { font-size: .8rem; line-height: 1.25; }
+#hud #payload-status, #hud #control-status { font-size: 10px; line-height: 1.25; }
+.hud-readouts {
+  top: calc(8px + var(--safe-top) + var(--hud-notice-top-height, 0px) + 2px);
+  left: max(8px, env(safe-area-inset-left)); right: max(8px, env(safe-area-inset-right));
+  gap: 4px 8px;
+}
+.hud-readouts .hud-top { gap: 4px; }
+.hud-readouts .time-block { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; }
+.hud-readouts .time-block > span { margin: 0; }
+.hud-readouts .targets { padding: 0; gap: 4px; border-width: 0; background: none; }
+.hud-readouts .target-tally { gap: 2px; }
+.hud-readouts .target-tally b { line-height: 1.2; }
+#app #hud #loop > span { line-height: 1.2; }
+.hud-readouts .flight-data {
+  grid-column: 1 / -1; width: 100%; max-width: none; display: grid;
+  grid-template-columns: max-content max-content minmax(0, 1fr);
+  grid-template-areas: 'health instrument score' 'bar instrument score' 'wing ammo ammo';
+  gap: 2px 6px; align-items: baseline;
+}
+.flight-data .health-label { grid-area: health; }
+.flight-data .health-track { grid-area: bar; margin: 0; }
+.flight-data .instrument { grid-area: instrument; flex-wrap: nowrap; gap: 4px; }
+.flight-data .wingmen { grid-area: wing; margin: 0; }
+.flight-data .score-readout { grid-area: score; margin: 0; }
+.flight-data .ammo { grid-area: ammo; margin: 0; }
+.hud-readouts .capture-info { grid-column: 1 / -1; width: 100%; max-width: none; }
+.hud-readouts .capture-points { display: flex; flex-wrap: wrap; gap: 2px 8px; }
+.hud-readouts .capture-points > span { white-space: nowrap; line-height: 1.25; }
+.hud-readouts .capture-info p { margin: 2px 0 0; line-height: 1.25; }
+
+/* The lower notification group shares the top region with inactive status;
+ * it is split into columns where warning/reload/prediction can co-occur. */
+.hud-notice-shared { top: calc(8px + var(--safe-top) + var(--hud-notice-top-height, 0px) + 2px); bottom: auto; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.hud-notice-shared #control-status { grid-column: 1 / -1; }
+.hud-readouts { top: calc(8px + var(--safe-top) + var(--hud-notice-top-height, 0px) + var(--hud-notice-shared-height, 0px) + 4px); }
+
+/* Countdown glyph advances stay stable without reducing any font size. */
+#app #hud #bomb small, #hud #reload-status, #hud #control-status { font-variant-numeric: tabular-nums; }

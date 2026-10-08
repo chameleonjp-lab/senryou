@@ -2,6 +2,7 @@ import './style.css';
 import './control-settings.css';
 import { FlightControls } from './input';
 import { ControlSettings } from './control-settings';
+import {reservationPhase} from './hud-notification-reservations';
 import { KeyboardSettings, ControlInputPresentation } from './keyboard-settings';
 import { RulesGuide } from './rules-guide';
 import { BattleView } from './battle-view';
@@ -30,7 +31,7 @@ const buttons={fire:el<HTMLButtonElement>('fire'),loop:el<HTMLButtonElement>('lo
   bomb:el<HTMLButtonElement>('bomb')};
 for(const b of Object.values(buttons))b.dataset.flightControl='true';
 const keyboard=new KeyboardSettings(), presentation=new ControlInputPresentation();
-const settings=new ControlSettings(buttons,keyboard,presentation);
+const settings=new ControlSettings(buttons,keyboard,presentation,()=>{controls.clear();pendingLoop=false;pendingBomb=false;});
 let rules:RulesGuide;
 const controls=new FlightControls(canvas,buttons,()=>screen==='playing'&&game.mission.phase==='running'&&game.mission.playerStatus==='flying'&&!settings.isOpen&&!rules?.isOpen,keyboard);
 const audio=new BattleAudio();
@@ -95,6 +96,8 @@ function forces(team:Team):Record<UnitKind,number>{return Object.fromEntries(KIN
 function forceText(n:Record<UnitKind,number>):string{return `歩${n.infantry} · 戦${n.tank} · 対${n.aa} · 空${n.aircraft}`;}
 function hud():void{
   const m=game.mission,player=m.units.find(u=>u.id===m.controlledAircraftId&&u.state==='active');
+  const notificationPhase=reservationPhase(!!player,m.playerStatus);
+  if(app.dataset.hudReservationPhase!==notificationPhase)app.dataset.hudReservationPhase=notificationPhase;
   el('timer').textContent=time(1200-m.tick/60);
   for(const [key,team] of [['friendly',m.playerTeam],['enemy',opposite(m.playerTeam)]] as const){
     const f=forces(team);el(`${key}-total`).textContent=String(Object.values(f).reduce((a,b)=>a+b,0));el(`force-${key}`).textContent=forceText(f);
