@@ -54,16 +54,25 @@ test('UI-only and legacy workflows hand off on the same repository, branch, and 
  assert.doesNotMatch(ui,/^\s+paths:/m);
 });
 
-test('runner.temp is referenced only from GitHub Actions step contexts',()=>{
+test('all fixture stages share runner.temp evidence through GitHub Actions step contexts',()=>{
  const workflows=[
   readFileSync(new URL('../.github/workflows/throttle-lever.yml',import.meta.url),'utf8'),
   readFileSync(new URL('../.github/workflows/ui-only.yml',import.meta.url),'utf8')
  ];
+ const steps=[
+  ['Generate pinned product UI modules','browser-tests/ui-only/check-fixture.mjs'],
+  ['Validate fixture Vite transforms','browser-tests/ui-only/validate-vite.mjs'],
+  ['Capture bounded product UI states','browser-tests/ui-only/capture.mjs']
+ ];
  for(const workflow of workflows){
   assert.doesNotMatch(workflow,/^ {4}env:\r?\n^ {6}UI_ONLY_EVIDENCE_DIR:.*\$\{\{\s*runner\.temp\s*\}\}/m);
-  assert.match(workflow,/^ {6}- name: Capture bounded product UI states\r?\n^ {8}env:\r?\n^ {10}UI_ONLY_EVIDENCE_DIR: \$\{\{ runner\.temp \}\}\/senryou-ui-only-evidence\r?\n^ {8}run: node browser-tests\/ui-only\/capture\.mjs$/m);
+  for(const [name,script] of steps){
+   const escapedName=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+   const escapedScript=script.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+   assert.match(workflow,new RegExp(`^      - name: ${escapedName}\\r?\\n        env:\\r?\\n          UI_ONLY_EVIDENCE_DIR: \\$\\{\\{ runner\\.temp \\}\\}\\/senryou-ui-only-evidence\\r?\\n        run: node ${escapedScript}$`,'m'));
+  }
   assert.match(workflow,/^ {10}path: \$\{\{ runner\.temp \}\}\/senryou-ui-only-evidence\/$/m);
-  assert.equal([...workflow.matchAll(/\$\{\{\s*runner\.temp\s*\}\}/g)].length,2);
+  assert.equal([...workflow.matchAll(/\$\{\{\s*runner\.temp\s*\}\}/g)].length,4);
  }
 });
 

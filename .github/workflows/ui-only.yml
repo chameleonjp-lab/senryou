@@ -23,10 +23,14 @@ jobs:
       - name: Normal type check and production build
         run: npm run build
       - name: Generate pinned product UI modules
+        env:
+          UI_ONLY_EVIDENCE_DIR: ${{ runner.temp }}/senryou-ui-only-evidence
         run: node browser-tests/ui-only/check-fixture.mjs
       - name: Strict type check for the UI-only fixture
         run: npx tsc --noEmit --project tsconfig.ui-only.json
       - name: Validate fixture Vite transforms
+        env:
+          UI_ONLY_EVIDENCE_DIR: ${{ runner.temp }}/senryou-ui-only-evidence
         run: node browser-tests/ui-only/validate-vite.mjs
       - name: Install Chromium only
         run: npx playwright install --with-deps chromium
