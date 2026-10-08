@@ -27,18 +27,25 @@ test('ordinary product entry/config have no fixture activation',()=>{
  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8'),config=readFileSync(new URL('../vite.config.ts',import.meta.url),'utf8');
  assert.doesNotMatch(html+config,/ui-only|__senryouUiOnly|__ui_only__/);
  const entry=readFileSync(new URL('../browser-tests/ui-only/entry.ts',import.meta.url),'utf8');
+ assert.doesNotMatch(entry,/import\s+['"][^'"]+\.css/);
  assert.ok(entry.includes("import.meta.env.MODE!=='ui-only'||location.pathname!=='/__ui_only__/'"));
  assert.ok(entry.indexOf("throw new Error('Private UI")<entry.indexOf("await import('virtual:senryou-ui')"));
 });
 test('fixture config rejects build or an omitted explicit development mode',()=>{
  const config=readFileSync(new URL('../vite.ui-only.config.ts',import.meta.url),'utf8');
  assert.ok(config.includes("command!=='serve'||mode!=='ui-only'"));assert.ok(config.includes("apply:'serve'"));
+ assert.ok(config.includes('ws:false,hmr:false'));
+ assert.ok(config.includes('<link rel="stylesheet" href="/src/style.css?direct">'));
+ assert.ok(config.includes('<link rel="stylesheet" href="/src/control-settings.css?direct">'));
+ assert.ok(config.includes('src=\"/@vite/client\"'));
+ assert.ok(config.includes('html.split(viteClient).length!==2'));
+ assert.ok(config.includes("html.replace(viteClient,'')"));
 });
 
 test('UI-only and legacy workflows hand off on the same repository, branch, and main base for every path',()=>{
  const legacy=readFileSync(new URL('../.github/workflows/throttle-lever.yml',import.meta.url),'utf8');
  const ui=readFileSync(new URL('../.github/workflows/ui-only.yml',import.meta.url),'utf8');
- const branch="'codex/senryou-ui-only-20261008'";
+ const branch="'codex/senryou-ui-only-context-fix-20261008'";
  assert.ok(legacy.includes(`head.repo.full_name != github.repository || github.event.pull_request.head.ref != ${branch} || github.event.pull_request.base.ref != 'main'`));
  assert.ok(legacy.includes(`github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == ${branch} && github.event.pull_request.base.ref == 'main'`));
  assert.ok(legacy.includes('Normal unit tests'));
@@ -52,6 +59,28 @@ test('UI-only and legacy workflows hand off on the same repository, branch, and 
  assert.ok(ui.includes('ref: ${{ github.sha }}'));
  assert.doesNotMatch(ui,/^\s+pull_request:/m);
  assert.doesNotMatch(ui,/^\s+paths:/m);
+});
+
+test('all fixture stages share runner.temp evidence through GitHub Actions step contexts',()=>{
+ const workflows=[
+  readFileSync(new URL('../.github/workflows/throttle-lever.yml',import.meta.url),'utf8'),
+  readFileSync(new URL('../.github/workflows/ui-only.yml',import.meta.url),'utf8')
+ ];
+ const steps=[
+  ['Generate pinned product UI modules','browser-tests/ui-only/check-fixture.mjs'],
+  ['Validate fixture Vite transforms','browser-tests/ui-only/validate-vite.mjs'],
+  ['Capture bounded product UI states','browser-tests/ui-only/capture.mjs']
+ ];
+ for(const workflow of workflows){
+  assert.doesNotMatch(workflow,/^ {4}env:\r?\n^ {6}UI_ONLY_EVIDENCE_DIR:.*\$\{\{\s*runner\.temp\s*\}\}/m);
+  for(const [name,script] of steps){
+   const escapedName=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+   const escapedScript=script.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+   assert.match(workflow,new RegExp(`^      - name: ${escapedName}\\r?\\n        env:\\r?\\n          UI_ONLY_EVIDENCE_DIR: \\$\\{\\{ runner\\.temp \\}\\}\\/senryou-ui-only-evidence\\r?\\n        run: node ${escapedScript}$`,'m'));
+  }
+  assert.match(workflow,/^ {10}path: \$\{\{ runner\.temp \}\}\/senryou-ui-only-evidence\/$/m);
+  assert.equal([...workflow.matchAll(/\$\{\{\s*runner\.temp\s*\}\}/g)].length,4);
+ }
 });
 
 test('adapter placeholders reject missing or duplicate tokens',()=>{assert.equal(replaceExactlyOnce('a TOKEN b','TOKEN','ok'),'a ok b');assert.throws(()=>replaceExactlyOnce('none','TOKEN','ok'));assert.throws(()=>replaceExactlyOnce('TOKEN TOKEN','TOKEN','ok'));});
