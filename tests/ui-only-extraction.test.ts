@@ -41,12 +41,15 @@ test('UI-only and legacy workflows hand off on the same repository, branch, and 
  const branch="'codex/senryou-ui-only-20261008'";
  assert.ok(legacy.includes(`head.repo.full_name != github.repository || github.event.pull_request.head.ref != ${branch} || github.event.pull_request.base.ref != 'main'`));
  assert.ok(legacy.includes(`github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == ${branch} && github.event.pull_request.base.ref == 'main'`));
- assert.ok(legacy.includes('uses: ./.github/workflows/ui-only.yml'));
+ assert.ok(legacy.includes('Normal unit tests'));
+ assert.ok(legacy.includes('Capture bounded product UI states'));
+ assert.ok(legacy.includes('Preserve UI-only screenshots and reports'));
  assert.ok(legacy.includes('workflow_dispatch:'));
  assert.ok(legacy.includes("github.event_name == 'workflow_dispatch' ||"));
  assert.ok(legacy.includes('github.event_name == \'workflow_dispatch\' && github.sha'));
- assert.ok(ui.includes(`head.repo.full_name == github.repository && github.event.pull_request.head.ref == ${branch} && github.event.pull_request.base.ref == 'main'`));
- assert.ok(ui.includes('workflow_call:'));
+ assert.ok(ui.includes('workflow_dispatch:'));
+ assert.ok(ui.includes('Capture bounded product UI states'));
+ assert.ok(ui.includes('ref: ${{ github.sha }}'));
  assert.doesNotMatch(ui,/^\s+pull_request:/m);
  assert.doesNotMatch(ui,/^\s+paths:/m);
 });

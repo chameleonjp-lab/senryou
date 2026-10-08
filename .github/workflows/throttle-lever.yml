@@ -10,10 +10,46 @@ concurrency:
 jobs:
   ui-only:
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/senryou-ui-only-20261008' && github.event.pull_request.base.ref == 'main'
-    uses: ./.github/workflows/ui-only.yml
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      UI_ONLY_EVIDENCE_DIR: ${{ runner.temp }}/senryou-ui-only-evidence
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install exact locked dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Normal unit tests
+        run: npm test
+      - name: Normal type check and production build
+        run: npm run build
+      - name: Generate pinned product UI modules
+        run: node browser-tests/ui-only/check-fixture.mjs
+      - name: Strict type check for the UI-only fixture
+        run: npx tsc --noEmit --project tsconfig.ui-only.json
+      - name: Validate fixture Vite transforms
+        run: node browser-tests/ui-only/validate-vite.mjs
+      - name: Install Chromium only
+        run: npx playwright install --with-deps chromium
+      - name: Capture bounded product UI states
+        run: node browser-tests/ui-only/capture.mjs
+      - name: Preserve UI-only screenshots and reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: senryou-ui-only-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/senryou-ui-only-evidence/
+          retention-days: 7
+          if-no-files-found: warn
   verify:
-    # This is the exact complement of ui-only.yml's job condition. Only the same-repo
-    # dedicated branch targeting main skips this legacy gameplay/GPU workload.
+    # This complements the UI-only job above. Only the same-repo dedicated branch
+    # targeting main skips this legacy gameplay/GPU workload.
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name != github.repository || github.event.pull_request.head.ref != 'codex/senryou-ui-only-20261008' || github.event.pull_request.base.ref != 'main'
     runs-on: ubuntu-latest
     timeout-minutes: 30

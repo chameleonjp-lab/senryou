@@ -1,12 +1,10 @@
 name: Senryou UI-only checks
 on:
-  workflow_call:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
   ui-only:
-    # Match the legacy workload's skip condition exactly, independent of changed paths.
-    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/senryou-ui-only-20261008' && github.event.pull_request.base.ref == 'main'
     runs-on: ubuntu-latest
     timeout-minutes: 12
     env:
@@ -14,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.sha }}
           persist-credentials: false
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
@@ -40,7 +38,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: senryou-ui-only-${{ github.event.pull_request.head.sha }}
+          name: senryou-ui-only-${{ github.sha }}
           path: ${{ runner.temp }}/senryou-ui-only-evidence/
           retention-days: 7
           if-no-files-found: warn
