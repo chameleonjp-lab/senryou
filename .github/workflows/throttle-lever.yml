@@ -9,11 +9,9 @@ concurrency:
   cancel-in-progress: true
 jobs:
   ui-only:
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/senryou-ui-only-20261008' && github.event.pull_request.base.ref == 'main'
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/senryou-ui-only-context-fix-20261008' && github.event.pull_request.base.ref == 'main'
     runs-on: ubuntu-latest
     timeout-minutes: 12
-    env:
-      UI_ONLY_EVIDENCE_DIR: ${{ runner.temp }}/senryou-ui-only-evidence
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -38,6 +36,8 @@ jobs:
       - name: Install Chromium only
         run: npx playwright install --with-deps chromium
       - name: Capture bounded product UI states
+        env:
+          UI_ONLY_EVIDENCE_DIR: ${{ runner.temp }}/senryou-ui-only-evidence
         run: node browser-tests/ui-only/capture.mjs
       - name: Preserve UI-only screenshots and reports
         if: always()
@@ -50,7 +50,7 @@ jobs:
   verify:
     # This complements the UI-only job above. Only the same-repo dedicated branch
     # targeting main skips this legacy gameplay/GPU workload.
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name != github.repository || github.event.pull_request.head.ref != 'codex/senryou-ui-only-20261008' || github.event.pull_request.base.ref != 'main'
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name != github.repository || github.event.pull_request.head.ref != 'codex/senryou-ui-only-context-fix-20261008' || github.event.pull_request.base.ref != 'main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:

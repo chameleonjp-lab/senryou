@@ -38,7 +38,7 @@ test('fixture config rejects build or an omitted explicit development mode',()=>
 test('UI-only and legacy workflows hand off on the same repository, branch, and main base for every path',()=>{
  const legacy=readFileSync(new URL('../.github/workflows/throttle-lever.yml',import.meta.url),'utf8');
  const ui=readFileSync(new URL('../.github/workflows/ui-only.yml',import.meta.url),'utf8');
- const branch="'codex/senryou-ui-only-20261008'";
+ const branch="'codex/senryou-ui-only-context-fix-20261008'";
  assert.ok(legacy.includes(`head.repo.full_name != github.repository || github.event.pull_request.head.ref != ${branch} || github.event.pull_request.base.ref != 'main'`));
  assert.ok(legacy.includes(`github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == ${branch} && github.event.pull_request.base.ref == 'main'`));
  assert.ok(legacy.includes('Normal unit tests'));
@@ -52,6 +52,19 @@ test('UI-only and legacy workflows hand off on the same repository, branch, and 
  assert.ok(ui.includes('ref: ${{ github.sha }}'));
  assert.doesNotMatch(ui,/^\s+pull_request:/m);
  assert.doesNotMatch(ui,/^\s+paths:/m);
+});
+
+test('runner.temp is referenced only from GitHub Actions step contexts',()=>{
+ const workflows=[
+  readFileSync(new URL('../.github/workflows/throttle-lever.yml',import.meta.url),'utf8'),
+  readFileSync(new URL('../.github/workflows/ui-only.yml',import.meta.url),'utf8')
+ ];
+ for(const workflow of workflows){
+  assert.doesNotMatch(workflow,/^ {4}env:\r?\n^ {6}UI_ONLY_EVIDENCE_DIR:.*\$\{\{\s*runner\.temp\s*\}\}/m);
+  assert.match(workflow,/^ {6}- name: Capture bounded product UI states\r?\n^ {8}env:\r?\n^ {10}UI_ONLY_EVIDENCE_DIR: \$\{\{ runner\.temp \}\}\/senryou-ui-only-evidence\r?\n^ {8}run: node browser-tests\/ui-only\/capture\.mjs$/m);
+  assert.match(workflow,/^ {10}path: \$\{\{ runner\.temp \}\}\/senryou-ui-only-evidence\/$/m);
+  assert.equal([...workflow.matchAll(/\$\{\{\s*runner\.temp\s*\}\}/g)].length,2);
+ }
 });
 
 test('adapter placeholders reject missing or duplicate tokens',()=>{assert.equal(replaceExactlyOnce('a TOKEN b','TOKEN','ok'),'a ok b');assert.throws(()=>replaceExactlyOnce('none','TOKEN','ok'));assert.throws(()=>replaceExactlyOnce('TOKEN TOKEN','TOKEN','ok'));});
