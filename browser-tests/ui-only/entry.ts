@@ -1,5 +1,3 @@
-import '../../src/style.css';
-import '../../src/control-settings.css';
 // Direct URL requests under ordinary dev/production never install a fixture API.
 if(!import.meta.env.DEV||import.meta.env.MODE!=='ui-only'||location.pathname!=='/__ui_only__/')throw new Error('Private UI fixture entry is disabled outside its explicit development route.');
 const original=HTMLCanvasElement.prototype.getContext;

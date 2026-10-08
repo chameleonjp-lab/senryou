@@ -27,16 +27,16 @@ test('ordinary product entry/config have no fixture activation',()=>{
  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8'),config=readFileSync(new URL('../vite.config.ts',import.meta.url),'utf8');
  assert.doesNotMatch(html+config,/ui-only|__senryouUiOnly|__ui_only__/);
  const entry=readFileSync(new URL('../browser-tests/ui-only/entry.ts',import.meta.url),'utf8');
+ assert.doesNotMatch(entry,/import\s+['"][^'"]+\.css/);
  assert.ok(entry.includes("import.meta.env.MODE!=='ui-only'||location.pathname!=='/__ui_only__/'"));
  assert.ok(entry.indexOf("throw new Error('Private UI")<entry.indexOf("await import('virtual:senryou-ui')"));
 });
 test('fixture config rejects build or an omitted explicit development mode',()=>{
  const config=readFileSync(new URL('../vite.ui-only.config.ts',import.meta.url),'utf8');
  assert.ok(config.includes("command!=='serve'||mode!=='ui-only'"));assert.ok(config.includes("apply:'serve'"));
- assert.ok(config.includes('ws:false'));
- assert.ok(config.includes('hmr:false'));
- assert.ok(config.includes("req.url?.split('?')[0]==='/@vite/client'"));
- assert.ok(config.includes("res.end('export {};')"));
+ assert.ok(config.includes('ws:false,hmr:false'));
+ assert.ok(config.includes('<link rel="stylesheet" href="/src/style.css?direct">'));
+ assert.ok(config.includes('<link rel="stylesheet" href="/src/control-settings.css?direct">'));
  assert.ok(config.includes('src=\"/@vite/client\"'));
  assert.ok(config.includes('html.split(viteClient).length!==2'));
  assert.ok(config.includes("html.replace(viteClient,'')"));
