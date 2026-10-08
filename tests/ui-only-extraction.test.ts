@@ -33,6 +33,7 @@ test('ordinary product entry/config have no fixture activation',()=>{
 test('fixture config rejects build or an omitted explicit development mode',()=>{
  const config=readFileSync(new URL('../vite.ui-only.config.ts',import.meta.url),'utf8');
  assert.ok(config.includes("command!=='serve'||mode!=='ui-only'"));assert.ok(config.includes("apply:'serve'"));
+ assert.ok(config.includes('ws:false,hmr:false'));
 });
 
 test('UI-only and legacy workflows hand off on the same repository, branch, and main base for every path',()=>{

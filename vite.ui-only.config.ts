@@ -5,7 +5,7 @@ import { generateProductModules } from './browser-tests/ui-only/extract-product.
 export default defineConfig(({command,mode})=>{
  if(command!=='serve'||mode!=='ui-only')throw new Error('UI fixture requires explicit serve --mode ui-only; it cannot build/publish.');
  const modules=generateProductModules();
- return {server:{host:'127.0.0.1',port:4189,strictPort:true,ws:false},plugins:[{
+ return {server:{host:'127.0.0.1',port:4189,strictPort:true,ws:false,hmr:false},plugins:[{
   name:'senryou-private-ui-only',apply:'serve',
   resolveId(id){if(id==='virtual:senryou-ui'||id==='virtual:senryou-canvas')return '\0'+id;},
   load(id){if(id==='\0virtual:senryou-ui')return {code:modules.ui,map:null};if(id==='\0virtual:senryou-canvas')return {code:modules.canvas,map:null};},
