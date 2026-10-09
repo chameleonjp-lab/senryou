@@ -1244,6 +1244,14 @@ p {
 /* On compact screens keep the readout/notice lane away from the fixed sight
  * and the upper-right Canvas radar. Text wraps within the lane; no labels are
  * hidden or reduced to make the reservation fit. */
+@media (max-width: 359px) {
+  /* The narrow screen's right lane is open below the radar; docking totals
+   * there keeps the complete labels outside the observed center sight. */
+  #hud .hud-readouts .targets {
+    position: absolute; top: 0; left: calc(100% + 60px); width: calc(56vw - 76px);
+    min-width: 92px; max-width: 128px; box-sizing: border-box; flex: none; align-content: start;
+  }
+}
 @media (max-width: 700px) {
   #hud .hud-readouts, #hud .hud-notice-top, #hud .hud-notice-shared {
     left: max(8px, env(safe-area-inset-left));
