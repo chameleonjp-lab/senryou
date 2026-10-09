@@ -1391,3 +1391,39 @@ p {
     width: var(--hud-center-gap);
   }
 }
+
+/* Keep the small portrait timer below the measured radar arc. Put capture
+ * labels in the open center-left lane after the sight, beside the left readout
+ * column; neither reservation changes a control's saved position. */
+@media (max-width: 359px) and (orientation: portrait) {
+  #hud .hud-readouts .time-block {
+    position: absolute;
+    top: max(0px, calc(var(--hud-radar-bottom) + 8px - var(--hud-readouts-top)));
+    right: 0;
+    width: var(--hud-side-column);
+    max-width: var(--hud-side-column);
+    grid-column: auto;
+  }
+  #hud .hud-readouts .capture-info {
+    top: max(0px, calc(350px - var(--hud-readouts-top)));
+    right: auto;
+    left: var(--hud-side-column);
+    width: var(--hud-center-gap);
+    max-width: var(--hud-center-gap);
+  }
+}
+
+/* Reserve the top-right Canvas radar before sizing portrait notices. A wider
+ * left lane keeps enlarged text from pushing every readout below the fold. */
+@media (min-width: 361px) and (max-width: 700px) and (orientation: portrait) {
+  #hud .hud-notice-top, #hud .hud-notice-shared {
+    width: calc(100% - var(--hud-radar-radius) - var(--hud-radar-radius) - 36px);
+    max-width: calc(100% - var(--hud-radar-radius) - var(--hud-radar-radius) - 36px);
+  }
+}
+
+/* Waiting's first Canvas sight segment begins at the viewport origin. Keep
+ * the target labels below that short visible diagonal in compact landscape. */
+@media (min-width: 361px) and (max-width: 700px) and (orientation: landscape) and (max-height: 600px) {
+  #hud { --hud-readouts-top: max(52px, calc(8px + var(--safe-top) + var(--hud-notice-top-height, 0px) + var(--hud-notice-shared-height, 0px) + 4px)); }
+}
