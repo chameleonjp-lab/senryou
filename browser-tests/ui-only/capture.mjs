@@ -45,7 +45,7 @@ async function verifyText200(page){
 const rows=[
  ['P-home',320,568,'home','easy',false],['P-easy',320,568,'hud-easy','easy',false],
  ['P-touch',320,568,'settings-touch','easy',false],['P-rules',320,568,'rules','easy',false],['P-startup-error',320,568,'startup-error','easy',false],
- ['L-normal',568,320,'flying-effective','normal',false],['L-notice',568,320,'waiting','normal',false],['L-pause',568,320,'pause','normal',false],['L-keyboard',568,320,'settings-keyboard','normal',false],
+ ['L-normal',568,320,'flying-effective','normal',false],['L-notice',568,320,'hud-notice','normal',false],['L-pause',568,320,'pause','normal',false],['L-keyboard',568,320,'settings-keyboard','normal',false],
  ['L-victory',568,320,'result-victory','normal',false],['L-defeat',568,320,'result-defeat','normal',false],['L-draw',568,320,'result-draw','normal',false],['L-aborted',568,320,'result-aborted','normal',false],['L-paused-error',568,320,'paused-error','normal',false],
  ['D-normal',1366,768,'hud-normal','normal',false],
  ['T-normal',393,852,'flying-effective','normal',true],['T-touch',393,852,'settings-touch','normal',true],['T-keyboard',393,852,'settings-keyboard','normal',true],['T-waiting',393,852,'waiting','normal',true],['T-spectating',393,852,'spectating','normal',true],['T-result',393,852,'result-aborted','normal',true],['T-rules',393,852,'rules','normal',true],
@@ -135,13 +135,14 @@ try{
   if(required||metrics.scrollHeight>metrics.clientHeight+1){await settle();item.bottomScroll=metrics;item.bottomScreenshot=item.id+'-bottom.png';const path=resolve(output,item.bottomScreenshot);await page.screenshot({path});item.bottomScreenshotSha256=fileSha256(path);report.screenshotCount++;}
  };
  for(const [id,width,height,fixture,mode,enlarge] of rows){
-  const item={id,fixture,mode,viewport:{width,height},domTextScale:enlarge?2:1,status:'not-run',batchIdentity:report.batchIdentity,sourceHashesFingerprint:report.sourceHashesFingerprint,centerHitPolicy:'observational-only; false does not fail capture',imageReviewed:false};report.screens.push(item);
-  activeCase={item,fixture};
+  const displayFixture=id==='L-notice'?'waiting':fixture;
+  const item={id,fixture,displayFixture,mode,viewport:{width,height},domTextScale:enlarge?2:1,status:'not-run',batchIdentity:report.batchIdentity,sourceHashesFingerprint:report.sourceHashesFingerprint,centerHitPolicy:'observational-only; false does not fail capture',imageReviewed:false};report.screens.push(item);
+  activeCase={item,fixture:displayFixture};
   try{
-   await page.setViewportSize({width,height});await page.evaluate(({fixture,mode})=>{window.__uiOnlyCanvasSight=null;window.__uiOnlyCanvasRadar=null;window.__senryouUiOnly.show(fixture,mode);},{fixture,mode});item.scrollReset=await resetScrollPositions();
+   await page.setViewportSize({width,height});await page.evaluate(({fixture,mode})=>{window.__uiOnlyCanvasSight=null;window.__uiOnlyCanvasRadar=null;window.__senryouUiOnly.show(fixture,mode);},{fixture:displayFixture,mode});item.scrollReset=await resetScrollPositions();
    if(enlarge)item.textScale=await text200(page);await settle();if(enlarge)item.textScaleVerification=await verifyText200(page);
    item.state=await state();item.canvas=await canvasState();
-   await saveTopScreenshot(item);await saveBottomScreenshot(item,fixture);
+   await saveTopScreenshot(item);await saveBottomScreenshot(item,displayFixture);
    item.layoutObservation=await page.evaluate(()=>{
     const rectOf=element=>{const r=element.getBoundingClientRect();return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height};};
     const visible=element=>element.checkVisibility({checkOpacity:true,checkVisibilityCSS:true});
@@ -185,7 +186,7 @@ try{
     return {viewport:view,targetBox,targetChildren,sight,sightSource:sight?.source??'no-product-Canvas2D-sight-observed',radar,radarSource:radar?.source??'no-product-Canvas2D-radar-observed',targetSightOverlap,targetTextOverflow:targetText,targetCounts,hudContent,hudContentOverlaps,hudControlOverlaps,canvasRegionOverlaps,outsideHudText,previewControls,previewLabels,previewLabelOverlaps,previewLabelControlOverlaps,outsidePreviewLabels,previewLabelOverflow,previewControlOverflow,outsideFlightControls,flightControls:controls,layoutObservationPhase:document.querySelector('#control-settings .settings-main')?.scrollTop?'after-required-settings-bottom-scroll':'top-state',centerHitRemainsObservational:true};
    });
    item.layoutIssues=[];
-   const sightExpected=['hud-easy','hud-normal','hud-notice','flying-effective','flying-ineffective','flying-no-prediction'].includes(fixture);
+   const sightExpected=['hud-easy','hud-normal','hud-notice','flying-effective','flying-ineffective','flying-no-prediction'].includes(displayFixture);
    if(sightExpected&&(!item.layoutObservation.sight||!item.layoutObservation.sight.bounds))item.layoutIssues.push('product Canvas2D sight bounds were not observed');
    if(item.state.screen==='playing'&&(!item.layoutObservation.radar||!item.layoutObservation.radar.bounds))item.layoutIssues.push('product Canvas2D radar bounds were not observed');
    if(item.layoutObservation.targetSightOverlap)item.layoutIssues.push('HUD target panel overlaps observed product sight bounds');
@@ -210,7 +211,7 @@ try{
    if(item.layoutIssues.length)item.error='Visible layout geometry issue: '+JSON.stringify(item.layoutIssues);
   }catch(error){item.status='failed';item.error=String(error);
    try{await saveTopScreenshot(item);}catch(e){item.evidenceError='Top screenshot unavailable: '+String(e);}
-   try{await saveBottomScreenshot(item,fixture);}catch(e){item.bottomEvidenceError='Bottom screenshot unavailable: '+String(e);}
+   try{await saveBottomScreenshot(item,displayFixture);}catch(e){item.bottomEvidenceError='Bottom screenshot unavailable: '+String(e);}
   }finally{saveCaseJson(item);activeCase=null;}
  }
  const action=async(name,fn)=>{try{await fn();report.actions.push({name,status:'passed'});}catch(error){report.actions.push({name,status:'failed',error:String(error)});}};
