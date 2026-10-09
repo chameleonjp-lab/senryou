@@ -51,12 +51,14 @@ const rows=[
  ['T-normal',393,852,'flying-effective','normal',true],['T-touch',393,852,'settings-touch','normal',true],['T-keyboard',393,852,'settings-keyboard','normal',true],['T-waiting',393,852,'waiting','normal',true],['T-spectating',393,852,'spectating','normal',true],['T-result',393,852,'result-aborted','normal',true],['T-rules',393,852,'rules','normal',true],
 ];
 for(const row of rows)assertFixtureId(row[3]);
-const started=performance.now();let server,browser,uiStart,uiWatchdog,terminating=false;
+const started=performance.now();let server,browser,uiStart,uiWatchdog,terminating=false,activeCase=null;
 const budgets={totalMs:90000,uiMs:65000,settleMs:2000,cleanupMs:2000};report.budgets=budgets;
 const bounded=(promise,ms,label)=>{let timer;return Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error(label+' timed out after '+ms+'ms')),ms);})]).finally(()=>clearTimeout(timer));};
 const saveReport=()=>{report.totalExecutionMs=performance.now()-started;writeFileSync(resolve(output,'report.json'),JSON.stringify(report,null,2)+'\n');};
 const cleanup=async()=>{try{const results=await bounded(Promise.allSettled([Promise.resolve().then(()=>browser?.close()),Promise.resolve().then(()=>server?.close())]),budgets.cleanupMs,'cleanup');for(const result of results)if(result.status==='rejected')report.errors.push({kind:'cleanup',message:String(result.reason)});}catch(error){report.errors.push({kind:'cleanup',message:String(error)});}};
-const timeoutStop=async(label)=>{if(terminating)return;terminating=true;report.timedOut=true;report.status='incomplete-or-failed';report.errors.push({kind:'timeout',message:label});if(uiStart)report.uiMs=performance.now()-uiStart;saveReport();await cleanup();saveReport();process.exit(1);};
+const timeoutStop=async(label)=>{if(terminating)return;terminating=true;report.timedOut=true;report.status='incomplete-or-failed';report.errors.push({kind:'timeout',message:label});if(uiStart)report.uiMs=performance.now()-uiStart;
+ if(activeCase){activeCase.item.status='failed';activeCase.item.error='Capture deadline interrupted this case';try{await saveTopScreenshot(activeCase.item);}catch(error){activeCase.item.evidenceError='Top screenshot unavailable during timeout: '+String(error);}try{await saveBottomScreenshot(activeCase.item,activeCase.fixture);}catch(error){activeCase.item.bottomEvidenceError='Bottom screenshot unavailable during timeout: '+String(error);}saveCaseJson(activeCase.item);}
+ saveReport();await cleanup();saveReport();process.exit(1);};
 const totalWatchdog=setTimeout(()=>void timeoutStop('Overall capture deadline exceeded'),budgets.totalMs);
 try{
  const batch=loadUiOnlyBatch(evidenceRoot);
@@ -66,11 +68,38 @@ try{
  const context=await browser.newContext({viewport:{width:320,height:568},hasTouch:true,serviceWorkers:'block'});
  await context.route('**/*',route=>{const url=new URL(route.request().url());if(url.origin!==origin){report.externalRequests.push(url.href);return route.abort();}return route.continue();});
  const page=await context.newPage();page.setDefaultTimeout(2000);
+ await page.addInitScript(()=>{
+  const getContext=HTMLCanvasElement.prototype.getContext,wrapped=new WeakMap();
+  HTMLCanvasElement.prototype.getContext=function(type,...args){
+   const context=getContext.call(this,type,...args);
+   if(this.id!=='markers'||type!=='2d'||!context)return context;
+   if(wrapped.has(context))return wrapped.get(context);
+   let path=[];
+   const include=(x,y)=>{if(Number.isFinite(x)&&Number.isFinite(y))path.push({x,y});};
+   const proxy=new Proxy(context,{get(target,key){
+    const value=Reflect.get(target,key,target);if(typeof value!=='function')return value;
+    if(key==='beginPath')return (...values)=>{path=[];return value.apply(target,values);};
+    if(key==='arc')return (x,y,r,...values)=>{if(Number.isFinite(x)&&Number.isFinite(y)&&Number.isFinite(r)){include(x-r,y-r);include(x+r,y+r);}return value.call(target,x,y,r,...values);};
+    if(key==='moveTo'||key==='lineTo')return (x,y,...values)=>{include(x,y);return value.call(target,x,y,...values);};
+    if(key==='stroke')return (...values)=>{
+     if(!window.__uiOnlyCanvasSight&&path.length){
+      const xs=path.map(point=>point.x),ys=path.map(point=>point.y),pad=(Number(target.lineWidth)||1)/2;
+      window.__uiOnlyCanvasSight={source:'observed-product-markers-Canvas2D-first-stroke',strokeStyle:target.strokeStyle,lineWidth:target.lineWidth,
+       bounds:{left:Math.min(...xs)-pad,top:Math.min(...ys)-pad,right:Math.max(...xs)+pad,bottom:Math.max(...ys)+pad},pathPoints:path};
+     }
+     return value.apply(target,values);
+    };
+    return value.bind(target);
+   },set(target,key,value){return Reflect.set(target,key,value,target);}});
+   wrapped.set(context,proxy);return proxy;
+  };
+  window.__uiOnlyCanvasSight=null;
+ });
  page.on('pageerror',error=>report.errors.push({kind:'pageerror',message:error.message}));page.on('console',msg=>{if(msg.type()==='error')report.errors.push({kind:'console',message:msg.text()});});
  await page.goto(origin+'/__ui_only__/',{waitUntil:'domcontentloaded'});await page.waitForFunction(()=>document.documentElement.dataset.uiOnlyReady==='true');report.productUiStarted=true;
  report.setupMs=performance.now()-started;report.setupAttemptElapsedMs=report.setupMs;report.setupStatus='completed';uiStart=performance.now();uiWatchdog=setTimeout(()=>void timeoutStop('UI capture deadline exceeded; missing work is not a pass'),budgets.uiMs);
  const settle=()=>bounded(page.evaluate(async()=>{await document.fonts.ready;await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}),budgets.settleMs,'fonts/frame settling');
- const canvasState=()=>page.locator('#markers').evaluate(canvas=>{const c=canvas.getContext('2d'),d=c.getImageData(0,0,canvas.width,canvas.height).data;let painted=0;for(let i=3;i<d.length;i+=4)if(d[i])painted++;return {width:canvas.width,height:canvas.height,paintedPixels:painted};});
+ const canvasState=()=>page.locator('#markers').evaluate(canvas=>{const c=canvas.getContext('2d'),d=c.getImageData(0,0,canvas.width,canvas.height).data;let painted=0;for(let i=3;i<d.length;i+=4)if(d[i])painted++;return {width:canvas.width,height:canvas.height,paintedPixels:painted,sight:window.__uiOnlyCanvasSight??null};});
  const state=()=>page.evaluate(()=>({...window.__senryouUiOnly.snapshot(),telemetry:window.__senryouUiOnly.telemetry}));
  const resetScrollPositions=()=>page.evaluate(()=>{
   window.scrollTo(0,0);
@@ -78,28 +107,73 @@ try{
   for(const element of elements)if(element.scrollTop!==0||element.scrollLeft!==0){element.scrollTop=0;element.scrollLeft=0;resetCount++;}
   return {scrollY:window.scrollY,documentTop:document.documentElement.scrollTop,bodyTop:document.body.scrollTop,resetCount};
  });
+ const saveCaseJson=item=>writeFileSync(resolve(output,item.id+'.json'),JSON.stringify(item,null,2)+'\n');
+ const saveTopScreenshot=async item=>{
+  if(item.screenshot)return;
+  await settle();item.state??=await state();item.canvas??=await canvasState();
+  item.screenshot=item.id+'.png';const screenshotPath=resolve(output,item.screenshot);await page.screenshot({path:screenshotPath});
+  item.screenshotSha256=fileSha256(screenshotPath);report.screenshotCount++;
+ };
+ const saveBottomScreenshot=async(item,fixture)=>{
+  const owner=fixture.startsWith('settings-')?'#control-settings .settings-main':fixture==='rules'?'#rules-content':fixture.startsWith('result-')?'#result':fixture==='startup-error'?'#home':fixture==='paused-error'?'#pause-screen':fixture==='pause'?'#pause-screen':fixture==='home'?'#home':null;
+  const required=fixture.startsWith('result-')||fixture.includes('error');
+  if(!owner)return;
+  const metrics=await page.locator(owner).evaluate(e=>{const beforeTop=e.scrollTop;e.scrollTop=e.scrollHeight;return {target:e.id||e.className,beforeTop,afterTop:e.scrollTop,scrollHeight:e.scrollHeight,clientHeight:e.clientHeight,bottomReached:e.scrollTop+e.clientHeight>=e.scrollHeight-1};});
+  if(required||metrics.scrollHeight>metrics.clientHeight+1){await settle();item.bottomScroll=metrics;item.bottomScreenshot=item.id+'-bottom.png';const path=resolve(output,item.bottomScreenshot);await page.screenshot({path});item.bottomScreenshotSha256=fileSha256(path);report.screenshotCount++;}
+ };
  for(const [id,width,height,fixture,mode,enlarge] of rows){
   const item={id,fixture,mode,viewport:{width,height},domTextScale:enlarge?2:1,status:'not-run',batchIdentity:report.batchIdentity,sourceHashesFingerprint:report.sourceHashesFingerprint,centerHitPolicy:'observational-only; false does not fail capture',imageReviewed:false};report.screens.push(item);
+  activeCase={item,fixture};
   try{
-   await page.setViewportSize({width,height});await page.evaluate(({fixture,mode})=>window.__senryouUiOnly.show(fixture,mode),{fixture,mode});item.scrollReset=await resetScrollPositions();
+   await page.setViewportSize({width,height});await page.evaluate(({fixture,mode})=>{window.__uiOnlyCanvasSight=null;window.__senryouUiOnly.show(fixture,mode);},{fixture,mode});item.scrollReset=await resetScrollPositions();
    if(enlarge)item.textScale=await text200(page);await settle();if(enlarge)item.textScaleVerification=await verifyText200(page);
    item.state=await state();item.canvas=await canvasState();
+   item.layoutObservation=await page.evaluate(()=>{
+    const rectOf=element=>{const r=element.getBoundingClientRect();return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height};};
+    const visible=element=>element.checkVisibility({checkOpacity:true,checkVisibilityCSS:true});
+    const box=document.querySelector('#hud .targets');
+    const view={width:innerWidth,height:innerHeight};
+    const sight=window.__uiOnlyCanvasSight??null;
+    const targetBox=box&&visible(box)?rectOf(box):null;
+    const targetSightOverlap=!!(targetBox&&sight&&targetBox.left<sight.bounds.right&&targetBox.right>sight.bounds.left&&targetBox.top<sight.bounds.bottom&&targetBox.bottom>sight.bounds.top);
+    const previewLabels=[...document.querySelectorAll('#control-settings .preview-control.external-label > span')].filter(visible).map(element=>({text:element.textContent.trim(),...rectOf(element),scrollWidth:element.scrollWidth,clientWidth:element.clientWidth}));
+    const previewLabelOverlaps=[];
+    for(let i=0;i<previewLabels.length;i++)for(let j=i+1;j<previewLabels.length;j++){
+     const a=previewLabels[i],b=previewLabels[j];if(a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top)previewLabelOverlaps.push([a.text,b.text]);
+    }
+    const controls=[...document.querySelectorAll('#hud [data-flight-control]')].filter(visible).map(element=>({id:element.id,...rectOf(element)}));
+    const hudContent=[...document.querySelectorAll('#hud .time-block,#hud .targets,#hud .flight-data,#hud .capture-info,#hud .hud-notice-top,#hud .hud-notice-shared')].filter(visible).map(element=>({id:element.id||element.className,...rectOf(element)}));
+    const hudControlOverlaps=[];
+    for(const control of controls)for(const content of hudContent)if(control.left<content.right&&control.right>content.left&&control.top<content.bottom&&control.bottom>content.top)hudControlOverlaps.push({control:control.id,content:content.id});
+    const targetText=[...(box?.querySelectorAll('*')??[])].filter(visible).map(element=>({text:element.textContent.trim(),scrollWidth:element.scrollWidth,clientWidth:element.clientWidth})).filter(item=>item.text&&item.scrollWidth>item.clientWidth+1);
+    const outsidePreviewLabels=previewLabels.filter(item=>item.left<0||item.right>view.width||item.top<0||item.bottom>view.height).map(item=>item.text);
+    const preview=document.querySelector('#control-settings .control-preview'),previewBox=preview&&visible(preview)?rectOf(preview):null;
+    const previewControlOverflow=[...document.querySelectorAll('#control-settings .preview-control')].filter(visible).map(element=>({id:element.dataset.control,...rectOf(element)})).filter(item=>previewBox&&(item.left<previewBox.left-1||item.right>previewBox.right+1||item.top<previewBox.top-1||item.bottom>previewBox.bottom+1)).map(item=>item.id);
+    const outsideFlightControls=controls.filter(item=>item.left<0||item.right>view.width||item.top<0||item.bottom>view.height).map(item=>item.id);
+    return {viewport:view,targetBox,sight,sightSource:sight?.source??'no-product-Canvas2D-sight-observed',targetSightOverlap,targetTextOverflow:targetText,hudContent,hudControlOverlaps,previewLabels,previewLabelOverlaps,outsidePreviewLabels,previewControlOverflow,outsideFlightControls,flightControls:controls,centerHitRemainsObservational:true};
+   });
+   item.layoutIssues=[];
+   const sightExpected=['hud-easy','hud-normal','hud-notice','flying-effective','flying-ineffective','flying-no-prediction'].includes(fixture);
+   if(sightExpected&&(!item.layoutObservation.sight||!item.layoutObservation.sight.bounds))item.layoutIssues.push('product Canvas2D sight bounds were not observed');
+   if(item.layoutObservation.targetSightOverlap)item.layoutIssues.push('HUD target panel overlaps observed product sight bounds');
+   if(item.layoutObservation.targetTextOverflow.length)item.layoutIssues.push('HUD target text overflows its measured box');
+   if(item.layoutObservation.hudControlOverlaps.length)item.layoutIssues.push('flight control overlaps a visible HUD reservation');
+   if(item.layoutObservation.previewLabelOverlaps.length)item.layoutIssues.push('Touch preview labels overlap');
+   if(item.layoutObservation.outsidePreviewLabels.length)item.layoutIssues.push('Touch preview label extends beyond viewport');
+   if(item.layoutObservation.previewControlOverflow.length)item.layoutIssues.push('Touch preview control extends beyond its visible preview frame');
+   if(item.layoutObservation.outsideFlightControls.length)item.layoutIssues.push('flight control extends beyond viewport');
    const playing=item.state.screen==='playing'||item.state.screen==='paused';
    if(playing&&item.canvas.paintedPixels===0)throw new Error('Required actual Canvas2D HUD was not painted');
    if(!playing&&item.canvas.paintedPixels!==0)throw new Error('Canvas HUD not cleared on non-game screen');
    if(item.state.telemetry.webglRequests!==0)throw new Error('Unexpected WebGL request');
    item.visibleControls=await page.evaluate(()=>[...document.querySelectorAll('button,[role="slider"],select')].filter(e=>e.checkVisibility({checkOpacity:true,checkVisibilityCSS:true})).map(e=>{const r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return {id:e.id,label:e.getAttribute('aria-label')||e.textContent.trim(),disabled:!!e.disabled,x:r.x,y:r.y,width:r.width,height:r.height,centerHit:hit===e||e.contains(hit)};}));
-   item.screenshot=id+'.png';const screenshotPath=resolve(output,item.screenshot);await page.screenshot({path:screenshotPath});item.screenshotSha256=fileSha256(screenshotPath);report.screenshotCount++;
-   const scrollOwner=fixture.startsWith('settings-')?'#control-settings .settings-main':fixture==='rules'?'#rules-content':fixture.startsWith('result-')?'#result':fixture==='startup-error'?'#home':fixture==='paused-error'?'#pause-screen':fixture==='pause'?'#pause-screen':fixture==='home'?'#home':null;
-   const requiresEndCapture=fixture.startsWith('result-')||fixture.includes('error');
-   if(scrollOwner){
-    const scrollMetrics=await page.locator(scrollOwner).evaluate(e=>{const beforeTop=e.scrollTop;e.scrollTop=e.scrollHeight;return {target:e.id||e.className,beforeTop,afterTop:e.scrollTop,scrollHeight:e.scrollHeight,clientHeight:e.clientHeight,bottomReached:e.scrollTop+e.clientHeight>=e.scrollHeight-1};});
-    if(requiresEndCapture||scrollMetrics.scrollHeight>scrollMetrics.clientHeight+1){
-     await settle();item.bottomScroll=scrollMetrics;item.bottomScreenshot=id+'-bottom.png';const bottomScreenshotPath=resolve(output,item.bottomScreenshot);await page.screenshot({path:bottomScreenshotPath});item.bottomScreenshotSha256=fileSha256(bottomScreenshotPath);report.screenshotCount++;
-    }
-   }
-   item.status='captured-needs-visual-review';
-  }catch(error){item.status='failed';item.error=String(error);}
+   await saveTopScreenshot(item);await saveBottomScreenshot(item,fixture);
+   item.status=item.layoutIssues.length?'failed':'captured-needs-visual-review';
+   if(item.layoutIssues.length)item.error='Visible layout geometry issue: '+JSON.stringify(item.layoutIssues);
+  }catch(error){item.status='failed';item.error=String(error);
+   try{await saveTopScreenshot(item);}catch(e){item.evidenceError='Top screenshot unavailable: '+String(e);}
+   try{await saveBottomScreenshot(item,fixture);}catch(e){item.bottomEvidenceError='Bottom screenshot unavailable: '+String(e);}
+  }finally{saveCaseJson(item);activeCase=null;}
  }
  const action=async(name,fn)=>{try{await fn();report.actions.push({name,status:'passed'});}catch(error){report.actions.push({name,status:'failed',error:String(error)});}};
  await page.setViewportSize({width:393,height:852});
