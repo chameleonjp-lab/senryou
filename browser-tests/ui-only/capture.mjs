@@ -202,6 +202,8 @@ try{
   catch(error){report.sourceHashesStable=false;report.errors.push({kind:'source-hash',message:String(error)});report.status='incomplete-or-failed';}
  }
  clearTimeout(uiWatchdog);await cleanup();if(report.errors.some(e=>e.kind==='cleanup'))report.status='incomplete-or-failed';saveReport();clearTimeout(totalWatchdog);console.log(JSON.stringify({status:report.status,output,screens:report.screens.length,batchIdentity:report.batchIdentity,uiMs:report.uiMs,imageReviewMs:report.imageReviewMs}));
+ const failedCases=report.screens.filter(item=>item.status==='failed').map(({id,error,layoutIssues,evidenceError,bottomEvidenceError,screenshot,bottomScreenshot})=>({id,error,layoutIssues,evidenceError,bottomEvidenceError,screenshot,bottomScreenshot}));
+ if(failedCases.length||report.errors.length||report.actions.some(item=>item.status==='failed'))console.log(JSON.stringify({kind:'ui-only-failure-details',failedCases,errors:report.errors,failedActions:report.actions.filter(item=>item.status==='failed')}));
 }
 if(report.status==='blocked'||report.status==='incomplete-or-failed')process.exitCode=1;
 
