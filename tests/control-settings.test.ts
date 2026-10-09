@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ControlSettings, DEFAULT_LAYOUT, controlBounds, controlDisplaySize, persistControlSettings, loadLayout, STORAGE_KEYS, MODE_CONTROLS, CONTROL_NAMES, previewLabelStyle, previewDimensions } from '../src/control-settings';
+import { ControlSettings, DEFAULT_LAYOUT, controlBounds, controlDisplaySize, fitControlFootprint, persistControlSettings, loadLayout, STORAGE_KEYS, MODE_CONTROLS, CONTROL_NAMES, previewLabelStyle, previewDimensions } from '../src/control-settings';
 import { DEFAULT_KEY_BINDINGS, KEYBOARD_STORAGE_KEY, KeyboardSettings } from '../src/keyboard-settings';
 
 function storageFixture() {
@@ -19,6 +19,15 @@ test('the complete position preview fits its scroll region while preserving the 
     assert.ok(result.width<=availableWidth);assert.ok(result.height<=availableHeight+1e-9);
     assert.ok(Math.abs(result.width/result.height-width/height)<1e-9);
   }
+});
+
+test('measured Touch controls fit the safe viewport before placement without shrinking below 44px', () => {
+  const portrait = fitControlFootprint({ width: 520, height: 82 }, { width: 393, height: 320 }, { top: 0, right: 24, bottom: 0, left: 8 });
+  assert.deepEqual(portrait, { width: 345, height: 82 });
+  const landscape = fitControlFootprint({ width: 520, height: 150 }, { width: 320, height: 568 }, { top: 0, right: 0, bottom: 0, left: 0 });
+  assert.deepEqual(landscape, { width: 304, height: 150 });
+  const tiny = fitControlFootprint({ width: 18, height: 20 }, { width: 50, height: 50 }, { top: 24, right: 24, bottom: 24, left: 24 });
+  assert.deepEqual(tiny, { width: 44, height: 44 });
 });
 
 test('Senryou layouts load only dedicated keys and leave the source games untouched', () => {
