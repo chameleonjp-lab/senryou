@@ -71,6 +71,7 @@ try{
  await page.addInitScript(()=>{
   const getContext=HTMLCanvasElement.prototype.getContext,wrapped=new WeakMap();
   HTMLCanvasElement.prototype.getContext=function(type,...args){
+   const canvas=this;
    const context=getContext.call(this,type,...args);
    if(this.id!=='markers'||type!=='2d'||!context)return context;
    if(wrapped.has(context))return wrapped.get(context);
@@ -82,7 +83,7 @@ try{
     if(key==='arc')return (x,y,r,...values)=>{
      if(Number.isFinite(x)&&Number.isFinite(y)&&Number.isFinite(r)){
       include(x-r,y-r);include(x+r,y+r);
-      const matrix=target.getTransform(),rect=this.getBoundingClientRect(),sx=rect.width/this.width,sy=rect.height/this.height;
+      const matrix=target.getTransform(),rect=canvas.getBoundingClientRect(),sx=rect.width/canvas.width,sy=rect.height/canvas.height;
       const cx=(matrix.a*x+matrix.c*y+matrix.e)*sx,cy=(matrix.b*x+matrix.d*y+matrix.f)*sy;
       const padX=Math.abs(matrix.a)*target.lineWidth*.5*sx,padY=Math.abs(matrix.d)*target.lineWidth*.5*sy;
       const rx=Math.abs(matrix.a)*r*sx+padX,ry=Math.abs(matrix.d)*r*sy+padY;
