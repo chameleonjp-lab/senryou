@@ -1417,8 +1417,8 @@ p {
  * left lane keeps enlarged text from pushing every readout below the fold. */
 @media (min-width: 361px) and (max-width: 700px) and (orientation: portrait) {
   #hud .hud-notice-top, #hud .hud-notice-shared {
-    width: calc(100% - var(--hud-radar-radius) - var(--hud-radar-radius) - 36px);
-    max-width: calc(100% - var(--hud-radar-radius) - var(--hud-radar-radius) - 36px);
+    width: min(192px, calc(100% - var(--hud-radar-radius) - var(--hud-radar-radius) - 36px));
+    max-width: min(192px, calc(100% - var(--hud-radar-radius) - var(--hud-radar-radius) - 36px));
   }
 }
 
@@ -1431,7 +1431,6 @@ p {
 /* Keep portrait target tallies in the two side lanes, leaving the center sight
  * corridor empty. The timer gets its own left/center row before those tallies. */
 @media (min-width: 361px) and (max-width: 700px) and (orientation: portrait) {
-  #hud { --hud-radar-bottom: calc(min(33vh, 196px) + var(--hud-radar-radius)); }
   #hud .hud-readouts .hud-top {
     grid-template-columns: minmax(0, 1fr) minmax(72px, var(--hud-center-gap)) minmax(0, 1fr);
     grid-template-rows: minmax(max(0px, calc(var(--hud-radar-bottom) - var(--hud-readouts-top))), max-content) max-content;
@@ -1456,10 +1455,14 @@ p {
     width: max(72px, calc(var(--hud-center-gap) - 24px));
   }
   #hud .hud-notice-shared #control-status {
-    grid-column: 1;
+    grid-column: 1 / -1;
+    grid-row: 2;
     margin-left: 52px;
     width: calc(100% - 52px);
   }
+  #hud .hud-notice-shared { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #hud .hud-notice-shared #payload-status { grid-column: 1; grid-row: 1; }
+  #hud .hud-notice-shared #reload-status { grid-column: 2; grid-row: 1; }
 }
 
 /* Waiting starts its Canvas sight at the viewport origin; keep its visible
