@@ -53,6 +53,10 @@ export function measureHudGeometry(app: HTMLElement,mode:'normal'|'easy'='normal
       .map(item => ({ x:(item.left-origin.left+item.width/2)*scaleX, y:(item.top-origin.top+item.height/2)*scaleY, width:item.width*scaleX, height:item.height*scaleY }));
     // Keep the aircraft/sight corridor free of automatically relocated controls.
     obstacles.push(hudSightReservation(mode,rect.width,rect.height));
+    // Match BattleView.drawRadar's Canvas geometry so controls stay outside its painted region.
+    const radarRadius=rect.width<360?42:49;
+    const radarX=rect.width-radarRadius-18,radarY=Math.min(rect.height*.33,180);
+    obstacles.push({x:radarX,y:radarY,width:2*(radarRadius+.5),height:2*(radarRadius+.5)});
     const required=[...copy.querySelectorAll<HTMLElement>('.time-block,.targets,.flight-data,.capture-info')];
     const complete=['fire','loop','bomb','throttle'].every(id=>!!controls[id])&&required.length===4&&required.every(el=>el.offsetWidth>0&&el.offsetHeight>0);
     return {obstacles,controls,complete,notification:{family:reservationFamily(phase),topHeight,sharedHeight,states:states.map(s=>s.id)}};
