@@ -1302,3 +1302,92 @@ p {
   overflow-wrap: anywhere;
 }
 #app #hud #loop > * { min-width: 0; max-width: 100%; flex-shrink: 1; white-space: normal; overflow-wrap: anywhere; text-align: center; }
+
+/* Match content columns to the center sight corridor and measured upper-right radar. */
+#hud {
+  --hud-center-gap: clamp(72px, calc(27vmin + 16px), 160px);
+  --hud-usable-width: calc(100% - max(8px, env(safe-area-inset-left)) - max(8px, env(safe-area-inset-right)));
+  --hud-side-column: calc((var(--hud-usable-width) - var(--hud-center-gap)) / 2);
+  --hud-readouts-top: calc(8px + var(--safe-top) + var(--hud-notice-top-height, 0px) + var(--hud-notice-shared-height, 0px) + 4px);
+  --hud-radar-radius: 49px;
+  --hud-radar-bottom: calc(min(33vh, 180px) + var(--hud-radar-radius));
+}
+@media (max-width: 359px) {
+  #hud { --hud-radar-radius: 42px; }
+}
+#hud .hud-readouts {
+  top: var(--hud-readouts-top);
+  grid-template-columns: minmax(0, 1fr) minmax(72px, var(--hud-center-gap)) minmax(0, 1fr);
+  column-gap: 0;
+  gap: 4px 0;
+}
+#hud .hud-readouts .hud-top {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(72px, var(--hud-center-gap)) minmax(0, 1fr);
+  gap: 4px 0;
+}
+#hud .hud-readouts .time-block {
+  grid-column: 1;
+  justify-self: start;
+  align-self: start;
+  min-width: 0;
+  max-width: 100%;
+}
+#hud .hud-readouts .targets {
+  grid-column: 3;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+}
+#hud .hud-readouts .flight-data { grid-column: 1; }
+#hud .hud-readouts .capture-info {
+  position: absolute;
+  top: max(0px, calc(var(--hud-radar-bottom) + 8px - var(--hud-readouts-top)));
+  right: 0;
+  left: auto;
+  grid-column: auto;
+  width: var(--hud-side-column);
+  max-width: none;
+}
+#hud .hud-notice-top, #hud .hud-notice-shared {
+  left: max(8px, env(safe-area-inset-left));
+  right: auto;
+  width: var(--hud-side-column);
+  max-width: none;
+}
+#hud .hud-notice-top > *, #hud .hud-notice-shared > * {
+  justify-self: start;
+  width: 100%;
+  max-width: 100%;
+}
+@media (max-width: 700px) {
+  #hud .hud-readouts .time-block { grid-column: 3; }
+  #hud .hud-readouts .targets { grid-column: 1; grid-row: 1; }
+}
+@media (min-width: 361px) and (max-width: 700px) and (orientation: landscape) and (max-height: 600px) {
+  #hud .hud-top .targets { max-width: calc(100% - 48px); }
+  #hud .hud-top .time-block {
+    max-width: min(100%, max(108px, calc(50vw - 175px)));
+  }
+  #app[data-mode="normal"] #hud .flight-tip {
+    left: calc(50vw + 28px);
+    right: auto;
+    top: max(calc(var(--hud-radar-bottom) + 8px), calc(50vh + 38px));
+    bottom: auto;
+    transform: none;
+    width: max-content;
+    max-width: var(--hud-center-gap);
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+@media (min-width: 361px) and (max-width: 700px) and (orientation: portrait) {
+  #hud .hud-readouts .capture-info {
+    top: max(0px, calc(50vh - var(--hud-readouts-top)));
+    right: auto;
+    left: var(--hud-side-column);
+    width: var(--hud-center-gap);
+  }
+}

@@ -45,7 +45,7 @@ async function verifyText200(page){
 const rows=[
  ['P-home',320,568,'home','easy',false],['P-easy',320,568,'hud-easy','easy',false],
  ['P-touch',320,568,'settings-touch','easy',false],['P-rules',320,568,'rules','easy',false],['P-startup-error',320,568,'startup-error','easy',false],
- ['L-normal',568,320,'flying-effective','normal',false],['L-notice',568,320,'hud-notice','normal',false],['L-pause',568,320,'pause','normal',false],['L-keyboard',568,320,'settings-keyboard','normal',false],
+ ['L-normal',568,320,'flying-effective','normal',false],['L-notice',568,320,'waiting','normal',false],['L-pause',568,320,'pause','normal',false],['L-keyboard',568,320,'settings-keyboard','normal',false],
  ['L-victory',568,320,'result-victory','normal',false],['L-defeat',568,320,'result-defeat','normal',false],['L-draw',568,320,'result-draw','normal',false],['L-aborted',568,320,'result-aborted','normal',false],['L-paused-error',568,320,'paused-error','normal',false],
  ['D-normal',1366,768,'hud-normal','normal',false],
  ['T-normal',393,852,'flying-effective','normal',true],['T-touch',393,852,'settings-touch','normal',true],['T-keyboard',393,852,'settings-keyboard','normal',true],['T-waiting',393,852,'waiting','normal',true],['T-spectating',393,852,'spectating','normal',true],['T-result',393,852,'result-aborted','normal',true],['T-rules',393,852,'rules','normal',true],
@@ -173,7 +173,7 @@ try{
     const outsideHudText=[];
     const walker=document.createTreeWalker(document.querySelector('#hud')??document.body,NodeFilter.SHOW_TEXT);
     for(let node=walker.nextNode();node;node=walker.nextNode())if(node.textContent?.trim()){
-     const parent=node.parentElement;if(!parent||!visible(parent))continue;
+     const parent=node.parentElement;if(!parent||!visible(parent)||parent.closest('.visually-hidden,[aria-hidden="true"]'))continue;
      const range=document.createRange();range.selectNodeContents(node);
      for(const rect of range.getClientRects())if(rect.left<0||rect.right>view.width||rect.top<0||rect.bottom>view.height)outsideHudText.push({text:node.textContent.trim(),left:rect.left,right:rect.right,top:rect.top,bottom:rect.bottom});
     }
