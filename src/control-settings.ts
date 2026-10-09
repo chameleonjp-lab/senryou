@@ -178,7 +178,7 @@ export class ControlSettings {
   private pendingLayout=false;
   private environmentKey='';
   private layoutCache=new Map<string,{placements:Record<ControlName,ControlPlacement & {blocked:boolean}>;fits:boolean}>();
-  private legacyPeerPins:Record<GameMode,boolean>={normal:false,easy:false};
+  private legacyPeerPins:Record<GameMode,ControlName[]>={normal:[],easy:[]};
   private recoveryPending = false;
   private saveFailedAwaitingUse = false;
   private keyDraft: KeyBindings;
@@ -194,7 +194,13 @@ export class ControlSettings {
     this.app = document.getElementById('app') ?? document.body;
     try { this.recoveryPending = hasSettingsRecovery(localStorage); } catch { /* Storage is optional. */ }
     this.saved = { normal: loadLayout('normal'), easy: loadLayout('easy') };
-    for(const mode of MODES)try{const raw=localStorage.getItem(LEGACY_STORAGE_KEYS[mode]);this.legacyPeerPins[mode]=readSettingsValue(STORAGE_KEYS[mode],localStorage)===null&&!!raw&&JSON.parse(raw).version===1;}catch{/* Corrupt legacy input is not a migration. */}
+    for(const mode of MODES)try{
+       const raw=localStorage.getItem(LEGACY_STORAGE_KEYS[mode]),parsed=raw?JSON.parse(raw):null;
+       const peerNames:ControlName[]=['fire','loop','bomb'];
+       this.legacyPeerPins[mode]=readSettingsValue(STORAGE_KEYS[mode],localStorage)===null&&parsed?.version===1&&parsed.controls&&typeof parsed.controls==='object'
+         ?peerNames.filter(name=>{const item=parsed.controls[name];return !!item&&typeof item==='object'&&['x','y','size','opacity'].every(key=>typeof item[key]==='number'&&Number.isFinite(item[key]));})
+         :[];
+     }catch{/* Corrupt legacy input is not a migration. */this.legacyPeerPins[mode]=[];}
     this.draft = this.copyLayouts(this.saved);
     this.dialog = this.createDialog();
     this.preview = this.dialog.querySelector<HTMLElement>('#control-preview')!;
@@ -750,11 +756,11 @@ export class ControlSettings {
     const cached=getCachedControlLayoutAndSyncFits(this.layoutCache,key,this.app.dataset);if(cached)return cached.placements;
     const items=MODE_CONTROLS[mode].map(name=>{
       const item=layout[name],size=this.renderDimensions(name,item.size);
-      const legacy=this.legacyPeerPins[mode]&&name!=='throttle';
+      const legacy=this.legacyPeerPins[mode].includes(name);
       const old=rectangularBounds(size,rect.width,rect.height,insets);
       return {id:name,x:(legacy?clamp(item.x,old.minX,old.maxX):item.x)*rect.width,y:(legacy?clamp(item.y,old.minY,old.maxY):item.y)*rect.height,...size};
     });
-    const result=placeControlFootprints(items,{...rect,top:insets.top+8,right:insets.right+8,bottom:insets.bottom+8,left:insets.left+8},this.utilityObstacles,4,this.legacyPeerPins[mode]?['fire','loop','bomb']:[]);
+    const result=placeControlFootprints(items,{...rect,top:insets.top+8,right:insets.right+8,bottom:insets.bottom+8,left:insets.left+8},this.utilityObstacles,4,this.legacyPeerPins[mode]);
     const fits=result.fits&&this.geometryReady;
     this.app.dataset.controlLayoutFits=String(fits);
     const rendered=Object.fromEntries(CONTROL_NAMES.map(name=>{const p=result.placements.find(p=>p.id===name);return [name,{...layout[name],x:p?p.x/rect.width:layout[name].x,y:p?p.y/rect.height:layout[name].y,blocked:name==='throttle'&&!fits}];})) as Record<ControlName,ControlPlacement & {blocked:boolean}>;
