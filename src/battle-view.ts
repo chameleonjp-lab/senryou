@@ -25,6 +25,17 @@ import { projectGunSight } from './gun-sight';
 import { RenderQueue } from './render-queue';
 import type { Aircraft, Bullet, GameMode } from './types';
 
+/** Shared Canvas HUD geometry for rendering and live control reservations. */
+export function radarCanvasMetrics(width: number, height: number): { x: number; y: number; radius: number } {
+  const radius = width < 360 ? 42 : 49;
+  const compactPortrait = width >= 361 && width <= 700 && height > width;
+  return {
+    x: width - radius - 18,
+    y: Math.min(height * .33, compactPortrait ? 196 : 180),
+    radius,
+  };
+}
+
 export const DETAIL_CAPACITY = 96;
 export const UNIT_VIEW_CAPACITY = 284;
 export const VISUAL_TRACER_CAPACITY = 1024;
@@ -725,7 +736,7 @@ export class BattleView {
   }
 
   private drawRadar(c: CanvasRenderingContext2D, mission: Mission): void {
-    const w = this.width, h = this.height, r = w < 360 ? 42 : 49, x = w - r - 18, y = Math.min(h * .33, 180);
+    const { x, y, radius: r } = radarCanvasMetrics(this.width, this.height);
     const player = mission.units.find(unit => unit.id === mission.controlledAircraftId);
     const origin = player?.position ?? { x: 0, y: 0, z: 0 }, heading = player?.heading ?? 0;
     const cy = Math.cos(heading), sy = Math.sin(heading), range = 2400;

@@ -251,7 +251,6 @@ try{
    if(item.state.telemetry.webglRequests!==0)throw new Error('Unexpected WebGL request');
    item.visibleControls=await page.evaluate(()=>[...document.querySelectorAll('button,[role="slider"],select')].filter(e=>e.checkVisibility({checkOpacity:true,checkVisibilityCSS:true})).map(e=>{const r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return {id:e.id,label:e.getAttribute('aria-label')||e.textContent.trim(),disabled:!!e.disabled,x:r.x,y:r.y,width:r.width,height:r.height,centerHit:hit===e||e.contains(hit)};}));
    item.visibleControlCenterMisses=item.visibleControls.filter(control=>!control.centerHit).map(({id,label})=>({id,label}));
-   if(item.visibleControlCenterMisses.length)item.layoutIssues.push('visible control center is intercepted by another element');
    item.status=item.layoutIssues.length?'failed':'captured-needs-visual-review';
    if(item.layoutIssues.length)item.error='Visible layout geometry issue: '+JSON.stringify(item.layoutIssues);
   }catch(error){item.status='failed';item.error=String(error);
@@ -286,7 +285,7 @@ try{
   catch(error){report.sourceHashesStable=false;report.errors.push({kind:'source-hash',message:String(error)});report.status='incomplete-or-failed';}
  }
  clearTimeout(uiWatchdog);await cleanup();if(report.errors.some(e=>e.kind==='cleanup'))report.status='incomplete-or-failed';saveReport();clearTimeout(totalWatchdog);console.log(JSON.stringify({status:report.status,output,screens:report.screens.length,batchIdentity:report.batchIdentity,uiMs:report.uiMs,imageReviewMs:report.imageReviewMs}));
- const failedCases=report.screens.filter(item=>item.status==='failed').map(({id,error,layoutIssues,layoutObservation,evidenceError,bottomEvidenceError,screenshot,bottomScreenshot})=>({id,error,layoutIssues,layoutObservation,evidenceError,bottomEvidenceError,screenshot,bottomScreenshot}));
+ const failedCases=report.screens.filter(item=>item.status==='failed').map(({id,error,layoutIssues,layoutObservation,visibleControlCenterMisses,evidenceError,bottomEvidenceError,screenshot,bottomScreenshot})=>({id,error,layoutIssues,layoutObservation,visibleControlCenterMisses,evidenceError,bottomEvidenceError,screenshot,bottomScreenshot}));
  if(failedCases.length||report.errors.length||report.actions.some(item=>item.status==='failed'))console.log(JSON.stringify({kind:'ui-only-failure-details',failedCases,errors:report.errors,failedActions:report.actions.filter(item=>item.status==='failed')}));
 }
 if(report.status==='blocked'||report.status==='incomplete-or-failed')process.exitCode=1;

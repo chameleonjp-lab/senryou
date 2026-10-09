@@ -1427,3 +1427,55 @@ p {
 @media (min-width: 361px) and (max-width: 700px) and (orientation: landscape) and (max-height: 600px) {
   #hud { --hud-readouts-top: max(52px, calc(8px + var(--safe-top) + var(--hud-notice-top-height, 0px) + var(--hud-notice-shared-height, 0px) + 4px)); }
 }
+
+/* Keep portrait target tallies in the two side lanes, leaving the center sight
+ * corridor empty. The timer gets its own left/center row before those tallies. */
+@media (min-width: 361px) and (max-width: 700px) and (orientation: portrait) {
+  #hud { --hud-radar-bottom: calc(min(33vh, 196px) + var(--hud-radar-radius)); }
+  #hud .hud-readouts .hud-top {
+    grid-template-columns: minmax(0, 1fr) minmax(72px, var(--hud-center-gap)) minmax(0, 1fr);
+    grid-template-rows: minmax(max(0px, calc(var(--hud-radar-bottom) - var(--hud-readouts-top))), max-content) max-content;
+  }
+  #hud .hud-readouts .time-block {
+    grid-column: 1 / 3;
+    grid-row: 1;
+    width: calc(var(--hud-side-column) + var(--hud-center-gap));
+  }
+  #hud .hud-readouts .targets {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    grid-template-columns: minmax(0, 1fr) minmax(72px, var(--hud-center-gap)) minmax(0, 1fr);
+    grid-template-areas: 'friendly . enemy' 'actions actions actions';
+  }
+  #hud .hud-readouts .targets .hud-actions {
+    justify-self: start;
+    justify-content: flex-start;
+  }
+  #hud .hud-readouts .capture-info {
+    left: calc(var(--hud-side-column) + 16px);
+    width: max(72px, calc(var(--hud-center-gap) - 24px));
+  }
+  #hud .hud-notice-shared #control-status {
+    grid-column: 1;
+    margin-left: 52px;
+    width: calc(100% - 52px);
+  }
+}
+
+/* Waiting starts its Canvas sight at the viewport origin; keep its visible
+ * status sentence clear of that actual short diagonal on compact landscape too. */
+@media (min-width: 361px) and (max-width: 700px) and (orientation: landscape) and (max-height: 600px) {
+  #hud .hud-notice-shared #control-status {
+    margin-left: 52px;
+    width: calc(100% - 52px);
+  }
+}
+
+/* The 320px portrait capture lane sits directly beside flight telemetry. */
+@media (max-width: 359px) and (orientation: portrait) {
+  #hud .hud-readouts .capture-info {
+    left: calc(var(--hud-side-column) + 16px);
+    width: max(72px, calc(var(--hud-center-gap) - 24px));
+    max-width: max(72px, calc(var(--hud-center-gap) - 24px));
+  }
+}
