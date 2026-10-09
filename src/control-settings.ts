@@ -659,8 +659,47 @@ export class ControlSettings {
       element.classList.toggle('external-label', labelStyle.outside);
       element.dataset.labelAlign = control.x < .25 ? 'left' : control.x > .75 ? 'right' : 'center';
       element.dataset.labelVertical = control.y < .25 ? 'below' : 'above';
+      element.dataset.labelSide = control.y < .25 ? 'bottom' : 'top';
       element.style.setProperty('--control-opacity', String(control.opacity));
       element.classList.toggle('is-selected', this.selected === name);
+    }
+    const previewBounds = this.preview.getBoundingClientRect();
+    const visibleControls = Array.from(this.preview.querySelectorAll<HTMLElement>('.preview-control:not([hidden])'));
+    const overlap = (a: DOMRect, b: DOMRect) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+    for (const element of visibleControls) {
+      if (!element.classList.contains('external-label')) continue;
+      const label = element.querySelector<HTMLElement>(':scope > span');
+      if (!label) continue;
+      const peers = visibleControls.filter(peer => peer !== element);
+      const preferred = element.dataset.labelSide === 'bottom' ? 'bottom' : 'top';
+      const sides = [preferred, preferred === 'top' ? 'bottom' : 'top', 'left', 'right'];
+      let placed = false;
+      for (const side of sides) {
+        const alignments = side === 'top' || side === 'bottom'
+          ? [element.dataset.labelAlign ?? 'center', 'left', 'right', 'center']
+          : ['center'];
+        for (const alignment of [...new Set(alignments)]) {
+          element.dataset.labelSide = side;
+          element.dataset.labelAlign = alignment;
+          if (side === 'top' || side === 'bottom') element.dataset.labelVertical = side === 'bottom' ? 'below' : 'above';
+          const labelBounds = label.getBoundingClientRect();
+          const insidePreview = labelBounds.left >= previewBounds.left && labelBounds.right <= previewBounds.right
+            && labelBounds.top >= previewBounds.top && labelBounds.bottom <= previewBounds.bottom;
+          const hitsControl = peers.some(peer => overlap(labelBounds, peer.getBoundingClientRect()));
+          const hitsLabel = visibleControls.some(peer => {
+            if (peer === element) return false;
+            const peerLabel = peer.querySelector<HTMLElement>(':scope > span');
+            return !!peerLabel && overlap(labelBounds, peerLabel.getBoundingClientRect());
+          });
+          if (insidePreview && !hitsControl && !hitsLabel) { placed = true; break; }
+        }
+        if (placed) break;
+      }
+      if (!placed) {
+        element.dataset.labelSide = preferred;
+        element.dataset.labelVertical = preferred === 'bottom' ? 'below' : 'above';
+        element.dataset.labelAlign = element.dataset.labelAlign ?? 'center';
+      }
     }
   }
 

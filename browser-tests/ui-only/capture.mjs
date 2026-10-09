@@ -79,7 +79,19 @@ try{
    const proxy=new Proxy(context,{get(target,key){
     const value=Reflect.get(target,key,target);if(typeof value!=='function')return value;
     if(key==='beginPath')return (...values)=>{path=[];return value.apply(target,values);};
-    if(key==='arc')return (x,y,r,...values)=>{if(Number.isFinite(x)&&Number.isFinite(y)&&Number.isFinite(r)){include(x-r,y-r);include(x+r,y+r);}return value.call(target,x,y,r,...values);};
+    if(key==='arc')return (x,y,r,...values)=>{
+     if(Number.isFinite(x)&&Number.isFinite(y)&&Number.isFinite(r)){
+      include(x-r,y-r);include(x+r,y+r);
+      const matrix=target.getTransform(),rect=this.getBoundingClientRect(),sx=rect.width/this.width,sy=rect.height/this.height;
+      const cx=(matrix.a*x+matrix.c*y+matrix.e)*sx,cy=(matrix.b*x+matrix.d*y+matrix.f)*sy;
+      const padX=Math.abs(matrix.a)*target.lineWidth*.5*sx,padY=Math.abs(matrix.d)*target.lineWidth*.5*sy;
+      const rx=Math.abs(matrix.a)*r*sx+padX,ry=Math.abs(matrix.d)*r*sy+padY;
+      if(Math.min(rx,ry)>=40&&cx>rect.width/2&&cy<rect.height/2){
+       window.__uiOnlyCanvasRadar={source:'observed-product-BattleView.drawRadar-Canvas2D-arc',bounds:{left:cx-rx,top:cy-ry,right:cx+rx,bottom:cy+ry},center:{x:cx,y:cy},radius:{x:rx-padX,y:ry-padY},strokePadding:{x:padX,y:padY}};
+      }
+     }
+     return value.call(target,x,y,r,...values);
+    };
     if(key==='moveTo'||key==='lineTo')return (x,y,...values)=>{include(x,y);return value.call(target,x,y,...values);};
     if(key==='stroke')return (...values)=>{
      if(!window.__uiOnlyCanvasSight&&path.length){
@@ -93,13 +105,13 @@ try{
    },set(target,key,value){return Reflect.set(target,key,value,target);}});
    wrapped.set(context,proxy);return proxy;
   };
-  window.__uiOnlyCanvasSight=null;
+  window.__uiOnlyCanvasSight=null;window.__uiOnlyCanvasRadar=null;
  });
  page.on('pageerror',error=>report.errors.push({kind:'pageerror',message:error.message}));page.on('console',msg=>{if(msg.type()==='error')report.errors.push({kind:'console',message:msg.text()});});
  await page.goto(origin+'/__ui_only__/',{waitUntil:'domcontentloaded'});await page.waitForFunction(()=>document.documentElement.dataset.uiOnlyReady==='true');report.productUiStarted=true;
  report.setupMs=performance.now()-started;report.setupAttemptElapsedMs=report.setupMs;report.setupStatus='completed';uiStart=performance.now();uiWatchdog=setTimeout(()=>void timeoutStop('UI capture deadline exceeded; missing work is not a pass'),budgets.uiMs);
  const settle=()=>bounded(page.evaluate(async()=>{await document.fonts.ready;await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}),budgets.settleMs,'fonts/frame settling');
- const canvasState=()=>page.locator('#markers').evaluate(canvas=>{const c=canvas.getContext('2d'),d=c.getImageData(0,0,canvas.width,canvas.height).data;let painted=0;for(let i=3;i<d.length;i+=4)if(d[i])painted++;return {width:canvas.width,height:canvas.height,paintedPixels:painted,sight:window.__uiOnlyCanvasSight??null};});
+ const canvasState=()=>page.locator('#markers').evaluate(canvas=>{const c=canvas.getContext('2d'),d=c.getImageData(0,0,canvas.width,canvas.height).data;let painted=0;for(let i=3;i<d.length;i+=4)if(d[i])painted++;return {width:canvas.width,height:canvas.height,paintedPixels:painted,sight:window.__uiOnlyCanvasSight??null,radar:window.__uiOnlyCanvasRadar??null};});
  const state=()=>page.evaluate(()=>({...window.__senryouUiOnly.snapshot(),telemetry:window.__senryouUiOnly.telemetry}));
  const resetScrollPositions=()=>page.evaluate(()=>{
   window.scrollTo(0,0);
@@ -125,7 +137,7 @@ try{
   const item={id,fixture,mode,viewport:{width,height},domTextScale:enlarge?2:1,status:'not-run',batchIdentity:report.batchIdentity,sourceHashesFingerprint:report.sourceHashesFingerprint,centerHitPolicy:'observational-only; false does not fail capture',imageReviewed:false};report.screens.push(item);
   activeCase={item,fixture};
   try{
-   await page.setViewportSize({width,height});await page.evaluate(({fixture,mode})=>{window.__uiOnlyCanvasSight=null;window.__senryouUiOnly.show(fixture,mode);},{fixture,mode});item.scrollReset=await resetScrollPositions();
+   await page.setViewportSize({width,height});await page.evaluate(({fixture,mode})=>{window.__uiOnlyCanvasSight=null;window.__uiOnlyCanvasRadar=null;window.__senryouUiOnly.show(fixture,mode);},{fixture,mode});item.scrollReset=await resetScrollPositions();
    if(enlarge)item.textScale=await text200(page);await settle();if(enlarge)item.textScaleVerification=await verifyText200(page);
    item.state=await state();item.canvas=await canvasState();
    await saveTopScreenshot(item);await saveBottomScreenshot(item,fixture);
@@ -134,34 +146,58 @@ try{
     const visible=element=>element.checkVisibility({checkOpacity:true,checkVisibilityCSS:true});
     const box=document.querySelector('#hud .targets');
     const view={width:innerWidth,height:innerHeight};
-    const sight=window.__uiOnlyCanvasSight??null;
+    const sight=window.__uiOnlyCanvasSight??null,radar=window.__uiOnlyCanvasRadar??null;
     const targetBox=box&&visible(box)?rectOf(box):null;
     const targetChildren=[...(box?.children??[])].map(element=>({className:(element instanceof HTMLElement?element.className:''),text:element.textContent?.trim()??'',...rectOf(element)}));
     const targetSightOverlap=!!(targetBox&&sight&&targetBox.left<sight.bounds.right&&targetBox.right>sight.bounds.left&&targetBox.top<sight.bounds.bottom&&targetBox.bottom>sight.bounds.top);
-    const previewLabels=[...document.querySelectorAll('#control-settings .preview-control.external-label > span')].filter(visible).map(element=>({text:element.textContent.trim(),...rectOf(element),scrollWidth:element.scrollWidth,clientWidth:element.clientWidth}));
+    const previewControls=[...document.querySelectorAll('#control-settings .preview-control')].filter(visible).map(element=>({id:element.dataset.control,...rectOf(element)}));
+    const previewLabels=[...document.querySelectorAll('#control-settings .preview-control.external-label > span')].filter(visible).map(element=>({owner:element.parentElement?.dataset.control,text:element.textContent.trim(),...rectOf(element),scrollWidth:element.scrollWidth,clientWidth:element.clientWidth}));
     const previewLabelOverlaps=[];
     for(let i=0;i<previewLabels.length;i++)for(let j=i+1;j<previewLabels.length;j++){
      const a=previewLabels[i],b=previewLabels[j];if(a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top)previewLabelOverlaps.push([a.text,b.text]);
     }
+    const previewLabelControlOverlaps=[];
+    for(const label of previewLabels)for(const control of previewControls)if(control.id!==label.owner&&label.left<control.right&&label.right>control.left&&label.top<control.bottom&&label.bottom>control.top)previewLabelControlOverlaps.push({label:label.text,owner:label.owner,control:control.id});
     const controls=[...document.querySelectorAll('#hud [data-flight-control]')].filter(visible).map(element=>({id:element.id,...rectOf(element)}));
-    const hudContent=[...document.querySelectorAll('#hud .time-block,#hud .targets,#hud .flight-data,#hud .capture-info,#hud .hud-notice-top,#hud .hud-notice-shared')].filter(visible).map(element=>({id:element.id||element.className,...rectOf(element)}));
+    const hudElements=[...document.querySelectorAll('#hud .time-block,#hud .targets,#hud .flight-data,#hud .capture-info,#hud .hud-notice-top > *,#hud .hud-notice-shared > *,#hud #flight-tip,#hud #announcement')].filter(visible);
+    const hudContent=hudElements.map(element=>({id:element.id||element.className,text:element.textContent.trim(),...rectOf(element)}));
+    const hudContentOverlaps=[];
+    for(let i=0;i<hudContent.length;i++)for(let j=i+1;j<hudContent.length;j++){const a=hudContent[i],b=hudContent[j];if(a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top)hudContentOverlaps.push({first:a.id,second:b.id});}
     const hudControlOverlaps=[];
-    for(const control of controls)for(const content of hudContent)if(control.left<content.right&&control.right>content.left&&control.top<content.bottom&&control.bottom>content.top)hudControlOverlaps.push({control:control.id,content:content.id});
+    for(const control of controls)for(const content of hudContent){const contained=content.left<=control.left&&content.right>=control.right&&content.top<=control.top&&content.bottom>=control.bottom;if(!contained&&control.left<content.right&&control.right>content.left&&control.top<content.bottom&&control.bottom>content.top)hudControlOverlaps.push({control:control.id,content:content.id});}
+    const canvasRegionOverlaps=[];
+    for(const element of [...hudContent,...controls.map(control=>({...control,kind:'flight-control'}))])for(const [name,region] of [['sight',sight],['radar',radar]])if(region&&element.left<region.bounds.right&&element.right>region.bounds.left&&element.top<region.bounds.bottom&&element.bottom>region.bounds.top)canvasRegionOverlaps.push({element:element.id,kind:element.kind??'hud-content',region:name});
     const targetText=[...(box?.querySelectorAll('*')??[])].filter(visible).map(element=>({text:element.textContent.trim(),scrollWidth:element.scrollWidth,clientWidth:element.clientWidth})).filter(item=>item.text&&item.scrollWidth>item.clientWidth+1);
+    const targetCounts=[...(box?.querySelectorAll('.target-tally b')??[])].filter(visible).map(element=>({text:element.textContent.trim(),lineRects:[...(()=>{const range=document.createRange();range.selectNodeContents(element);return range.getClientRects();})()].map(rect=>({left:rect.left,right:rect.right,top:rect.top,bottom:rect.bottom}))}));
+    const outsideHudText=[];
+    const walker=document.createTreeWalker(document.querySelector('#hud')??document.body,NodeFilter.SHOW_TEXT);
+    for(let node=walker.nextNode();node;node=walker.nextNode())if(node.textContent?.trim()){
+     const parent=node.parentElement;if(!parent||!visible(parent))continue;
+     const range=document.createRange();range.selectNodeContents(node);
+     for(const rect of range.getClientRects())if(rect.left<0||rect.right>view.width||rect.top<0||rect.bottom>view.height)outsideHudText.push({text:node.textContent.trim(),left:rect.left,right:rect.right,top:rect.top,bottom:rect.bottom});
+    }
     const outsidePreviewLabels=previewLabels.filter(item=>item.left<0||item.right>view.width||item.top<0||item.bottom>view.height).map(item=>item.text);
     const preview=document.querySelector('#control-settings .control-preview'),previewBox=preview&&visible(preview)?rectOf(preview):null;
+    const previewLabelOverflow=previewLabels.filter(item=>previewBox&&(item.left<previewBox.left-1||item.right>previewBox.right+1||item.top<previewBox.top-1||item.bottom>previewBox.bottom+1)).map(item=>item.text);
     const previewControlOverflow=[...document.querySelectorAll('#control-settings .preview-control')].filter(visible).map(element=>({id:element.dataset.control,...rectOf(element)})).filter(item=>previewBox&&(item.left<previewBox.left-1||item.right>previewBox.right+1||item.top<previewBox.top-1||item.bottom>previewBox.bottom+1)).map(item=>item.id);
     const outsideFlightControls=controls.filter(item=>item.left<0||item.right>view.width||item.top<0||item.bottom>view.height).map(item=>item.id);
-    return {viewport:view,targetBox,targetChildren,sight,sightSource:sight?.source??'no-product-Canvas2D-sight-observed',targetSightOverlap,targetTextOverflow:targetText,hudContent,hudControlOverlaps,previewLabels,previewLabelOverlaps,outsidePreviewLabels,previewControlOverflow,outsideFlightControls,flightControls:controls,layoutObservationPhase:document.querySelector('#control-settings .settings-main')?.scrollTop?'after-required-settings-bottom-scroll':'top-state',centerHitRemainsObservational:true};
+    return {viewport:view,targetBox,targetChildren,sight,sightSource:sight?.source??'no-product-Canvas2D-sight-observed',radar,radarSource:radar?.source??'no-product-Canvas2D-radar-observed',targetSightOverlap,targetTextOverflow:targetText,targetCounts,hudContent,hudContentOverlaps,hudControlOverlaps,canvasRegionOverlaps,outsideHudText,previewControls,previewLabels,previewLabelOverlaps,previewLabelControlOverlaps,outsidePreviewLabels,previewLabelOverflow,previewControlOverflow,outsideFlightControls,flightControls:controls,layoutObservationPhase:document.querySelector('#control-settings .settings-main')?.scrollTop?'after-required-settings-bottom-scroll':'top-state',centerHitRemainsObservational:true};
    });
    item.layoutIssues=[];
    const sightExpected=['hud-easy','hud-normal','hud-notice','flying-effective','flying-ineffective','flying-no-prediction'].includes(fixture);
    if(sightExpected&&(!item.layoutObservation.sight||!item.layoutObservation.sight.bounds))item.layoutIssues.push('product Canvas2D sight bounds were not observed');
+   if(item.state.screen==='playing'&&(!item.layoutObservation.radar||!item.layoutObservation.radar.bounds))item.layoutIssues.push('product Canvas2D radar bounds were not observed');
    if(item.layoutObservation.targetSightOverlap)item.layoutIssues.push('HUD target panel overlaps observed product sight bounds');
    if(item.layoutObservation.targetTextOverflow.length)item.layoutIssues.push('HUD target text overflows its measured box');
+   if(item.layoutObservation.targetCounts.some(count=>count.text==='296'&&count.lineRects.length!==1))item.layoutIssues.push('target count 296 is not visible on a single line');
+   if(item.layoutObservation.hudContentOverlaps.length)item.layoutIssues.push('visible HUD content overlaps another HUD content region');
    if(item.layoutObservation.hudControlOverlaps.length)item.layoutIssues.push('flight control overlaps a visible HUD reservation');
+   if(item.layoutObservation.canvasRegionOverlaps.length)item.layoutIssues.push('visible HUD or flight control overlaps a measured Canvas2D sight/radar region');
+   if(item.layoutObservation.outsideHudText.length)item.layoutIssues.push('visible HUD text extends beyond viewport');
    if(item.layoutObservation.previewLabelOverlaps.length)item.layoutIssues.push('Touch preview labels overlap');
+   if(item.layoutObservation.previewLabelControlOverlaps.length)item.layoutIssues.push('Touch preview label overlaps another control');
    if(item.layoutObservation.outsidePreviewLabels.length)item.layoutIssues.push('Touch preview label extends beyond viewport');
+   if(item.layoutObservation.previewLabelOverflow.length)item.layoutIssues.push('Touch preview label extends beyond its clipped preview frame');
    if(item.layoutObservation.previewControlOverflow.length)item.layoutIssues.push('Touch preview control extends beyond its visible preview frame');
    if(item.layoutObservation.outsideFlightControls.length)item.layoutIssues.push('flight control extends beyond viewport');
    const playing=item.state.screen==='playing'||item.state.screen==='paused';

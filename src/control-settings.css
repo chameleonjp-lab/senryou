@@ -104,3 +104,9 @@
 }
 
 #control-settings .preview-control.external-label[data-label-vertical="below"] > span { bottom: auto; top: calc(100% + 2px); }
+#control-settings .preview-control.external-label[data-label-side="left"] > span {
+  top: 50%; right: calc(100% + 2px); bottom: auto; left: auto; transform: translateY(-50%);
+}
+#control-settings .preview-control.external-label[data-label-side="right"] > span {
+  top: 50%; right: auto; bottom: auto; left: calc(100% + 2px); transform: translateY(-50%);
+}
