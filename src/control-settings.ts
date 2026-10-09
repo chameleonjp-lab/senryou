@@ -33,6 +33,22 @@ export const DEFAULT_LAYOUT: ControlLayout = {
 };
 const CONTROL_LABELS: Record<ControlName, string> = { fire: '射撃', loop: '宙返り', throttle: '速度レバー', bomb: '爆弾' };
 
+/** Bound measured control content to a touch-safe viewport without changing saved coordinates. */
+export function fitControlFootprint(
+  size: { width: number; height: number },
+  viewport: { width: number; height: number },
+  insets: Insets,
+  minimum = 44,
+  margin = 16,
+): { width: number; height: number } {
+  const maxWidth = Math.max(minimum, viewport.width - insets.left - insets.right - margin);
+  const maxHeight = Math.max(minimum, viewport.height - insets.top - insets.bottom - margin);
+  return {
+    width: Math.max(minimum, Math.min(size.width, maxWidth)),
+    height: Math.max(minimum, Math.min(size.height, maxHeight)),
+  };
+}
+
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 const copyLayout = (layout: ControlLayout): ControlLayout => Object.fromEntries(
   CONTROL_NAMES.map(name => [name, { ...layout[name] }]),
@@ -685,7 +701,7 @@ export class ControlSettings {
   private renderDimensions(name:ControlName,size:number):{width:number;height:number} {
     const rect=controlLayoutSize(this.app),base=controlDimensions(name,size,rect.width,rect.height,this.readInsets());
     const content=this.contentDimensions[name];
-    return {width:Math.max(base.width,content?.width??0),height:Math.max(base.height,content?.height??0)};
+    return fitControlFootprint({width:Math.max(base.width,content?.width??0),height:Math.max(base.height,content?.height??0)},rect,this.readInsets());
   }
 
   private renderPlacements(layout:ControlLayout,mode:GameMode):Record<ControlName,ControlPlacement & {blocked:boolean}> {
