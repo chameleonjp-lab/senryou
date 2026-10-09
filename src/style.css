@@ -1045,7 +1045,7 @@ p {
 .rules-header { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px 12px; }
 .rules-header .eyebrow { margin: 0 0 4px; font-size: 10px; }
 .rules-header h2 { margin: 0; font-size: 20px; font-weight: 500; }
-#rules-close { width: 44px; height: 44px; flex: 0 0 auto; border: 1px solid #8aaeb2; border-radius: 50%; background: #193b49; font-size: 28px; }
+#rules-close { display: grid; place-items: center; width: 44px; height: 44px; flex: 0 0 auto; padding: 0; line-height: 1; border: 1px solid #8aaeb2; border-radius: 50%; background: #193b49; font-size: 28px; }
 .rules-content { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 18px 10px; touch-action: pan-y; }
 .rules-content h3 { margin: 18px 0 8px; font-size: 16px; color: #f0dba7; }
 .rules-content p { margin: 0 0 10px; font-size: 14px; line-height: 1.8; }
@@ -1244,18 +1244,38 @@ p {
 /* On compact screens keep the readout/notice lane away from the fixed sight
  * and the upper-right Canvas radar. Text wraps within the lane; no labels are
  * hidden or reduced to make the reservation fit. */
+@media (max-width: 359px) {
+  /* The narrow screen's right lane is open below the radar; docking totals
+   * there keeps the complete labels outside the observed center sight. */
+  #hud .hud-readouts .targets {
+    position: absolute; top: 0; left: calc(100% + 60px); width: calc(56vw - 76px);
+    min-width: 92px; max-width: 128px; box-sizing: border-box; flex: none; align-content: start;
+  }
+}
 @media (max-width: 700px) {
   #hud .hud-readouts, #hud .hud-notice-top, #hud .hud-notice-shared {
     left: max(8px, env(safe-area-inset-left));
     right: auto;
-    width: min(40vw, 224px);
+    width: min(44vw, 248px);
     max-width: calc(100% - 16px);
+    min-width: 0;
+    box-sizing: border-box;
   }
   #hud .hud-readouts { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  #hud .hud-readouts > *, #hud .hud-top, #hud .time-block, #hud .targets,
+  #hud .target-tally, #hud .flight-data, #hud .capture-info { min-width: 0; max-width: 100%; }
   #hud .hud-top { grid-column: 1; display: flex; flex-direction: column; align-items: stretch; gap: 4px; }
   #hud .time-block { width: 100%; }
-  #hud .targets { width: 100%; min-width: 0; margin: 0; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 3px; padding: 4px; }
-  #hud .targets .target-tally small { white-space: normal; overflow-wrap: anywhere; }
+  #hud .targets {
+    display: grid; width: 100%; margin: 0; grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas: 'friendly enemy' 'actions actions'; gap: 4px; padding: 4px;
+  }
+  #hud .targets .target-tally:first-child { grid-area: friendly; }
+  #hud .targets .target-tally:last-child { grid-area: enemy; }
+  #hud .targets .hud-actions { grid-area: actions; justify-content: center; }
+  #hud .targets .target-tally > span, #hud .targets .target-tally small,
+  #hud .targets div { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+  #hud .targets .target-tally b { margin: 0; }
   #hud .hud-readouts .flight-data, #hud .hud-readouts .capture-info {
     grid-column: 1; width: 100%; max-width: none; justify-self: stretch;
   }
@@ -1270,7 +1290,13 @@ p {
 
 /* The real button and its measured placement share one safe, wrapping box. */
 #app #hud #loop {
+  width: var(--control-size);
+  min-width: 44px;
   max-width: calc(100% - max(16px, env(safe-area-inset-left) + env(safe-area-inset-right) + 16px));
   overflow-wrap: anywhere;
 }
 #app #hud #loop > * { min-width: 0; max-width: 100%; flex-shrink: 1; white-space: normal; overflow-wrap: anywhere; text-align: center; }
+
+@media (orientation: landscape) and (max-height: 600px) and (max-width: 700px) {
+  #hud .hud-readouts { width: min(40vw, 248px); }
+}

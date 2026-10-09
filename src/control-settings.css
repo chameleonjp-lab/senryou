@@ -78,11 +78,11 @@
   touch-action: none;
 }
 #control-settings .preview-control.is-selected { border-color: #fff0b5; box-shadow: 0 0 0 2px #ffe7a8; }
-#control-settings .preview-control > span { pointer-events: none; white-space: nowrap; }
+#control-settings .preview-control > span { pointer-events: none; min-width: 0; max-width: min(32vw, 120px); white-space: normal; overflow-wrap: anywhere; text-align: center; }
 #control-settings .preview-control.external-label > span {
   position: absolute; bottom: calc(100% + 2px); left: 50%; transform: translateX(-50%);
   border-radius: 3px; padding: 2px 3px; background: #071e2bf2; color: #fff0c8;
-  font-size: 10px; line-height: 1.2;
+  width: max-content; font-size: 10px; line-height: 1.2;
 }
 #control-settings .preview-control.external-label[data-label-align="left"] > span { left: 0; transform: none; }
 #control-settings .preview-control.external-label[data-label-align="right"] > span { left: auto; right: 0; transform: none; }
