@@ -128,6 +128,7 @@ try{
    await page.setViewportSize({width,height});await page.evaluate(({fixture,mode})=>{window.__uiOnlyCanvasSight=null;window.__senryouUiOnly.show(fixture,mode);},{fixture,mode});item.scrollReset=await resetScrollPositions();
    if(enlarge)item.textScale=await text200(page);await settle();if(enlarge)item.textScaleVerification=await verifyText200(page);
    item.state=await state();item.canvas=await canvasState();
+   await saveTopScreenshot(item);await saveBottomScreenshot(item,fixture);
    item.layoutObservation=await page.evaluate(()=>{
     const rectOf=element=>{const r=element.getBoundingClientRect();return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height};};
     const visible=element=>element.checkVisibility({checkOpacity:true,checkVisibilityCSS:true});
@@ -135,6 +136,7 @@ try{
     const view={width:innerWidth,height:innerHeight};
     const sight=window.__uiOnlyCanvasSight??null;
     const targetBox=box&&visible(box)?rectOf(box):null;
+    const targetChildren=[...(box?.children??[])].map(element=>({className:(element instanceof HTMLElement?element.className:''),text:element.textContent?.trim()??'',...rectOf(element)}));
     const targetSightOverlap=!!(targetBox&&sight&&targetBox.left<sight.bounds.right&&targetBox.right>sight.bounds.left&&targetBox.top<sight.bounds.bottom&&targetBox.bottom>sight.bounds.top);
     const previewLabels=[...document.querySelectorAll('#control-settings .preview-control.external-label > span')].filter(visible).map(element=>({text:element.textContent.trim(),...rectOf(element),scrollWidth:element.scrollWidth,clientWidth:element.clientWidth}));
     const previewLabelOverlaps=[];
@@ -150,7 +152,7 @@ try{
     const preview=document.querySelector('#control-settings .control-preview'),previewBox=preview&&visible(preview)?rectOf(preview):null;
     const previewControlOverflow=[...document.querySelectorAll('#control-settings .preview-control')].filter(visible).map(element=>({id:element.dataset.control,...rectOf(element)})).filter(item=>previewBox&&(item.left<previewBox.left-1||item.right>previewBox.right+1||item.top<previewBox.top-1||item.bottom>previewBox.bottom+1)).map(item=>item.id);
     const outsideFlightControls=controls.filter(item=>item.left<0||item.right>view.width||item.top<0||item.bottom>view.height).map(item=>item.id);
-    return {viewport:view,targetBox,sight,sightSource:sight?.source??'no-product-Canvas2D-sight-observed',targetSightOverlap,targetTextOverflow:targetText,hudContent,hudControlOverlaps,previewLabels,previewLabelOverlaps,outsidePreviewLabels,previewControlOverflow,outsideFlightControls,flightControls:controls,centerHitRemainsObservational:true};
+    return {viewport:view,targetBox,targetChildren,sight,sightSource:sight?.source??'no-product-Canvas2D-sight-observed',targetSightOverlap,targetTextOverflow:targetText,hudContent,hudControlOverlaps,previewLabels,previewLabelOverlaps,outsidePreviewLabels,previewControlOverflow,outsideFlightControls,flightControls:controls,layoutObservationPhase:document.querySelector('#control-settings .settings-main')?.scrollTop?'after-required-settings-bottom-scroll':'top-state',centerHitRemainsObservational:true};
    });
    item.layoutIssues=[];
    const sightExpected=['hud-easy','hud-normal','hud-notice','flying-effective','flying-ineffective','flying-no-prediction'].includes(fixture);
@@ -167,7 +169,6 @@ try{
    if(!playing&&item.canvas.paintedPixels!==0)throw new Error('Canvas HUD not cleared on non-game screen');
    if(item.state.telemetry.webglRequests!==0)throw new Error('Unexpected WebGL request');
    item.visibleControls=await page.evaluate(()=>[...document.querySelectorAll('button,[role="slider"],select')].filter(e=>e.checkVisibility({checkOpacity:true,checkVisibilityCSS:true})).map(e=>{const r=e.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return {id:e.id,label:e.getAttribute('aria-label')||e.textContent.trim(),disabled:!!e.disabled,x:r.x,y:r.y,width:r.width,height:r.height,centerHit:hit===e||e.contains(hit)};}));
-   await saveTopScreenshot(item);await saveBottomScreenshot(item,fixture);
    item.status=item.layoutIssues.length?'failed':'captured-needs-visual-review';
    if(item.layoutIssues.length)item.error='Visible layout geometry issue: '+JSON.stringify(item.layoutIssues);
   }catch(error){item.status='failed';item.error=String(error);
