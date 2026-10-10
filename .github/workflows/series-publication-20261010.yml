@@ -1,0 +1,111 @@
+name: Publish approved Zero Series verification build
+on:
+  push:
+    branches: ['publish/zero-series-20261010']
+permissions:
+  contents: read
+concurrency:
+  group: senryou-pages
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.ref == 'refs/heads/publish/zero-series-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+      pages: read
+    env:
+      SOURCE_COMMIT: 470d94e81730b6b3090842838e45fadd01ec3fe7
+      UI_ONLY_EVIDENCE_DIR: ${{ runner.temp }}/series-ui-evidence
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: 470d94e81730b6b3090842838e45fadd01ec3fe7
+          persist-credentials: false
+      - name: Verify the exact currently accepted main
+        run: |
+          test "$(git rev-parse HEAD)" = "$SOURCE_COMMIT"
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$SOURCE_COMMIT"
+          test -z "$(git status --porcelain)"
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Current bounded UI-only checks; no gameplay
+        run: |
+          node browser-tests/ui-only/check-fixture.mjs
+          npx tsc --noEmit --project tsconfig.ui-only.json
+          node browser-tests/ui-only/validate-vite.mjs
+          node browser-tests/ui-only/capture.mjs
+      - name: Validate public files and bind artifact to source
+        env:
+          WORKFLOW_COMMIT: ${{ github.sha }}
+        run: |
+          
+          python - <<'PYVALIDATE'
+          import hashlib,json,os,re
+          from pathlib import Path
+          root=Path('dist')
+          files=[]
+          for p in sorted(root.rglob('*')):
+              assert not p.is_symlink(), 'Symlink in public build'
+              if p.is_dir(): continue
+              assert p.is_file(), 'Unexpected public entry'
+              path=p.relative_to(root).as_posix()
+              if path=='deployment.json': continue
+              assert path in ['index.html','third-party-notices.txt','artifact-manifest.json'] or re.fullmatch(r'assets/[A-Za-z0-9_.-]+\.(js|css)',path), path
+              text=p.read_text()
+              assert 'sourceMappingURL=' not in text, path
+              assert not re.search(r'__senryou|__uchiotose|__fantasiaReadState|__uiOnly|__machimamoreUi|__gekichinUiOnly',text), path
+              files.append({'path':path,'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'bytes':p.stat().st_size})
+          html=(root/'index.html').read_text()
+          assert not re.search(r'(?:src|href)=["\']/(?!/)',html), 'Root-relative asset'
+          for path in re.findall(r'(?:src|href)=["\']\./(assets/[^"\']+)',html): assert (root/path).is_file(), path
+          assert any(x['path'].endswith('.js') for x in files)
+          assert any(x['path'].endswith('.css') for x in files)
+          assert (root/'third-party-notices.txt').read_bytes()==Path('public/third-party-notices.txt').read_bytes()
+          manifest_path=root/'deployment.json'
+          manifest=json.loads(manifest_path.read_text()) if manifest_path.exists() else {'repository':'chameleonjp-lab/senryou','commit':os.environ['SOURCE_COMMIT'],'files':{x['path']:x['sha256'] for x in files}}
+          assert manifest['commit']==os.environ['SOURCE_COMMIT']
+          manifest.update({'sourceTree':os.popen('git rev-parse HEAD^{tree}').read().strip(),'workflowCommit':os.environ['WORKFLOW_COMMIT'],'publicationAuthorizationDate':'2026-10-10','publicationScope':'User-requested verification build; final physical-phone and gameplay acceptance are not claimed'})
+          manifest_path.write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
+          PYVALIDATE
+      - name: Preserve checks and pictures separately from the public site
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: senryou-series-publication-${{ github.sha }}
+          path: |
+            test-results/
+            ${{ runner.temp }}/series-ui-evidence/
+            dist/deployment.json
+          retention-days: 14
+          if-no-files-found: warn
+      - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b
+        with:
+          path: dist
+          retention-days: 7
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/publish/zero-series-20261010'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Read existing Pages configuration
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b
+        with:
+          enablement: false
+      - name: Publish the checked artifact
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e
