@@ -1,7 +1,8 @@
 name: Publish approved Zero Series verification build
 on:
   push:
-    branches: ['publish/zero-series-20261010']
+    branches: [main]
+    paths: ['.github/workflows/series-publication-20261010.yml', 'docs/ZERO_SERIES_PUBLICATION_20261010.md']
 permissions:
   contents: read
 concurrency:
@@ -9,24 +10,32 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build:
-    if: github.ref == 'refs/heads/publish/zero-series-20261010'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 12
     permissions:
       contents: read
       pages: read
     env:
-      SOURCE_COMMIT: 470d94e81730b6b3090842838e45fadd01ec3fe7
+      SOURCE_COMMIT: ${{ github.sha }}
+      APPROVED_PRODUCT_SOURCE: 470d94e81730b6b3090842838e45fadd01ec3fe7
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: 470d94e81730b6b3090842838e45fadd01ec3fe7
+          ref: ${{ github.sha }}
+          fetch-depth: 2
           persist-credentials: false
-      - name: Verify the exact currently accepted main
+      - name: Verify the exact approved product source and the main publication commit
         run: |
           test "$(git rev-parse HEAD)" = "$SOURCE_COMMIT"
           test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$SOURCE_COMMIT"
           test -z "$(git status --porcelain)"
+          test "$(git show -s --format=%P HEAD)" = "$APPROVED_PRODUCT_SOURCE"
+          python - <<'PYAPPROVAL'
+          import os,subprocess
+          paths=subprocess.check_output(['git','diff','--no-renames','--name-only',os.environ['APPROVED_PRODUCT_SOURCE'],'HEAD'],text=True).splitlines()
+          assert sorted(paths)==['.github/workflows/series-publication-20261010.yml','docs/ZERO_SERIES_PUBLICATION_20261010.md'], paths
+          PYAPPROVAL
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
           node-version: '24'
@@ -83,6 +92,9 @@ jobs:
           name: senryou-series-publication-${{ github.sha }}
           path: |
             test-results/
+            artifacts/
+            playwright-report/
+            dist/artifact-manifest.json
             ${{ runner.temp }}/series-ui-evidence/
             dist/deployment.json
           retention-days: 14
@@ -93,7 +105,7 @@ jobs:
           retention-days: 7
   deploy:
     needs: build
-    if: github.ref == 'refs/heads/publish/zero-series-20261010'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
