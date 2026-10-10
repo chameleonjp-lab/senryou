@@ -1491,7 +1491,7 @@ p {
     row-gap: 0;
   }
   #app[data-hud-reservation-phase="flying"] #hud .hud-readouts .capture-info {
-    top: max(0px, calc(42.4vh - var(--hud-readouts-top)));
+    top: calc(42.4vh - var(--hud-readouts-top));
     right: auto;
     left: 0;
     width: min(280px, calc(100% - 16px));
