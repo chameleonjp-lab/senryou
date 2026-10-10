@@ -1473,49 +1473,59 @@ p {
   }
 }
 
-/* At 393px portrait, keep every readout reachable at 200% DOM text while
- * reserving the measured sight, radar, and live control rectangles. */
+/* At 393px portrait, keep the enlarged flying HUD in measured safe lanes.
+ * Waiting/spectating retain their prior sight-aligned notification layout. */
 @media (min-width: 390px) and (max-width: 700px) and (orientation: portrait) {
-  #hud {
+  #app[data-hud-reservation-phase="flying"] #hud {
     --hud-center-gap: clamp(139px, calc(27vmin + 33px), 160px);
     --hud-readouts-top: max(
       calc(41.5vh + var(--safe-top)),
       calc(8px + var(--safe-top) + var(--hud-notice-top-height, 0px) + var(--hud-notice-shared-height, 0px) + 4px)
     );
   }
-  #hud .hud-readouts { row-gap: 0; }
-  #hud .hud-readouts .hud-top { row-gap: 0; }
-  #hud .hud-readouts .targets {
+  #app[data-hud-reservation-phase="flying"] #hud .hud-readouts { row-gap: 0; }
+  #app[data-hud-reservation-phase="flying"] #hud .hud-readouts .hud-top { row-gap: 0; }
+  #app[data-hud-reservation-phase="flying"] #hud .hud-readouts .targets {
     grid-template-areas: 'friendly actions enemy';
     column-gap: 0;
     row-gap: 0;
   }
-  #hud .hud-readouts .capture-info {
-    top: max(0px, calc(70.5vh - var(--hud-readouts-top)));
+  #app[data-hud-reservation-phase="flying"] #hud .hud-readouts .capture-info {
+    top: max(0px, calc(42.4vh - var(--hud-readouts-top)));
+    right: auto;
+    left: 0;
+    width: min(280px, calc(100% - 16px));
+    max-width: min(280px, calc(100% - 16px));
   }
-  #hud .hud-notice-shared {
+  #app[data-hud-reservation-phase="flying"] #hud .hud-readouts .flight-data {
+    grid-column: 1 / 3;
+    width: min(210px, calc(100% - 16px));
+    max-width: 210px;
+    justify-self: start;
+  }
+  #app[data-hud-reservation-phase="flying"] #hud .hud-notice-shared {
     width: min(144px, calc(100% - var(--hud-radar-radius) - var(--hud-radar-radius) - 36px));
     max-width: min(144px, calc(100% - var(--hud-radar-radius) - var(--hud-radar-radius) - 36px));
     grid-template-columns: minmax(0, 1fr);
   }
-  #hud .hud-notice-shared #control-status {
+  #app[data-hud-reservation-phase="flying"] #hud .hud-notice-shared #control-status {
     grid-column: 1;
     grid-row: auto;
     margin-left: 0;
     width: 100%;
   }
-  #hud .hud-notice-shared #payload-status,
-  #hud .hud-notice-shared #reload-status {
+  #app[data-hud-reservation-phase="flying"] #hud .hud-notice-shared #payload-status,
+  #app[data-hud-reservation-phase="flying"] #hud .hud-notice-shared #reload-status {
     grid-column: 1;
     grid-row: auto;
   }
-  #hud .flight-tip {
+  #app[data-hud-reservation-phase="flying"] #hud .flight-tip {
     top: auto;
     right: max(8px, env(safe-area-inset-right));
-    bottom: calc(132px + var(--safe-bottom));
+    bottom: calc(110px + var(--safe-bottom));
     left: auto;
-    width: var(--hud-side-column);
-    max-width: var(--hud-side-column);
+    width: max-content;
+    max-width: calc(100% - 230px);
     transform: none;
     white-space: normal;
     overflow-wrap: anywhere;
