@@ -1413,8 +1413,7 @@ p {
   }
 }
 
-/* Reserve the top-right Canvas radar before sizing portrait notices. A wider
- * left lane keeps enlarged text from pushing every readout below the fold. */
+/* Keep portrait notice text inside the measured left lane beside the radar. */
 @media (min-width: 361px) and (max-width: 700px) and (orientation: portrait) {
   #hud .hud-notice-top, #hud .hud-notice-shared {
     width: min(192px, calc(100% - var(--hud-radar-radius) - var(--hud-radar-radius) - 36px));
@@ -1425,7 +1424,7 @@ p {
 /* Waiting's first Canvas sight segment begins at the viewport origin. Keep
  * the target labels below that short visible diagonal in compact landscape. */
 @media (min-width: 361px) and (max-width: 700px) and (orientation: landscape) and (max-height: 600px) {
-  #hud { --hud-readouts-top: max(52px, calc(8px + var(--safe-top) + var(--hud-notice-top-height, 0px) + var(--hud-notice-shared-height, 0px) + 4px)); }
+  #hud { --hud-readouts-top: max(52px, calc(8px + var(--safe-top) + var(--hud-notice-top-height, 0px) + var(--hud-notice-shared-height, 0px))); }
 }
 
 /* Keep portrait target tallies in the two side lanes, leaving the center sight
@@ -1471,6 +1470,65 @@ p {
   #hud .hud-notice-shared #control-status {
     margin-left: 52px;
     width: calc(100% - 52px);
+  }
+}
+
+/* At 393px portrait, keep the enlarged flying HUD in measured safe lanes.
+ * Waiting/spectating retain their prior sight-aligned notification layout. */
+@media (min-width: 390px) and (max-width: 700px) and (orientation: portrait) {
+  #app[data-hud-reservation-phase="flying"] #hud {
+    --hud-center-gap: clamp(139px, calc(27vmin + 33px), 160px);
+    --hud-readouts-top: max(
+      calc(41.5vh + var(--safe-top)),
+      calc(8px + var(--safe-top) + var(--hud-notice-top-height, 0px) + var(--hud-notice-shared-height, 0px) + 4px)
+    );
+  }
+  #app[data-hud-reservation-phase="flying"] #hud .hud-readouts { row-gap: 0; }
+  #app[data-hud-reservation-phase="flying"] #hud .hud-readouts .hud-top { row-gap: 0; }
+  #app[data-hud-reservation-phase="flying"] #hud .hud-readouts .targets {
+    grid-template-areas: 'friendly actions enemy';
+    column-gap: 0;
+    row-gap: 0;
+  }
+  #app[data-hud-reservation-phase="flying"] #hud .hud-readouts .capture-info {
+    top: calc(42.4vh - var(--hud-readouts-top));
+    right: auto;
+    left: 0;
+    width: min(280px, calc(100% - 16px));
+    max-width: min(280px, calc(100% - 16px));
+  }
+  #app[data-hud-reservation-phase="flying"] #hud .hud-readouts .flight-data {
+    grid-column: 1 / 3;
+    width: min(210px, calc(100% - 16px));
+    max-width: 210px;
+    justify-self: start;
+  }
+  #app[data-hud-reservation-phase="flying"] #hud .hud-notice-shared {
+    width: min(144px, calc(100% - var(--hud-radar-radius) - var(--hud-radar-radius) - 36px));
+    max-width: min(144px, calc(100% - var(--hud-radar-radius) - var(--hud-radar-radius) - 36px));
+    grid-template-columns: minmax(0, 1fr);
+  }
+  #app[data-hud-reservation-phase="flying"] #hud .hud-notice-shared #control-status {
+    grid-column: 1;
+    grid-row: auto;
+    margin-left: 0;
+    width: 100%;
+  }
+  #app[data-hud-reservation-phase="flying"] #hud .hud-notice-shared #payload-status,
+  #app[data-hud-reservation-phase="flying"] #hud .hud-notice-shared #reload-status {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  #app[data-hud-reservation-phase="flying"] #hud .flight-tip {
+    top: auto;
+    right: max(8px, env(safe-area-inset-right));
+    bottom: calc(110px + var(--safe-bottom));
+    left: auto;
+    width: max-content;
+    max-width: calc(100% - 230px);
+    transform: none;
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 }
 
