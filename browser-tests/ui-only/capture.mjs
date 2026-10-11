@@ -240,7 +240,7 @@ try{
     const outsideFlightControls=controls.filter(item=>item.left<0||item.right>view.width||item.top<0||item.bottom>view.height).map(item=>item.id);
     const worldTexts=(window.__uiOnlyCanvasText??[]).filter(item=>item.text!=='2.4km');
     const worldLabelIssues=[];
-    if(view.width>view.height&&view.height<=360&&document.querySelector('#app')?.dataset.screen==='playing'){
+    if((view.width>view.height?view.height<=360:view.width<=430)&&document.querySelector('#app')?.dataset.screen==='playing'){
      const hudButtons=[...document.querySelectorAll('#hud button,[data-flight-control]')].filter(visible).map(rectOf);
      for(const label of worldTexts){
       if(label.left<0||label.right>view.width||label.top<0||label.bottom>view.height)worldLabelIssues.push({text:label.text,kind:'outside-viewport'});

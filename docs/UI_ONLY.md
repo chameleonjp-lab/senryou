@@ -26,6 +26,10 @@ dependency to the pinned source batch and records actual Canvas2D text bounds.
 The dedicated same-repository `codex/senryou-ui-labels-20261011` PR branch uses
 the same bounded UI-only job; other branches retain the legacy automatic job.
 This does not turn the legacy GPU/gameplay failure or real-device gates into a pass.
+After PR15 was adopted, the narrow-portrait follow-up uses the same bounded
+route on `codex/senryou-ui-portrait-labels-20261011`, with the complementary
+legacy condition. Small-portrait world text is measured against the actual HUD
+and controls, including the DOM text 200% case; Canvas fonts remain unchanged.
 
 1. node browser-tests/ui-only/check-fixture.mjs
 2. npx tsc --noEmit --project tsconfig.ui-only.json

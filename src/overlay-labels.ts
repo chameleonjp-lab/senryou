@@ -72,7 +72,7 @@ export class OverlayLabels {
 
 const hudCache = new WeakMap<HTMLCanvasElement, { signature: string; boxes: LabelBox[] }>();
 export function compactOverlayLabels(canvas: HTMLCanvasElement, width: number, height: number): OverlayLabels | null {
-  if (width <= height || height > 360) return null;
+  if (width > height ? height > 360 : width > 430) return null;
   const document = canvas.ownerDocument, hud = document.querySelector<HTMLElement>('#hud');
   const app = hud?.closest<HTMLElement>('#app');
   const signature = [width, height, hud?.textContent?.replace(/\d/g, '0'),
