@@ -1,4 +1,16 @@
-# 2026-10-10 公開確認版の許可と範囲
+# 2026-10-11 表示修正の公開
+
+本人のゼロシリーズ公開・共通UI反映と「作業再開」の依頼に基づき、PR16で採用したmain `28ec72df4b59f25e024e9668147134abc2df184b`（tree `931eb3212f46d7377388fc2798c758948316b4c0`）を基準に再公開する。製品変更は小さい縦横画面の世界文字・レーダー距離の配置と、縦画面境界警告の同じ全文・字体での二行表示である。武器・シミュレーション・投影点・入力・音・得点・保存・依存関係は維持する。
+
+固定製品と同じtreeのhead `82e87e71d23bfbe79eb0a2d8ad2a471cfed20a36` / [run38101300049](https://github.com/chameleonjp-lab/senryou/actions/runs/38101300049) は215単体、通常build、厳密13UI関数/8Canvas method抽出、型、Vite変換と元37画像の全検査が成功した。artifact11688280930のZIP SHA256は`b704760e266c0dd5d527c7268db4befc303332438176ab13c75bdefc8e588dd2`。40sourceを製品・fixtureの実bytesへ、全37PNGを元reportのhashとbatchへ照合した。変更した10元PNGは担当が実見し、残る27枚は前回確認batchと完全同一bytes。警告・競合・敵距離・HP文字・落下目安・レーダー距離を保ち、検査したHUD/操作/照準/レーダー/文字同士の重複と画面外は解消した。固定Mission再描画前後のJSONが一致し、UI5.52秒・全体7.63秒、errorと外部requestは0。
+
+このPRは公開workflowと本文書の2pathだけを変更する。公開commitの第一親が上記固定mainに一致し、固定mainとの全差分がこの2pathに厳密一致することを確認する。checkout深度3で通常の単一親とGitHub mergeの複数親を明示的に検査し、他の製品差分があれば停止する。公開はmain pushだけに限定し、実際のmain ref・clean tree・単体・build・bounded UI-only・配布ファイル検査へ成功したdistだけを既存github-pages環境へ配備する。Pages設定の有効化や環境条件の変更、mainへの直接push、force pushは行わない。
+
+検査用HTMLや画像、文書は製品配布へ混ぜない。配布manifestのcommit/sourceTree/workflowCommitを採用mainへ結び、許可日を2026-10-11として記録する。CIだけで公開成功とせず、公開runとdeploy job、公式入口HTTP200、manifestと全製品ファイルのTLS GET・SHA256・現在main buildのbytes一致を確認した後に一覧の証拠を更新する。
+
+これは固定した表示状態のUI-only確認で、Canvas文字200%、実機iPhone/Safari、本編、操作感、音、GPU性能や任意の高密度戦況の正式受入は未検証。空き領域がない場合も文字を消さず元の位置で描く。既存legacy run38019700364の失敗を合格化しない。ゲーム開始・戦闘・得点送信・ランキング再開・Codex Cloud environmentsは使用しない。復元は通常のrevertと再配備で行う。
+
+## 前回公開の記録（2026-10-10）
 
 本人がゼロシリーズの未公開ページの公開と、カイセン・ファイトフライトに操作とUIを合わせるよう指示したため、今回レビュー済みのゲームsource `470d94e81730b6b3090842838e45fadd01ec3fe7` を基準に公開する。既存のmain限定公開ルールに従い、PRで採用したmainのcommitを固定して組み立てる。このmain commitの親は基準sourceと厳密に一致し、差分は今回のworkflowと本文書の2ファイルだけでなければ停止する。単体・build・UI-only検査に成功した配布ファイルだけを公開する。mainへの直接pushは行わず、別担当の未採用差分を混ぜない。
 
