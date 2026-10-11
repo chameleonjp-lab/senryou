@@ -54,6 +54,34 @@ export class OverlayLabels {
       }
     }
     if (!chosen && this.comparisonsLeft > 0) {
+      const corners = this.occupied.flatMap(box =>
+        [box.x - preferred.width - gap, box.x + box.width + gap].flatMap(x =>
+          [box.y - preferred.height - gap, box.y + box.height + gap].map(y => clamp({ ...preferred, x, y }))));
+      corners.sort((a, b) => (a.x - origin.x) ** 2 + (a.y - origin.y) ** 2 -
+        ((b.x - origin.x) ** 2 + (b.y - origin.y) ** 2) || a.y - b.y || a.x - b.x);
+      chosen = corners.find(box => this.comparisonsLeft > 0 && fits(box));
+    }
+    if (!chosen && this.comparisonsLeft > 0) {
+      // A narrow clear lane can fall between regular scan rows. Test exact
+      // reservation edges before the coarse scan, keeping the same work cap.
+      const rows = [...new Set(this.occupied.flatMap(box => [box.y - preferred.height - gap, box.y + box.height + gap]))]
+        .sort((a, b) => Math.abs(a - origin.y) - Math.abs(b - origin.y) || a - b);
+      for (const y of rows) {
+        if (this.comparisonsLeft <= 0) break;
+        const box = clamp({ ...preferred, x: origin.x, y });
+        if (fits(box)) { chosen = box; break; }
+      }
+      if (!chosen) {
+        const columns = [...new Set(this.occupied.flatMap(box => [box.x - preferred.width - gap, box.x + box.width + gap]))]
+          .sort((a, b) => Math.abs(a - origin.x) - Math.abs(b - origin.x) || a - b);
+        for (const x of columns) {
+          if (this.comparisonsLeft <= 0) break;
+          const box = clamp({ ...preferred, x, y: origin.y });
+          if (fits(box)) { chosen = box; break; }
+        }
+      }
+    }
+    if (!chosen && this.comparisonsLeft > 0) {
       // A bounded final scan also handles intersecting reservations whose edge
       // candidates are blocked by a third box. It never removes label content.
       let best = Infinity;
@@ -72,7 +100,7 @@ export class OverlayLabels {
 
 const hudCache = new WeakMap<HTMLCanvasElement, { signature: string; boxes: LabelBox[] }>();
 export function compactOverlayLabels(canvas: HTMLCanvasElement, width: number, height: number): OverlayLabels | null {
-  if (width <= height || height > 360) return null;
+  if (width > height ? height > 360 : width > 430) return null;
   const document = canvas.ownerDocument, hud = document.querySelector<HTMLElement>('#hud');
   const app = hud?.closest<HTMLElement>('#app');
   const signature = [width, height, hud?.textContent?.replace(/\d/g, '0'),
@@ -109,15 +137,15 @@ export function compactOverlayLabels(canvas: HTMLCanvasElement, width: number, h
   const radius = width < 360 ? 42 : 49;
   return new OverlayLabels(width, height, [...cached.boxes,
     { x: width - 2 * radius - 18, y: Math.min(height * .33, 180) - radius,
-      width: 2 * radius, height: 2 * radius + 16 }]);
+      width: 2 * radius, height: 2 * radius }]);
 }
 
 export function overlayTextPosition(layout: OverlayLabels | null, c: CanvasRenderingContext2D,
-  text: string, x: number, y: number, extraTop = 0, minWidth = 0): { x: number; y: number } {
+  text: string, x: number, y: number, extraTop = 0, minWidth = 0, additionalLines: readonly string[] = []): { x: number; y: number } {
   if (!layout) return { x, y };
   const metrics = c.measureText(text), ascent = Math.max(10, metrics.actualBoundingBoxAscent), descent = Math.max(3, metrics.actualBoundingBoxDescent);
-  const width = Math.max(minWidth, Math.ceil(metrics.width)) + 4;
-  const original = { x: x - width / 2, y: y - ascent - extraTop - 2, width, height: ascent + descent + extraTop + 4 };
+  const width = Math.max(minWidth, Math.ceil(metrics.width), ...additionalLines.map(line => Math.ceil(c.measureText(line).width))) + 4;
+  const original = { x: x - width / 2, y: y - ascent - extraTop - 2, width, height: ascent + descent + extraTop + 4 + additionalLines.length * 15 };
   const box = layout.place(original);
   return { x: box.x + width / 2, y: box.y + ascent + extraTop + 2 };
 }

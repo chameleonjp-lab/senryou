@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "mainSha256": "da95930d4dbcf76a7e8b006d1fa33dc1117090f32200b06abf9bac6fe97e7ed8",
-  "viewSha256": "af34df5f45cabcac8fae1777f83434e6a1e4053c638c6a0747607e3500b6a5ad",
+  "viewSha256": "45f788b129b8f1e0ea7b259118fc9b3f6028373800d6599e265615d8e07a4134",
   "terrainSha256": "ee0f8ffbfdea1c3d5750b8d7c4542367d43cec74269bdd475c657dabd8aecf5e",
   "bounds": {
     "sha256": "2a4892998a6fe1f053a040b43f26f5467020afecbc9075703ebcbc9d4a81f581",
@@ -737,7 +737,7 @@
     {
       "name": "drawBoundaryWarning",
       "signature": "private drawBoundaryWarning(c: CanvasRenderingContext2D, unit: Unit): void",
-      "sha256": "88faa5879e1b6a370c316b0893d391ee45615657c1cbce961024c3eb26b07160",
+      "sha256": "bd57ac6324c8675825e3365380b52ad541ec5406b9927ad7b0489add14c7160d",
       "identifiers": [
         "BATTLEFIELD",
         "CanvasRenderingContext2D",
@@ -750,8 +750,12 @@
         "fillStyle",
         "fillText",
         "font",
+        "forEach",
         "height",
+        "index",
         "label",
+        "line",
+        "lines",
         "max",
         "maxX",
         "maxY",
@@ -764,6 +768,7 @@
         "position",
         "restore",
         "save",
+        "slice",
         "text",
         "textAlign",
         "unit",
@@ -829,7 +834,7 @@
     {
       "name": "drawRadar",
       "signature": "private drawRadar(c: CanvasRenderingContext2D, mission: Mission): void",
-      "sha256": "8895c911a7698dfc91a30ecc10f9d89007aaa2bf2e7c96ca91e6091dd36fe123",
+      "sha256": "3be89f0484c674cfdebe9cfcc39a3b6798833487e3cbde01ffdb3bba40ce65be",
       "identifiers": [
         "CanvasRenderingContext2D",
         "Math",
@@ -862,12 +867,15 @@
         "hypot",
         "id",
         "kind",
+        "label",
         "lineTo",
         "lineWidth",
         "min",
         "mission",
         "moveTo",
         "origin",
+        "overlayLabels",
+        "overlayTextPosition",
         "owner",
         "player",
         "playerTeam",
@@ -900,6 +908,7 @@
       ],
       "thisMembers": [
         "height",
+        "overlayLabels",
         "width"
       ]
     }

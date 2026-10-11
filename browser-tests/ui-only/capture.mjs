@@ -238,9 +238,9 @@ try{
     const previewLabelOverflow=previewLabels.filter(item=>previewBox&&(item.left<previewBox.left-1||item.right>previewBox.right+1||item.top<previewBox.top-1||item.bottom>previewBox.bottom+1)).map(item=>item.text);
     const previewControlOverflow=[...document.querySelectorAll('#control-settings .preview-control')].filter(visible).map(element=>({id:element.dataset.control,...rectOf(element)})).filter(item=>previewBox&&(item.left<previewBox.left-1||item.right>previewBox.right+1||item.top<previewBox.top-1||item.bottom>previewBox.bottom+1)).map(item=>item.id);
     const outsideFlightControls=controls.filter(item=>item.left<0||item.right>view.width||item.top<0||item.bottom>view.height).map(item=>item.id);
-    const worldTexts=(window.__uiOnlyCanvasText??[]).filter(item=>item.text!=='2.4km');
+    const worldTexts=window.__uiOnlyCanvasText??[];
     const worldLabelIssues=[];
-    if(view.width>view.height&&view.height<=360&&document.querySelector('#app')?.dataset.screen==='playing'){
+    if((view.width>view.height?view.height<=360:view.width<=430)&&document.querySelector('#app')?.dataset.screen==='playing'){
      const hudButtons=[...document.querySelectorAll('#hud button,[data-flight-control]')].filter(visible).map(rectOf);
      for(const label of worldTexts){
       if(label.left<0||label.right>view.width||label.top<0||label.bottom>view.height)worldLabelIssues.push({text:label.text,kind:'outside-viewport'});
@@ -272,8 +272,8 @@ try{
    if(item.layoutObservation.previewControlOverflow.length)item.layoutIssues.push('Touch preview control extends beyond its visible preview frame');
    if(item.layoutObservation.outsideFlightControls.length)item.layoutIssues.push('flight control extends beyond viewport');
    if(item.layoutObservation.worldLabelIssues.length)item.layoutIssues.push('compact world labels overlap protected HUD/controls/sight/radar or each other');
-   if(id==='L-normal')for(const text of ['対空照準 1門','作戦空域の境界 · 内側へ旋回','爆弾の落下目安 · 30.0秒','P3 競合','619m']){
-    if(!item.layoutObservation.worldTexts.some(item=>item.text===text))item.layoutIssues.push('Required world label was not painted: '+text);
+   if(id==='L-normal'||id==='T-normal')for(const text of ['対空照準 1門','作戦空域の境界 · 内側へ旋回','爆弾の落下目安 · 30.0秒','P3 競合','619m','戦車 294m','2.4km']){
+    if(!item.layoutObservation.worldTexts.map(item=>item.text).join(' ').includes(text))item.layoutIssues.push('Required world label was not painted: '+text);
    }
    const playing=item.state.screen==='playing'||item.state.screen==='paused';
    if(playing&&item.canvas.paintedPixels===0)throw new Error('Required actual Canvas2D HUD was not painted');
