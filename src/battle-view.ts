@@ -778,7 +778,10 @@ export class BattleView {
       if (distance > r - 4) c.stroke(); else c.fill();
     }
     c.fillStyle = '#fff4ce'; c.beginPath(); c.moveTo(0, -5); c.lineTo(3, 4); c.lineTo(0, 2); c.lineTo(-3, 4); c.closePath(); c.fill();
-    c.fillStyle = '#b8cfce'; c.font = '9px system-ui'; c.textAlign = 'center'; c.fillText('2.4km', 0, r + 13); c.restore();
+    c.restore();
+    c.save(); c.fillStyle = '#b8cfce'; c.font = '9px system-ui'; c.textAlign = 'center';
+    const label = overlayTextPosition(this.overlayLabels, c, '2.4km', x, y + r + 13);
+    c.fillText('2.4km', label.x, label.y); c.restore();
   }
 
   diagnostics() {

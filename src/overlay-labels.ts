@@ -137,7 +137,7 @@ export function compactOverlayLabels(canvas: HTMLCanvasElement, width: number, h
   const radius = width < 360 ? 42 : 49;
   return new OverlayLabels(width, height, [...cached.boxes,
     { x: width - 2 * radius - 18, y: Math.min(height * .33, 180) - radius,
-      width: 2 * radius, height: 2 * radius + 16 }]);
+      width: 2 * radius, height: 2 * radius }]);
 }
 
 export function overlayTextPosition(layout: OverlayLabels | null, c: CanvasRenderingContext2D,
