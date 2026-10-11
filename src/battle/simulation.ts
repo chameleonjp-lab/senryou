@@ -1,3 +1,4 @@
+import { clearFlightAssistance, smoothFlightAssistance } from '../flight-target';
 import type { Aircraft, FlightInput, GameMode } from '../types';
 import { advanceThrottle, clamp, createFlightController, forwardOf, MAX_SPEED, updatePlayerLoop, type FlightController } from '../flight';
 import { autoFireTarget, applyEasyShotCorrection, getFlightAssist, predictedShotDirection } from '../flight-assist';
@@ -14,6 +15,7 @@ import { aircraftTerrainContact } from './projectiles';
 export interface BattleGame {
   mission: Mission; mode: GameMode; combat: CombatState;
   pilot: Aircraft | null; controller: FlightController | null; pilotId: string | null;
+  terrainAvoidanceActive: boolean;
   input: FlightInput; inputs: {tick:number; input:FlightInput}[]; recordInputs:boolean;
 }
 export const NEUTRAL_INPUT: FlightInput = {turn:0, climb:0, fire:false, loop:false, bomb:false};
@@ -23,9 +25,10 @@ export function createBattle(seed = 1, mode: GameMode = 'easy', team: Team = 'A'
   if(aiOnly){mission.controlEnabled=false;mission.controlledAircraftId=null;for(const unit of mission.units)unit.role='ai';}
   mission.groundAI = createGroundAI(mission);
   return {mission, mode, combat:createCombatState(mission.id), pilot:null, controller:null, pilotId:null,
-    input:{...NEUTRAL_INPUT}, inputs:[],recordInputs:!aiOnly};
+    terrainAvoidanceActive:false, input:{...NEUTRAL_INPUT}, inputs:[],recordInputs:!aiOnly};
 }
 function movePlayer(game: BattleGame, input: FlightInput): void {
+  game.terrainAvoidanceActive = false;
   const m = game.mission;
   const unit = m.units.find(u => u.id === m.controlledAircraftId && u.state === 'active');
   if (!unit) {game.pilotId = null; game.pilot = null; game.controller = null; return;}
@@ -37,20 +40,14 @@ function movePlayer(game: BattleGame, input: FlightInput): void {
   readFlightAircraft(plane, unit, m.playerTeam);
   const previous = {...unit.position};
   const previousAttitude={heading:unit.heading,pitch:unit.pitch,bank:unit.bank};
-  const assist = getFlightAssist(plane, targetsForFlight(m).filter(t=>t.team==='enemy'), input, game.mode);
+  const assist = getFlightAssist(plane, targetsForFlight(m).filter(t=>t.team==='enemy'), input, game.mode, meta.targetLock);
   const dt = 1/60;
-  const slew = (current:number, target:number, rate:number) => current + clamp(target-current,-rate*dt,rate*dt);
-  const manual = Math.max(Math.abs(input.turn),Math.abs(input.climb)) >= .35;
-  meta.assistTurn = manual ? 0 : slew(meta.assistTurn,assist.turn-input.turn,2.5);
-  meta.assistClimb = manual ? 0 : slew(meta.assistClimb,assist.climb-input.climb,1.5);
-  if (meta.assistTurn * input.turn < 0) meta.assistTurn = 0;
-  if (meta.assistClimb * input.climb < 0) meta.assistClimb = 0;
-  meta.responseMultiplier = slew(meta.responseMultiplier,assist.responseMultiplier,2.5);
-  const adjusted = {...input,turn:input.turn+meta.assistTurn,climb:input.climb+meta.assistClimb};
+  const adjusted = { ...input, ...smoothFlightAssistance(meta, input, assist, dt) };
   if(game.mode==='easy'){
     const direction=forwardOf(plane);
     const lookAhead={x:unit.position.x+direction.x*plane.speed*3,y:unit.position.y+direction.y*plane.speed*3,z:unit.position.z+direction.z*plane.speed*3};
     if(sweepTerrain(unit.position,lookAhead,40)){
+      game.terrainAvoidanceActive = true;
       // Ground assistance must give terrain clearance priority over pulling at a target.
       adjusted.climb=Math.max(.85,adjusted.climb);meta.assistClimb=Math.max(0,meta.assistClimb);
     }
@@ -64,6 +61,10 @@ function movePlayer(game: BattleGame, input: FlightInput): void {
   unit.velocity = {x:(unit.position.x-previous.x)*60,y:(unit.position.y-previous.y)*60,z:(unit.position.z-previous.z)*60};
   plane.position.set(unit.position.x,unit.position.y,unit.position.z);
   if (aircraftTerrainContact(unit,previous,DEFAULT_COMBAT_TERRAIN,previousAttitude)) markLost(m,unit.id);
+}
+export function clearBattleFlightAssistance(game: BattleGame): void {
+  if (game.controller) clearFlightAssistance(game.controller);
+  game.terrainAvoidanceActive = false;
 }
 export function stepBattle(game: BattleGame, raw: FlightInput = NEUTRAL_INPUT, abort = false): void {
   if (game.mission.phase !== 'running') return;
@@ -79,7 +80,7 @@ export function stepBattle(game: BattleGame, raw: FlightInput = NEUTRAL_INPUT, a
     combat(m) {
       const commands = updateAirAI(m,game.combat.air,DEFAULT_COMBAT_TERRAIN);
       const plane = game.pilot;
-      const target = game.mode==='easy' && plane && m.controlledAircraftId ? autoFireTarget(plane,targetsForFlight(m).filter(t=>t.team==='enemy'),game.mode,input.viewAspect) : null;
+      const target = game.mode==='easy' && plane && m.controlledAircraftId ? autoFireTarget(plane,targetsForFlight(m).filter(t=>t.team==='enemy'),game.mode,input.viewAspect,game.controller!.targetLock) : null;
       const directions: Partial<Record<'mg'|'cannon',{x:number;y:number;z:number}>> = {};
       if (plane && target) for (const kind of ['mg','cannon'] as const) {
         const forward = forwardOf(plane);

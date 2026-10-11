@@ -306,3 +306,7 @@ KeyboardEvent.code、IME/テキスト編集/Ctrl・Alt・Meta抑止、重複割�
 | A24 | 最終候補commit、全検査ログ/画像/実機条件/未検証/既知制約を紐付け。変更後の古い結果を合格として流用しない |
 
 未確定の初期値を実装中に黙って変えない。変更は該当R/A、理由、比較結果、ルール版を残す。性能未達で兵力削減や占領簡略化をする前に、描画/データ構造を改善し、なお必要なら設計案を再提示する。
+
+## 2026-10-11依頼：操作・標的・照準の共通追補
+
+今回の採用契約は [ZERO_SERIES_AIM_CONTRACT.md](ZERO_SERIES_AIM_CONTRACT.md)、実行結果と未確認項目は [ZERO_SERIES_AIM_VERIFICATION.md](ZERO_SERIES_AIM_VERIFICATION.md)。R1–R8の対象・意図的な作品差・基点を明示する。過去の「未実施」「文書のみ」は当時の工程の記録で、この追補の結果やSafari実機受入とは別。main宛てDraft PRまでとし、公開/mergeは今回実施しない。

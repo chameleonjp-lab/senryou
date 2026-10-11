@@ -1,0 +1,1908 @@
+{
+  "schema_version": 1,
+  "repository": "chameleonjp-lab/senryou",
+  "base_main": "43b1073fd9d9ee2285032787ca691e6a506fa647",
+  "branch": "codex/zero-series-aim-camera-20261012",
+  "recorded_at": "2026-10-11T19:01:04.670Z",
+  "source_sha256": {
+    "src/aircraft-batch.ts": "cd69fdcd03507faffca251b311f253f4ccd10aa0bb11fbfc767626a4960c5428",
+    "src/aircraft-damage.ts": "b0a71f4b39aa1adab948ea3f08d99f0ed60e30deb5087992c8f748c9a5fade83",
+    "src/aircraft-tracers.ts": "fb6cd860fcabe4f541b75ae167a6fb4b83f063e195f99ef272c4aa8559a1b4b7",
+    "src/aircraft.ts": "1a9c18f93e5a48869882b2aa2946cdeb352dc4a8acd76b4fd9beade8ded621d5",
+    "src/battle/air-ai.ts": "b85fe4f3276300948566b1858bc63e9c0f32c587e214a4f81730694ceed0846f",
+    "src/battle/capture.ts": "5385f31ca927b75c4b9a45b976dc48f6df4eeea37cda10bab3fdfe306dd20722",
+    "src/battle/combat.ts": "ca414a071cb2ec8bfec43b966f59a2e03b14a298b203264a34e7f72a7d33bafc",
+    "src/battle/ground-ai.ts": "81bfa52fe124f6cde46f619a6c008d12b47b07e8e8236f0f3dd0cfc179fd0037",
+    "src/battle/ground-nav.ts": "506ac7d5bc642bc83f22b4f00de84b8da29a7408dab8227d92fbf4781213b9a8",
+    "src/battle/mission.ts": "b169db348c4137afb7a20f3ea8947ff116b9eb0b887adb315eb3c0a15f7213a9",
+    "src/battle/projectiles.ts": "7e56c5128b663221b3f9c00b123a7b5453722ca0caec008fd67a1ec0443bf640",
+    "src/battle/roster.ts": "d7cc4c583f960b420812626908498bc3cec44fecaa2c711726b93c090ec5a360",
+    "src/battle/rules.ts": "5dffa632b9dc05af4ed5491df3a6e4ac55fe431e15ef8d161932dbbcac3fad0d",
+    "src/battle/scoring.ts": "585db405175966923b7527e2ace2bb51bd864c57ea2e2be97c8e94dfcf2c5597",
+    "src/battle/simulation.ts": "d7a112cc56da9d74fdac16091ef0e712253e4539f2b54a1e00c3a8d3041068cc",
+    "src/battle/terrain.ts": "ee0f8ffbfdea1c3d5750b8d7c4542367d43cec74269bdd475c657dabd8aecf5e",
+    "src/battle/types.ts": "ebcca6ed4b3a2df03b089d49f2e0d8fbaa8733010149e05fef5ee1287df65e28",
+    "src/battle/weapons.ts": "6e59e1c6d4d1b26addc0a773453185ab2d0aa1ab7f72b6c641c5aa3f02f2f016",
+    "src/battle-audio.ts": "550fe6b535c7c6cb011c69808638efa9366e10a7a2a2aff0744aff931905f4c2",
+    "src/battle-flight.ts": "b6b722810cdf706c5274c8514dce2e6dc9e1e72a2f1908b002e41865cf2f7c98",
+    "src/battle-ground-view.ts": "543c3ce1e2ee8fac60f8f1c78e6a150bc9c1a90840c5d412b771f9ec16aff6fd",
+    "src/battle-landscape.ts": "97154aa71280df61ba5e6a5b17928b2b0c21534290449311da1d28bbd2080e05",
+    "src/battle-sky.ts": "9e41e7c1a54be8c6f3f4f8dc38f47b7df347e0edb03c73c37029aa4015773143",
+    "src/battle-view.ts": "71c0ece6450440bd84e504183792e319125094c660ba95d490c944daa19e0867",
+    "src/control-footprints.ts": "f06c165319e21a834f907d7641d7f6c04f95a2d1077ba5fed3d3c9c2ce28f1a9",
+    "src/control-obstacles.ts": "cacd1cff5a216dc45a1c9d5eba95b261d2d3343d517290d3b4c0fd85421dac67",
+    "src/control-settings.css": "bb70790c5ca8f8bf7407ff502c097f34b082e65a794c5e595bb1c8354ce6bcab",
+    "src/control-settings.ts": "f794b0f65d5865e0d6f71db4a52e41cefe94e230fd86f50fbe246f110858c1fc",
+    "src/dialog-focus.ts": "86d631a4d618558e1ca671004c12ccc1fbdfe75516e6c5d04f962acd2c5e1996",
+    "src/flight-assist.ts": "5d03742931f13221efdc5bfcced5964ae18fd2c0eaf7ef21df8779cf3b804cea",
+    "src/flight-target.ts": "d93d32e3afa7814005de2f8f5a102a624350db6cd9f5e1ebe46eb94350763961",
+    "src/flight-view.ts": "1f9b7e040c2270de5838f24bad93c7ac1c75c7827ba3c1b58591ef6271a20363",
+    "src/flight.ts": "638648fb173981cf233c0a16b1420a2ccd574ae654530cd1b79b624743524ca7",
+    "src/gun-sight.ts": "436c9e7c6a6864513489de6d8172d85d97bd1bf685b60678890f848a9acd2b71",
+    "src/hud-geometry.ts": "bb88fce589195f2b105a4e7b1e30e89cb243f9d761b3cc91d86546237bbbe22d",
+    "src/hud-notification-reservations.ts": "840d738ee899e1c47176e976217557d016ac6331321c94021ddda358df61c70e",
+    "src/hud-sight-reservation.ts": "a407a91b6ab23efba22bb96fd1dab08a7e7c448db832a797673b77a892c1a298",
+    "src/input.ts": "739f001f9d2089e1d530abe89d386b1d11393ef48e1588a78269b61fb7df327d",
+    "src/keyboard-settings.ts": "1c82035a0a72bdd5db459d188262d5c8b91876983fb024a526c6e804585bc57b",
+    "src/main.ts": "34bab9148691171013c12e64e313fc5d279d571fd469832a9671b1f06c1a0746",
+    "src/mission.ts": "3bc5b4aaa139cd659dc9ead6318337fa37b2e27ed6053ac22605d4095a0a2c26",
+    "src/overlay-labels.ts": "abcd4095ef5a34d2aa0219cc3e74d336d11b0a989df0440b921d6d6ae2218f33",
+    "src/render-queue.ts": "8ec4611984beb7168ead1a7e758faf399b0cc0b73939502352be984ab35648f7",
+    "src/rules-guide.ts": "b87befc4b47709c8c8a33a9d1b9493abb9dd37973f8d45fd7ccc5963aad2c29f",
+    "src/settings-storage.ts": "fa7397b27ff74686edf24aef6e524e648d1bbb764bb468ac3d783a14e53f1421",
+    "src/style.css": "ed21e063d57c33088311cc25cb5c5f6df67a472b90d3049436b1a5c9b89e96ee",
+    "src/throttle-control.ts": "99b45ef5b506ee7a051f80152bf3ce1dcf7a5f521a7c446f6021e76a67163466",
+    "src/throttle-lever.ts": "e83fe3c570581d16cb76e08ef9a039bbe9d4a50da6575366ac7e126bf3f30cf0",
+    "src/types.ts": "e7a67fe88886174c1fbaf8698fffca605afa1b4c6215add4a8543d64b15f3505",
+    "tests/air-ai.test.ts": "e94e1ecd9d717e3566685a0048ded0f82cac0dff7e6bd713cc6d411fbe3da0dd",
+    "tests/battle-core.test.ts": "b10eaec2099d859b1ef2165149f3bde0d0e8d13505bc40b8b365333072697801",
+    "tests/battle-integration.test.ts": "62258c9f89257724f92ee5aec17c0f8f0fce28e5a9089dccc3212b72d15065be",
+    "tests/combat.test.ts": "93ca15bafed67c865ff299f72e1ec72a1f48331c36f582a5927f471c1cd6db64",
+    "tests/control-footprints.test.ts": "29a4e2631ecc2bc4b634a78549fb08bf665dd420defe4fde901c90ea272bff95",
+    "tests/control-settings.test.ts": "633cda188a4419cd4b47070a28027f01f4362712af8595c4ebf59f0ed2e8c31d",
+    "tests/fixtures/throttle-lever-v1.json": "416c5ac01d4d14d1f45d94385e07233090740db04382e468db1f0c64689df8ca",
+    "tests/flight-render-contract.test.ts": "6d6ba8d4528db80da7c894564aaf2261f8f6e9ca87a7c4ec53f5f275d20c906a",
+    "tests/flight-target-regression.test.ts": "a3fb416e5f659e491797ac75b0e8869805a6cf5937fa2fcb4776e1b78d2d6091",
+    "tests/hud-notification-reservations.test.ts": "6592ce0c9edd7054dd10834a8d42dd136d6cde5fd990b0386902afd41da4e501",
+    "tests/hud-sight-reservation.test.ts": "14db45afea73b8f13f362d31a2152d7e8247cd75fd873f5358884cb3c49f5975",
+    "tests/input-controls.test.ts": "b33d74e1943ef9f8e071d7b0bd8fca6478366ad5703e1d3fb9a395c4b331e973",
+    "tests/input-ownership-regression.test.ts": "37fac20e30b9257d0dcacd49e320ac58dc33402046996a2cdbd06cd4307e6ccf",
+    "tests/keyboard-settings.test.ts": "93f4cd7d1ffb517b1661262b67aed06b0795f0c6b6e9142dfe9e24fb93a8c4f6",
+    "tests/network-guard.test.ts": "c49ae4fe8ce95d1ef07bd3f0aa1de125bb492186d05af15bb0f10a4f4919cc4b",
+    "tests/optimizer-manifest.test.ts": "eb97ee4c2a15b92c656f0c58e69a6fed02c1f19206e50a50c8756a606e2e1e7d",
+    "tests/overlay-labels.test.ts": "50da8f203baf9a0af24c3d321fed6a7a0ce730ca1abf14bf86920288231a9e3b",
+    "tests/paired-harness.test.ts": "738445a4478a88802bbd8ccf95877d774aa8d174036cce1ac4441aa843f8952e",
+    "tests/rules-guide.test.ts": "f129083e5927a60f85359c2f30ba5f5b031867f413e6c2b54732248cd2239093",
+    "tests/summarize-throttle-smoke.test.ts": "8ba0fb7ce2be864c07f5db4da13cefd51ddfad2d4a26e39435d7e86ea5044311",
+    "tests/terrain-ground.test.ts": "1245d24f8ef72e27b4bac80617592da844ccde782f9d82896e888e3a140b8f5d",
+    "tests/throttle-lever.test.ts": "33dbdad75fd681fa7c89c60e137166be2a0d693d5fdd61aa6ac608ff17a9ac4a",
+    "tests/throttle-review.test.ts": "410f0657ad337c1c4cb3e2029801cf4e7661865a1309905f27dc8c5d5acdd260",
+    "tests/ui-only-extraction.test.ts": "1d02a9116b991ee168f7060fea1f21ad84feec86b37ad68ab568864980a7f468",
+    "scripts/acceptance.ts": "1a9d8ecefad3b79a9b60aad002c27ee00e1d87ba011bfea3cdb803b6fed2e3d3",
+    "scripts/battle-probe.ts": "bc5b752a23d8e75f2b66c72347bd294d8b21607163adb42007350463c59c464d",
+    "scripts/paired-harness-source.mjs": "33b00ebe51e29223f88515623a13590b32d89590a9ceb14176a0b8d0565e5bd5",
+    "scripts/run-paired-harness.mjs": "3ae26aa25665cea878a53de79ec868677f34b0e5c0535065eaabba8ffa52d542",
+    "scripts/summarize-throttle-smoke.mjs": "15078e2698815dfcfd899a7bf59df77fdda9558eec2e125b470ffd4f1158e891",
+    "browser-tests/asset-manifest.mjs": "0bf55fc946c7be776317a249c604621b26b615d4226ebb2e88bb3259d88bb8fb",
+    "browser-tests/network-guard.ts": "b0ffcfa48a63b33ea95af069eb2dbb7f9bfc12beaa5dc066a4df88f06fc4cf7c",
+    "browser-tests/optimizer-manifest.mjs": "3486ad5776a61d0dc8a7971add9834ae80df622bffc5722aa998ec2b72fd023a",
+    "browser-tests/paired-diagnostic-observer.ts": "15b52d02fa2ad8bf727405f8a830f035c47e3295c3ccef3058ec9e6f34d42a07",
+    "browser-tests/reference-comparison.spec.ts": "b18bb45e17e7020ecf9bc70ed812f48e2688d4578c902884293023926158656c",
+    "browser-tests/reference-render-baseline.spec.ts": "142785179f0e37a025625a9405a8b14aede38f03780c3dc73fb9c497d3f6b6dc",
+    "browser-tests/smoke.spec.ts": "f6914e4af00d44c9b452ff5b1612147f865dc298fbca3d3e7874ba0994cbf3d5",
+    "browser-tests/throttle-lever.spec.ts": "7bb45fe15fc9ff6f13576162d8449ba422f0343033e96403793e1e91fde985e7",
+    "browser-tests/ui-only/canvas-adapter.template.ts": "43a0ddb51338451ecbddb655fe4207692968b5daa3a1c96a32f5d4940dee258d",
+    "browser-tests/ui-only/capture.mjs": "007843b17c60fe1e3bdfd0043dae231e7fb067af05a73004c440b975f6be0851",
+    "browser-tests/ui-only/check-fixture.mjs": "d39031aca57c3f268adf5013e7b92b3e98aabc44f2d04fea10ed14e2acb114e0",
+    "browser-tests/ui-only/entry.ts": "794fba3153197eb354333a74e5f1aa4c067e2b5dde8f0a8760776eae0c467fc2",
+    "browser-tests/ui-only/extract-product.mjs": "0e4955d0dbf64d28f1ceb9664f36f4b2de975828f5017d71f126095ad6b14dd4",
+    "browser-tests/ui-only/extraction-contract.json": "210aa5eba1e35dd07912e06a05a8588803c3d9561026e2152fb42262463d70b1",
+    "browser-tests/ui-only/samples.ts": "67386b41f25b1901c2ff19d3c124448aa240b3cc962a5b0361da9cfcb7bd1fdd",
+    "browser-tests/ui-only/ui-adapter.template.ts": "b49613b63756e618c7a4c326c0c497a20967b846fb93cf0d6a1b885b868eda05",
+    "browser-tests/ui-only/validate-vite.mjs": "1e86e0c268e91eef059e6052859099cc632a7f128fd180fb8e34a4dc20234d35",
+    "docs/evidence/aim-camera/verify-normal-fire.mts": "032fdacfee2f57530d8c3ebdbedd78651a0237b455aa5f26f9d31a37fd461189",
+    "tests/paused-render.test.ts": "9ac5eb7f9f1ae35d8f4d0372cb4f48a9e1112c93e03fd27c6b37bcec1a521a96"
+  },
+  "checks": {
+    "unit": {
+      "command": "npm test",
+      "exit_code": 0,
+      "passed": 234,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "56ed8f803c9a9057e570c4ed2f6df9496af63ebd5d719757843288b8fadba908",
+      "log_utc_mtime": "2026-10-11T18:51:33.019Z"
+    },
+    "build": {
+      "command": "npm run build",
+      "exit_code": 0,
+      "log_sha256": "3a2d81e8424569b1ea36e52d4a1820027a15f80277fdfb5f0a71177f2604f9af",
+      "log_utc_mtime": "2026-10-11T18:49:40.663Z"
+    },
+    "related_browser": {
+      "command": "PLAYWRIGHT_BROWSERS_PATH=<browser-cache> npx playwright test --config=playwright.throttle.config.ts --project=chromium --project=chromium-smoke --workers=1",
+      "result": "20 pass / 4既存skip（合格件数へskipを含めない）。標準UI configの絶対移行元pathは現workspaceと一致せず、そのsuite全体の合格は未確認。",
+      "log_sha256": "8da25c76b6bea38b944922389947e20e8e354097ba2440cd796105c88de91bca",
+      "scope": "historical pre-render-followup head, not a pass of the current full suite"
+    },
+    "normal_fire": {
+      "command": "node --import tsx docs/evidence/aim-camera/verify-normal-fire.mts",
+      "exit_code": 0,
+      "result_sha256": "bac94b2e8d9ee7351ee2f799c102b2226026d43eb1a12bd6ae7d11bfa57925d5",
+      "script_sha256": "032fdacfee2f57530d8c3ebdbedd78651a0237b455aa5f26f9d31a37fd461189"
+    },
+    "legacy_comparison": {
+      "command": "PLAYWRIGHT_BROWSERS_PATH=<browser-cache> THROTTLE_BASELINE_DIR=<pinned-71b0e5-checkout> npm run test:browser -- --config=playwright.throttle.config.ts --project=chromium --grep 'same-condition before-after'",
+      "exit_code": 0,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "237674b81286a08eecd2cd739ec5968b21cd968e4edd50b7fe431609705dea39",
+      "summary_path": "docs/evidence/aim-camera/ci-comparison-followup.json",
+      "summary_sha256": "30551a5fe6af0681095ce7402c37858f4b3701f98997097e5ef7dc65a539f086",
+      "prior_ci": {
+        "head": "9888039e1753faa6712f8528eab61571cc86feb8",
+        "run_id": 38157524049,
+        "result": "failure; 30 passed / 10 existing skipped / 5 failed",
+        "four_failures": "raw battleHash differs only by approved targetLock field; inherited payload comparison and strict neutral lock assertions now pass",
+        "remaining_pc_smoke": "candidate and historical baseline both entered renderer protective pause; no waiver or protection removal"
+      },
+      "scope": "historical pre-render-followup head"
+    },
+    "current_smoke": {
+      "command": "PLAYWRIGHT_BROWSERS_PATH=<browser-cache> npm run test:browser -- --config=playwright.throttle.config.ts --project=chromium-smoke",
+      "exit_code": 0,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "4a93dd902fc6f2b9822139d1ab8f3ba75482d2970cdfe7b59bfa8d8b518e0e4c",
+      "log_utc_mtime": "2026-10-11T18:52:43.479Z"
+    }
+  },
+  "product_browser": {
+    "browser": "153.0.8010.0",
+    "engine": "Chromium / SwiftShader",
+    "built_bundle": true,
+    "font": "Noto Sans JP / @fontsource/noto-sans-jp 5.3.1, installed only in verification environment",
+    "deterministic_seed": false,
+    "note": "native start/mode/resize/pause/settings, no fixture injection; protective RAF pause may cover a live last accepted frame",
+    "rows": [
+      {
+        "repo": "senryou",
+        "mode": "normal",
+        "width": 320,
+        "height": 568,
+        "dpr": 1,
+        "file": "normal-320x568-dpr1.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 10.578125,
+              "y": 308.609375,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 62.234375,
+              "y": 308.609375,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 86.53125,
+              "y": 507.90625,
+              "width": 76.53125,
+              "height": 52
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 229.59375,
+              "y": 323.921875,
+              "width": 72,
+              "height": 101.1875
+            },
+            "label": "↻宙返りすぐ使える"
+          },
+          {
+            "id": "fire",
+            "rect": {
+              "x": 216,
+              "y": 429.109375,
+              "width": 96,
+              "height": 96
+            },
+            "label": "射撃（長押し）"
+          },
+          {
+            "id": "throttle",
+            "rect": {
+              "x": 112.796875,
+              "y": 39.0625,
+              "width": 64,
+              "height": 128
+            },
+            "label": "速度レバー"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 320,
+          "height": 568
+        }
+      },
+      {
+        "repo": "senryou",
+        "mode": "normal",
+        "width": 393,
+        "height": 852,
+        "dpr": 1,
+        "file": "normal-393x852-dpr1.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 126.9375,
+              "y": 399.515625,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 178.59375,
+              "y": 399.515625,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 115,
+              "y": 774.875,
+              "width": 76.53125,
+              "height": 52
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 290.1875,
+              "y": 507.125,
+              "width": 72,
+              "height": 101.1875
+            },
+            "label": "↻宙返りすぐ使える"
+          },
+          {
+            "id": "fire",
+            "rect": {
+              "x": 278.1875,
+              "y": 612.3125,
+              "width": 96,
+              "height": 96
+            },
+            "label": "射撃（長押し）"
+          },
+          {
+            "id": "throttle",
+            "rect": {
+              "x": 34.796875,
+              "y": 575,
+              "width": 64,
+              "height": 128
+            },
+            "label": "速度レバー"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 393,
+          "height": 852
+        }
+      },
+      {
+        "repo": "senryou",
+        "mode": "normal",
+        "width": 852,
+        "height": 393,
+        "dpr": 1,
+        "file": "normal-852x393-dpr1.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 617.6875,
+              "y": 92.4375,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 669.34375,
+              "y": 92.4375,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 294,
+              "y": 333,
+              "width": 76.53125,
+              "height": 52
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 608.828125,
+              "y": 213.9296875,
+              "width": 62.875,
+              "height": 92.796875
+            },
+            "label": "↻宙返りすぐ使える"
+          },
+          {
+            "id": "fire",
+            "rect": {
+              "x": 675.71875,
+              "y": 298.671875,
+              "width": 62.875,
+              "height": 62.875
+            },
+            "label": "射撃（長押し）"
+          },
+          {
+            "id": "throttle",
+            "rect": {
+              "x": 98.109375,
+              "y": 231.875,
+              "width": 62.875,
+              "height": 125.75
+            },
+            "label": "速度レバー"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 852,
+          "height": 393
+        }
+      },
+      {
+        "repo": "senryou",
+        "mode": "normal",
+        "width": 568,
+        "height": 320,
+        "dpr": 1,
+        "file": "normal-568x320-dpr1.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 48.5625,
+              "y": 181.875,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 100.21875,
+              "y": 181.875,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 291.984375,
+              "y": 260.796875,
+              "width": 76.53125,
+              "height": 51.1875
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 508.796875,
+              "y": 189.8359375,
+              "width": 51.1875,
+              "height": 92.796875
+            },
+            "label": "↻宙返りすぐ使える"
+          },
+          {
+            "id": "fire",
+            "rect": {
+              "x": 445.84375,
+              "y": 243.203125,
+              "width": 51.1875,
+              "height": 51.1875
+            },
+            "label": "射撃（長押し）"
+          },
+          {
+            "id": "throttle",
+            "rect": {
+              "x": 236.796875,
+              "y": 188.8046875,
+              "width": 51.1875,
+              "height": 102.390625
+            },
+            "label": "速度レバー"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 568,
+          "height": 320
+        }
+      },
+      {
+        "repo": "senryou",
+        "mode": "normal",
+        "width": 1280,
+        "height": 720,
+        "dpr": 1,
+        "file": "normal-1280x720-dpr1.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 948.171875,
+              "y": 68.421875,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 999.828125,
+              "y": 68.421875,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 460.921875,
+              "y": 650.796875,
+              "width": 76.53125,
+              "height": 52
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 1026.390625,
+              "y": 424.59375,
+              "width": 72,
+              "height": 101.1875
+            },
+            "label": "↻宙返りすぐ使える"
+          },
+          {
+            "id": "fire",
+            "rect": {
+              "x": 1014.390625,
+              "y": 556.796875,
+              "width": 96,
+              "height": 96
+            },
+            "label": "射撃（長押し）"
+          },
+          {
+            "id": "throttle",
+            "rect": {
+              "x": 185.59375,
+              "y": 476,
+              "width": 64,
+              "height": 128
+            },
+            "label": "速度レバー"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 1280,
+          "height": 720
+        }
+      },
+      {
+        "repo": "senryou",
+        "mode": "easy",
+        "width": 320,
+        "height": 568,
+        "dpr": 1,
+        "file": "easy-320x568-dpr1.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 10.578125,
+              "y": 308.609375,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 62.234375,
+              "y": 308.609375,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 86.53125,
+              "y": 507.90625,
+              "width": 76.53125,
+              "height": 52
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 229.59375,
+              "y": 324.28125,
+              "width": 72,
+              "height": 101.1875
+            },
+            "label": "↻宙返りすぐ使える"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 320,
+          "height": 568
+        }
+      },
+      {
+        "repo": "senryou",
+        "mode": "easy",
+        "width": 393,
+        "height": 852,
+        "dpr": 1,
+        "file": "easy-393x852-dpr1.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 126.9375,
+              "y": 399.515625,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 178.59375,
+              "y": 399.515625,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 115,
+              "y": 774.875,
+              "width": 76.53125,
+              "height": 52
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 290.1875,
+              "y": 511.71875,
+              "width": 72,
+              "height": 101.1875
+            },
+            "label": "↻宙返りすぐ使える"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 393,
+          "height": 852
+        }
+      },
+      {
+        "repo": "senryou",
+        "mode": "easy",
+        "width": 852,
+        "height": 393,
+        "dpr": 1,
+        "file": "easy-852x393-dpr1.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 617.6875,
+              "y": 92.4375,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 669.34375,
+              "y": 92.4375,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 294,
+              "y": 333,
+              "width": 76.53125,
+              "height": 52
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 675.71875,
+              "y": 213.9296875,
+              "width": 62.875,
+              "height": 92.796875
+            },
+            "label": "↻宙返りすぐ使える"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 852,
+          "height": 393
+        }
+      },
+      {
+        "repo": "senryou",
+        "mode": "easy",
+        "width": 568,
+        "height": 320,
+        "dpr": 1,
+        "file": "easy-568x320-dpr1.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 48.5625,
+              "y": 181.875,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 100.21875,
+              "y": 181.875,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 236.78125,
+              "y": 260.796875,
+              "width": 76.53125,
+              "height": 51.1875
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 445.84375,
+              "y": 189.8359375,
+              "width": 51.1875,
+              "height": 92.796875
+            },
+            "label": "↻宙返りすぐ使える"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 568,
+          "height": 320
+        }
+      },
+      {
+        "repo": "senryou",
+        "mode": "easy",
+        "width": 1280,
+        "height": 720,
+        "dpr": 1,
+        "file": "easy-1280x720-dpr1.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 948.171875,
+              "y": 68.421875,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 999.828125,
+              "y": 68.421875,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 460.921875,
+              "y": 650.796875,
+              "width": 76.53125,
+              "height": 52
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 1026.390625,
+              "y": 424.59375,
+              "width": 72,
+              "height": 101.1875
+            },
+            "label": "↻宙返りすぐ使える"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 1280,
+          "height": 720
+        }
+      },
+      {
+        "repo": "senryou",
+        "mode": "normal",
+        "width": 320,
+        "height": 568,
+        "dpr": 2,
+        "file": "normal-320x568-dpr2.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 10.578125,
+              "y": 308.609375,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 62.234375,
+              "y": 308.609375,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 86.53125,
+              "y": 507.90625,
+              "width": 76.53125,
+              "height": 52
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 229.59375,
+              "y": 323.921875,
+              "width": 72,
+              "height": 101.1875
+            },
+            "label": "↻宙返りすぐ使える"
+          },
+          {
+            "id": "fire",
+            "rect": {
+              "x": 216,
+              "y": 429.109375,
+              "width": 96,
+              "height": 96
+            },
+            "label": "射撃（長押し）"
+          },
+          {
+            "id": "throttle",
+            "rect": {
+              "x": 112.796875,
+              "y": 39.0625,
+              "width": 64,
+              "height": 128
+            },
+            "label": "速度レバー"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 320,
+          "height": 568
+        }
+      },
+      {
+        "repo": "senryou",
+        "mode": "normal",
+        "width": 393,
+        "height": 852,
+        "dpr": 2,
+        "file": "normal-393x852-dpr2.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 126.9375,
+              "y": 399.515625,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 178.59375,
+              "y": 399.515625,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 115,
+              "y": 774.875,
+              "width": 76.53125,
+              "height": 52
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 290.1875,
+              "y": 507.125,
+              "width": 72,
+              "height": 101.1875
+            },
+            "label": "↻宙返りすぐ使える"
+          },
+          {
+            "id": "fire",
+            "rect": {
+              "x": 278.1875,
+              "y": 612.3125,
+              "width": 96,
+              "height": 96
+            },
+            "label": "射撃（長押し）"
+          },
+          {
+            "id": "throttle",
+            "rect": {
+              "x": 34.796875,
+              "y": 575,
+              "width": 64,
+              "height": 128
+            },
+            "label": "速度レバー"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 393,
+          "height": 852
+        }
+      },
+      {
+        "repo": "senryou",
+        "mode": "normal",
+        "width": 852,
+        "height": 393,
+        "dpr": 2,
+        "file": "normal-852x393-dpr2.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 617.6875,
+              "y": 92.4375,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 669.34375,
+              "y": 92.4375,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 294,
+              "y": 333,
+              "width": 76.53125,
+              "height": 52
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 608.828125,
+              "y": 213.9296875,
+              "width": 62.875,
+              "height": 92.796875
+            },
+            "label": "↻宙返りすぐ使える"
+          },
+          {
+            "id": "fire",
+            "rect": {
+              "x": 675.71875,
+              "y": 298.671875,
+              "width": 62.875,
+              "height": 62.875
+            },
+            "label": "射撃（長押し）"
+          },
+          {
+            "id": "throttle",
+            "rect": {
+              "x": 98.109375,
+              "y": 231.875,
+              "width": 62.875,
+              "height": 125.75
+            },
+            "label": "速度レバー"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 852,
+          "height": 393
+        }
+      },
+      {
+        "repo": "senryou",
+        "mode": "normal",
+        "width": 568,
+        "height": 320,
+        "dpr": 2,
+        "file": "normal-568x320-dpr2.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 48.5625,
+              "y": 181.875,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 100.21875,
+              "y": 181.875,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 291.984375,
+              "y": 260.796875,
+              "width": 76.53125,
+              "height": 51.1875
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 508.796875,
+              "y": 189.8359375,
+              "width": 51.1875,
+              "height": 92.796875
+            },
+            "label": "↻宙返りすぐ使える"
+          },
+          {
+            "id": "fire",
+            "rect": {
+              "x": 445.84375,
+              "y": 243.203125,
+              "width": 51.1875,
+              "height": 51.1875
+            },
+            "label": "射撃（長押し）"
+          },
+          {
+            "id": "throttle",
+            "rect": {
+              "x": 236.796875,
+              "y": 188.8046875,
+              "width": 51.1875,
+              "height": 102.390625
+            },
+            "label": "速度レバー"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 568,
+          "height": 320
+        }
+      },
+      {
+        "repo": "senryou",
+        "mode": "normal",
+        "width": 1280,
+        "height": 720,
+        "dpr": 2,
+        "file": "normal-1280x720-dpr2.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 948.171875,
+              "y": 68.421875,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 999.828125,
+              "y": 68.421875,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 460.921875,
+              "y": 650.796875,
+              "width": 76.53125,
+              "height": 52
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 1026.390625,
+              "y": 424.59375,
+              "width": 72,
+              "height": 101.1875
+            },
+            "label": "↻宙返りすぐ使える"
+          },
+          {
+            "id": "fire",
+            "rect": {
+              "x": 1014.390625,
+              "y": 556.796875,
+              "width": 96,
+              "height": 96
+            },
+            "label": "射撃（長押し）"
+          },
+          {
+            "id": "throttle",
+            "rect": {
+              "x": 185.59375,
+              "y": 476,
+              "width": 64,
+              "height": 128
+            },
+            "label": "速度レバー"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 1280,
+          "height": 720
+        }
+      },
+      {
+        "repo": "senryou",
+        "mode": "easy",
+        "width": 320,
+        "height": 568,
+        "dpr": 2,
+        "file": "easy-320x568-dpr2.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 10.578125,
+              "y": 308.609375,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 62.234375,
+              "y": 308.609375,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 86.53125,
+              "y": 507.90625,
+              "width": 76.53125,
+              "height": 52
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 229.59375,
+              "y": 324.28125,
+              "width": 72,
+              "height": 101.1875
+            },
+            "label": "↻宙返りすぐ使える"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 320,
+          "height": 568
+        }
+      },
+      {
+        "repo": "senryou",
+        "mode": "easy",
+        "width": 393,
+        "height": 852,
+        "dpr": 2,
+        "file": "easy-393x852-dpr2.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 126.9375,
+              "y": 399.515625,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 178.59375,
+              "y": 399.515625,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 115,
+              "y": 774.875,
+              "width": 76.53125,
+              "height": 52
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 290.1875,
+              "y": 511.71875,
+              "width": 72,
+              "height": 101.1875
+            },
+            "label": "↻宙返りすぐ使える"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 393,
+          "height": 852
+        }
+      },
+      {
+        "repo": "senryou",
+        "mode": "easy",
+        "width": 852,
+        "height": 393,
+        "dpr": 2,
+        "file": "easy-852x393-dpr2.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 617.6875,
+              "y": 92.4375,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 669.34375,
+              "y": 92.4375,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 294,
+              "y": 333,
+              "width": 76.53125,
+              "height": 52
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 675.71875,
+              "y": 213.9296875,
+              "width": 62.875,
+              "height": 92.796875
+            },
+            "label": "↻宙返りすぐ使える"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 852,
+          "height": 393
+        }
+      },
+      {
+        "repo": "senryou",
+        "mode": "easy",
+        "width": 568,
+        "height": 320,
+        "dpr": 2,
+        "file": "easy-568x320-dpr2.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 48.5625,
+              "y": 181.875,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 100.21875,
+              "y": 181.875,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 236.78125,
+              "y": 260.796875,
+              "width": 76.53125,
+              "height": 51.1875
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 445.84375,
+              "y": 189.8359375,
+              "width": 51.1875,
+              "height": 92.796875
+            },
+            "label": "↻宙返りすぐ使える"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 568,
+          "height": 320
+        }
+      },
+      {
+        "repo": "senryou",
+        "mode": "easy",
+        "width": 1280,
+        "height": 720,
+        "dpr": 2,
+        "file": "easy-1280x720-dpr2.png",
+        "pageErrors": [],
+        "screen": "playing",
+        "controls": [
+          {
+            "id": "game-sound",
+            "rect": {
+              "x": 948.171875,
+              "y": 68.421875,
+              "width": 47.65625,
+              "height": 44
+            },
+            "label": "音をオンにする"
+          },
+          {
+            "id": "pause",
+            "rect": {
+              "x": 999.828125,
+              "y": 68.421875,
+              "width": 44,
+              "height": 44
+            },
+            "label": "一時停止"
+          },
+          {
+            "id": "bomb",
+            "rect": {
+              "x": 460.921875,
+              "y": 650.796875,
+              "width": 76.53125,
+              "height": 52
+            },
+            "label": "爆弾を投下"
+          },
+          {
+            "id": "loop",
+            "rect": {
+              "x": 1026.390625,
+              "y": 424.59375,
+              "width": 72,
+              "height": 101.1875
+            },
+            "label": "↻宙返りすぐ使える"
+          }
+        ],
+        "sight": null,
+        "scroll": {
+          "width": 1280,
+          "height": 720
+        }
+      }
+    ],
+    "raw_image_sha256": {
+      "normal-320x568-dpr1.png": "cb229b73942094c05ccb29ed2dba89f74aaf111cfdebdbf4e638a63fee6dbc87",
+      "normal-393x852-dpr1.png": "759027de2a6a883a00d87e19c25c0b76f98e2c9ab6bf6f69c26dfb24d455b2ea",
+      "normal-852x393-dpr1.png": "e84c9b023a87c6681b37a0d113435e2c0cbcf016212b03e018ca7d7ced76a710",
+      "normal-568x320-dpr1.png": "12a256da1fc7a8e6e0a6cfac41b401d1620b78a84bbd305c6be9d3af22bc07fe",
+      "normal-1280x720-dpr1.png": "b86e9b5b46340f00d843f62186de8d9cda845a3fa4bc963639a6ec77dd031e05",
+      "easy-320x568-dpr1.png": "1eab2acd9456d783a1fd89af914ed17c0e32f14ea87981ded7bb8b3718cd88df",
+      "easy-393x852-dpr1.png": "78497b57bedcb4f5347e6a619961cf8c6a4ef970cc323f5a7f5545a7087f06c9",
+      "easy-852x393-dpr1.png": "22d4994f000ae2cefc0236b243baacd6fc5e0bd21861f0f4e4addb9b5f278e98",
+      "easy-568x320-dpr1.png": "192c54d5261132977b939bd465314400cb00bac30e117c4679a3ba492e5f39ff",
+      "easy-1280x720-dpr1.png": "a4e4cd8f4e59c1022073478de580f2966744e5d4b749dbf9aeef7634f3b45e0d",
+      "normal-320x568-dpr2.png": "47366eda57818b7ddacf58da837ee01a7e3c089d56ce6df4b895150d07c3bc77",
+      "normal-393x852-dpr2.png": "4828f4d029f1189aaf4206b5c2c66f06c25bd2299e3b1489ec4e214f28f384e8",
+      "normal-852x393-dpr2.png": "a4a757c0350bf9d4d0e1fcd1f4ddcac5695b21d0b901a9f38cf0ac3e35d61837",
+      "normal-568x320-dpr2.png": "66222228e9ad9b86b3e052bcac743da6ac547fec3cb324b5ea013a899aa12060",
+      "normal-1280x720-dpr2.png": "12f1c429058747c49f1228e6bfdfd619950d399bfd05f7ec185b81367003f188",
+      "easy-320x568-dpr2.png": "9dc9c8d31671b0b9611997397c1d31ceb5cc8db8e0fc9f34d7cf3cece7c973e8",
+      "easy-393x852-dpr2.png": "70c24079eb261bbcf1cbab405b62e171d52b34437a40054913e7333eaff0a7cc",
+      "easy-852x393-dpr2.png": "b122196300f8a600642d8bb7b12110f789ff07b65b423a06f6e3e06c68d00241",
+      "easy-568x320-dpr2.png": "2b5c4b409ffd3ffec377d547cd61ac4c0616aa50dc9fd755b269307bf0ea062a",
+      "easy-1280x720-dpr2.png": "3977b08227afaac82723706cf7b094bad96552273b1f3bbd6397f60534b83e79"
+    },
+    "captured_before_ci_followup": true,
+    "capture_source_sha256": {
+      "src/main.ts": "abbb6e3e5bb496b7ec706909f1249e71e4ef90725804c970bd2bd8e70400b064",
+      "src/battle-view.ts": "45f788b129b8f1e0ea7b259118fc9b3f6028373800d6599e265615d8e07a4134"
+    }
+  },
+  "committed_images": {
+    "pause-settings.jpg": "b9ce32a6c342dc83410e92ed5455c8a1436db84baa5d219c9354ab7125117181",
+    "portrait-comparison.jpg": "945939bba4e0823fcbb9d6c8646c995b37609f71566c3baba5c5297aef8d053f",
+    "viewport-contact.jpg": "559f56acaf232e27d230e8eb449e113a2e8c4dbf634c3d3186cc75c9970b17ab",
+    "viewport-dpr2.jpg": "53fa7488f0e8e0a4ae1b77e0b2f836183ef1eb2950885c8a4eac738fde845f03",
+    "ci-resume-pc-hud.png": "c1c4458dbd6da282ae97dbd2b1989afc439f611886672d736acda2f877ec3955",
+    "ci-resume-pc-pause.png": "940428b035f6b376a297d0575898db9dc1298959353ad66bb3df5e5a71bc8d00"
+  },
+  "unconfirmed": [
+    "physical iPhone Safari symptom/acceptance",
+    "WebKit automation (browser download unavailable)",
+    "actual render 30/60/120Hz comparison",
+    "product bundle 200% text/safe-area overrides (UI-only checks separate)"
+  ],
+  "ci_followup": {
+    "previous_head": "56b5eb3db9ce0ae954df2651324c885ea195d03a",
+    "independent_review": {
+      "mode": "read-only code and evidence review",
+      "required_fixes": 0,
+      "real_device_acceptance": false
+    },
+    "limits": [
+      "fallback Chromium 153.0.8010.0 / SwiftShader differs from Playwright 1.61.1 expected Chromium",
+      "physical iPhone Safari and local WebKit unavailable; no acceptance claim",
+      "required new-head CI must be read independently of local checks"
+    ],
+    "prior_ci": {
+      "run_id": 38159359366,
+      "job_id": 114528844671,
+      "conclusion": "failure",
+      "browser": {
+        "passed": 34,
+        "existing_skipped": 10,
+        "failed": 1
+      },
+      "failure": "PC resume button hidden after renderer protective stop; original 120000ms timeout unchanged"
+    },
+    "scope": {
+      "paused_frame": "retain completed identical tick/mission/mode/HUD/revision only; still poll GL first",
+      "graphics_failure": "stop subsequent scheduling and rendering when !ready or lost",
+      "watchdog_ms": 1000,
+      "simulation_hz": 60,
+      "quality_changed": false,
+      "ci_changed": false
+    },
+    "paused_render_observation": {
+      "method": "normal native Start/Pause, read-only draw callbacks and queue snapshots; not GPU performance acceptance",
+      "probe_sha256": "6ce26a6fd7917e517227fe6e629fb2a7463cd712b2ec1f491fd7433d396a5030",
+      "before": {
+        "log_sha256": "cbc8d0ab8ca20f308c9edecb4acb77f870f03cbb4040c5f6b306e67e09089471",
+        "log_utc_mtime": "2026-10-11T18:46:22.362Z",
+        "paused": {
+          "before": {
+            "tick": 84,
+            "screen": "paused",
+            "ready": true,
+            "queue": {
+              "status": "pending",
+              "failure": null,
+              "pendingMs": 594.5,
+              "lastCompletedPendingMs": 448.90000000596046,
+              "completedFrameIntervalMs": 578.7999999970198,
+              "submittedCount": 3,
+              "completedCount": 2,
+              "skippedCount": 119
+            }
+          },
+          "after": {
+            "tick": 84,
+            "screen": "paused",
+            "ready": false,
+            "queue": {
+              "status": "pending",
+              "failure": null,
+              "pendingMs": 128.5,
+              "lastCompletedPendingMs": 161.70000000298023,
+              "completedFrameIntervalMs": 166.3999999910593,
+              "submittedCount": 14,
+              "completedCount": 13,
+              "skippedCount": 507
+            }
+          }
+        },
+        "calls": 199,
+        "triangles": 258666
+      },
+      "after": {
+        "log_sha256": "31e7cd960a40211756b4ebe0ba85164dcf01df348095c8d9b5f759f7cc5beafc",
+        "log_utc_mtime": "2026-10-11T18:49:46.519Z",
+        "paused": {
+          "before": {
+            "tick": 79,
+            "screen": "paused",
+            "ready": true,
+            "queue": {
+              "status": "pending",
+              "failure": null,
+              "pendingMs": 61,
+              "lastCompletedPendingMs": 625.5,
+              "completedFrameIntervalMs": 640.6999999880791,
+              "submittedCount": 4,
+              "completedCount": 3,
+              "skippedCount": 147
+            }
+          },
+          "after": {
+            "tick": 79,
+            "screen": "paused",
+            "ready": true,
+            "queue": {
+              "status": "ready",
+              "failure": null,
+              "pendingMs": 0,
+              "lastCompletedPendingMs": 376.5,
+              "completedFrameIntervalMs": 383.40000000596046,
+              "submittedCount": 5,
+              "completedCount": 5,
+              "skippedCount": 251
+            }
+          }
+        },
+        "calls": 199,
+        "triangles": 258666
+      }
+    },
+    "smoke": [
+      {
+        "viewport": {
+          "id": "phone-portrait-393x648",
+          "width": 393,
+          "height": 648,
+          "isMobile": true,
+          "hasTouch": true
+        },
+        "raw_evidence_sha256": "d922af790506ee8c01a7daf3dc4bee4539a704b594040fb863c984b3b3a6dc9e",
+        "actions": [
+          "home → touch settings → keyboard settings → cancel",
+          {
+            "action": "home → rules → back",
+            "rulesScroll": {
+              "scrollHeight": 3401,
+              "clientHeight": 471,
+              "reachedBottom": true
+            }
+          },
+          "easy: start → pause → resume",
+          "pause → end mission → result",
+          "result → home → select normal → start"
+        ],
+        "pageErrors": [],
+        "consoleErrors": [],
+        "blockedExternal": [],
+        "easy": {
+          "screen": "playing",
+          "ready": true,
+          "lost": false,
+          "mode": "easy",
+          "mission": {
+            "phase": "running",
+            "tick": 110,
+            "result": null
+          },
+          "queue": {
+            "status": "pending",
+            "failure": null,
+            "pendingMs": 18.19999998807907,
+            "lastCompletedPendingMs": 56,
+            "completedFrameIntervalMs": 66.59999999403954,
+            "submittedCount": 15,
+            "completedCount": 14,
+            "skippedCount": 206
+          },
+          "calls": 185,
+          "triangles": 254534
+        },
+        "normal": {
+          "screen": "playing",
+          "ready": true,
+          "lost": false,
+          "mode": "normal",
+          "mission": {
+            "phase": "running",
+            "tick": 7,
+            "result": null
+          },
+          "queue": {
+            "status": "pending",
+            "failure": null,
+            "pendingMs": 49.70000000298023,
+            "lastCompletedPendingMs": 74.79999999701977,
+            "completedFrameIntervalMs": 100,
+            "submittedCount": 31,
+            "completedCount": 30,
+            "skippedCount": 334
+          },
+          "calls": 183,
+          "triangles": 256418
+        }
+      },
+      {
+        "viewport": {
+          "id": "phone-landscape-568x320",
+          "width": 568,
+          "height": 320,
+          "isMobile": true,
+          "hasTouch": true
+        },
+        "raw_evidence_sha256": "98ce93263c7eda26ec47f414f6e60735b8152d1491dcf3c1b6e91bb9b5340002",
+        "actions": [
+          "home → touch settings → keyboard settings → cancel",
+          {
+            "action": "home → rules → back",
+            "rulesScroll": {
+              "scrollHeight": 2494,
+              "clientHeight": 165,
+              "reachedBottom": true
+            }
+          },
+          "easy: start → pause → resume",
+          "pause → end mission → result",
+          "result → home → select normal → start"
+        ],
+        "pageErrors": [],
+        "consoleErrors": [],
+        "blockedExternal": [],
+        "easy": {
+          "screen": "playing",
+          "ready": true,
+          "lost": false,
+          "mode": "easy",
+          "mission": {
+            "phase": "running",
+            "tick": 95,
+            "result": null
+          },
+          "queue": {
+            "status": "pending",
+            "failure": null,
+            "pendingMs": 51.5,
+            "lastCompletedPendingMs": 67.90000000596046,
+            "completedFrameIntervalMs": 83.09999999403954,
+            "submittedCount": 21,
+            "completedCount": 20,
+            "skippedCount": 174
+          },
+          "calls": 201,
+          "triangles": 259218
+        },
+        "normal": {
+          "screen": "playing",
+          "ready": true,
+          "lost": false,
+          "mode": "normal",
+          "mission": {
+            "phase": "running",
+            "tick": 3,
+            "result": null
+          },
+          "queue": {
+            "status": "pending",
+            "failure": null,
+            "pendingMs": 21,
+            "lastCompletedPendingMs": 48.099999994039536,
+            "completedFrameIntervalMs": 66.59999999403954,
+            "submittedCount": 38,
+            "completedCount": 37,
+            "skippedCount": 288
+          },
+          "calls": 189,
+          "triangles": 256506
+        }
+      },
+      {
+        "viewport": {
+          "id": "pc-1280x720",
+          "width": 1280,
+          "height": 720,
+          "isMobile": false,
+          "hasTouch": false
+        },
+        "raw_evidence_sha256": "5457c5beb1d0b84b8cf4d23cdd168b827b7a9bc0e3c45753a00b660a41a3a768",
+        "actions": [
+          "home → touch settings → keyboard settings → cancel",
+          {
+            "action": "home → rules → back",
+            "rulesScroll": {
+              "scrollHeight": 2242,
+              "clientHeight": 543,
+              "reachedBottom": true
+            }
+          },
+          "easy: start → pause → resume",
+          "pause → end mission → result",
+          "result → home → select normal → start"
+        ],
+        "pageErrors": [],
+        "consoleErrors": [],
+        "blockedExternal": [],
+        "easy": {
+          "screen": "playing",
+          "ready": true,
+          "lost": false,
+          "mode": "easy",
+          "mission": {
+            "phase": "running",
+            "tick": 108,
+            "result": null
+          },
+          "queue": {
+            "status": "pending",
+            "failure": null,
+            "pendingMs": 339.3999999910593,
+            "lastCompletedPendingMs": 444,
+            "completedFrameIntervalMs": 462.70000000298023,
+            "submittedCount": 7,
+            "completedCount": 6,
+            "skippedCount": 214
+          },
+          "calls": 201,
+          "triangles": 259218
+        },
+        "normal": {
+          "screen": "playing",
+          "ready": true,
+          "lost": false,
+          "mode": "normal",
+          "mission": {
+            "phase": "running",
+            "tick": 6,
+            "result": null
+          },
+          "queue": {
+            "status": "pending",
+            "failure": null,
+            "pendingMs": 20.900000005960464,
+            "lastCompletedPendingMs": 91.59999999403954,
+            "completedFrameIntervalMs": 96.29999999701977,
+            "submittedCount": 18,
+            "completedCount": 17,
+            "skippedCount": 470
+          },
+          "calls": 189,
+          "triangles": 256506
+        }
+      }
+    ],
+    "smoke_before": {
+      "passed": 1,
+      "failed": 0,
+      "scope": "unchanged local PC smoke passed; original CI failure not fully reproduced in identical conditions",
+      "log_sha256": "572c8d60e14d2419f3cc21f218ba102bfb0253e6d8ccf264f26c623605e5531b",
+      "log_utc_mtime": "2026-10-11T18:41:34.745Z"
+    },
+    "throttle_partial": {
+      "expected_tests": 21,
+      "observed_passes": 10,
+      "tool_reported_exit_code": 0,
+      "final_summary_available": false,
+      "accepted_as_suite_pass": false,
+      "log_sha256": "29de4a0fc06ae0e8b21a8b264c303f26a968c52a60a3e558775ab9df886a2239",
+      "log_utc_mtime": "2026-10-11T18:53:29.067Z"
+    },
+    "extraction_contract": {
+      "whole_file_sha_updates": 2,
+      "unchanged_ui_functions": 13,
+      "unchanged_canvas_methods": 8,
+      "contract_sha256": "210aa5eba1e35dd07912e06a05a8588803c3d9561026e2152fb42262463d70b1"
+    }
+  }
+}

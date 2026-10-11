@@ -1,0 +1,1924 @@
+{
+  "baseline_commit": "71b0e5bc9ffbe2cbd1f295160b9e8e3c40ad6650",
+  "candidate_product_base": "43b1073fd9d9ee2285032787ca691e6a506fa647",
+  "branch": "codex/zero-series-aim-camera-20261012",
+  "note": "Only approved targetLock is separated from the inherited comparison schema; raw product battleHash remains unchanged. All inherited payload fields are compared exactly. Candidate lock must be exactly neutral. No broad field exclusion or game mutation.",
+  "browser": "Chromium 153.0.8010.0 / SwiftShader; local fallback, not iPhone",
+  "result": "4 passed / 0 failed / 0 skipped",
+  "report_sha256": "e43cc1f1742a27211b2232eb0521a8bb338de66e433eea97c494b2de56e06158",
+  "utc_mtime": "2026-10-11T17:19:31.364874+00:00",
+  "cases": [
+    {
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "baseline_raw_hash": "8f7bea6b",
+      "candidate_raw_hash": "41bd3ac7",
+      "candidate_inherited_schema_hash": "8f7bea6b",
+      "all_inherited_payload_fields_equal": true,
+      "new_target_lock": {
+        "key": null,
+        "manual": false,
+        "changed": false
+      },
+      "conditions_sha256": "b8ffccfc71425d13f61d3a1243fa4d006cd84ab228a847a5c11713ad4168dfa9"
+    },
+    {
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "baseline_raw_hash": "8f7bea6b",
+      "candidate_raw_hash": "41bd3ac7",
+      "candidate_inherited_schema_hash": "8f7bea6b",
+      "all_inherited_payload_fields_equal": true,
+      "new_target_lock": {
+        "key": null,
+        "manual": false,
+        "changed": false
+      },
+      "conditions_sha256": "52c1ee9f1c76e60048e9b1d5fa5d9f653b5144831abd6b1969e6f52ab0aca93c"
+    },
+    {
+      "viewport": {
+        "width": 568,
+        "height": 320
+      },
+      "baseline_raw_hash": "8f7bea6b",
+      "candidate_raw_hash": "41bd3ac7",
+      "candidate_inherited_schema_hash": "8f7bea6b",
+      "all_inherited_payload_fields_equal": true,
+      "new_target_lock": {
+        "key": null,
+        "manual": false,
+        "changed": false
+      },
+      "conditions_sha256": "3f55d1d71f4a9b1fb280f835363d52e7818de0185491c46c1590784a1d6fa23e"
+    },
+    {
+      "viewport": {
+        "width": 852,
+        "height": 393
+      },
+      "baseline_raw_hash": "8f7bea6b",
+      "candidate_raw_hash": "41bd3ac7",
+      "candidate_inherited_schema_hash": "8f7bea6b",
+      "all_inherited_payload_fields_equal": true,
+      "new_target_lock": {
+        "key": null,
+        "manual": false,
+        "changed": false
+      },
+      "conditions_sha256": "f8c23a82a8d948b3311db24a7c488a51c542b9b868cc02d5ebcc3dba921c6eea"
+    }
+  ],
+  "shared_inherited_payload": {
+    "mode": "normal",
+    "core": "3ca78e54",
+    "combat": {
+      "missionId": "mission",
+      "nextShotId": 1,
+      "projectiles": [],
+      "bulletCapacity": 4096,
+      "bombCapacity": 64,
+      "deferredShots": 0,
+      "events": [],
+      "air": {
+        "units": [
+          [
+            "A-aircraft-001",
+            {
+              "task": "air",
+              "phase": "approach",
+              "phaseSince": 1,
+              "targetId": null,
+              "noTargetSince": 1,
+              "disengageUntil": 0,
+              "pursuitSince": 1,
+              "waypoint": {
+                "x": -2850,
+                "y": 600,
+                "z": -240
+              },
+              "turn": 0.3155670581457753,
+              "climb": -0.08275424434080146,
+              "memories": []
+            }
+          ],
+          [
+            "A-aircraft-002",
+            {
+              "task": "air",
+              "phase": "approach",
+              "phaseSince": 1,
+              "targetId": null,
+              "noTargetSince": 1,
+              "disengageUntil": 0,
+              "pursuitSince": 1,
+              "waypoint": {
+                "x": -2850,
+                "y": 600,
+                "z": 240
+              },
+              "turn": -0.3155670581457747,
+              "climb": -0.08275424434080146,
+              "memories": []
+            }
+          ],
+          [
+            "A-aircraft-003",
+            {
+              "task": "air",
+              "phase": "approach",
+              "phaseSince": 1,
+              "targetId": null,
+              "noTargetSince": 1,
+              "disengageUntil": 0,
+              "pursuitSince": 1,
+              "waypoint": {
+                "x": -2850,
+                "y": 600,
+                "z": 720
+              },
+              "turn": -0.15973199958972983,
+              "climb": -0.08428275185355481,
+              "memories": []
+            }
+          ],
+          [
+            "A-aircraft-004",
+            {
+              "task": "support",
+              "phase": "approach",
+              "phaseSince": 1,
+              "targetId": null,
+              "noTargetSince": 1,
+              "disengageUntil": 0,
+              "pursuitSince": 1,
+              "waypoint": {
+                "x": -3030,
+                "y": 600,
+                "z": -720
+              },
+              "turn": 0.15031503184774184,
+              "climb": -0.07934103787976707,
+              "memories": []
+            }
+          ],
+          [
+            "A-aircraft-005",
+            {
+              "task": "support",
+              "phase": "approach",
+              "phaseSince": 1,
+              "targetId": null,
+              "noTargetSince": 1,
+              "disengageUntil": 0,
+              "pursuitSince": 1,
+              "waypoint": {
+                "x": -3030,
+                "y": 600,
+                "z": -240
+              },
+              "turn": 0.29737350240308913,
+              "climb": -0.07806199763619347,
+              "memories": []
+            }
+          ],
+          [
+            "B-aircraft-000",
+            {
+              "task": "air",
+              "phase": "approach",
+              "phaseSince": 1,
+              "targetId": null,
+              "noTargetSince": 1,
+              "disengageUntil": 0,
+              "pursuitSince": 1,
+              "waypoint": {
+                "x": 2850,
+                "y": 600,
+                "z": -720
+              },
+              "turn": -0.15973199958972983,
+              "climb": -0.08428275185355481,
+              "memories": []
+            }
+          ],
+          [
+            "B-aircraft-001",
+            {
+              "task": "air",
+              "phase": "approach",
+              "phaseSince": 1,
+              "targetId": null,
+              "noTargetSince": 1,
+              "disengageUntil": 0,
+              "pursuitSince": 1,
+              "waypoint": {
+                "x": 2850,
+                "y": 600,
+                "z": -240
+              },
+              "turn": -0.3155670581457753,
+              "climb": -0.08275424434080146,
+              "memories": []
+            }
+          ],
+          [
+            "B-aircraft-002",
+            {
+              "task": "air",
+              "phase": "approach",
+              "phaseSince": 1,
+              "targetId": null,
+              "noTargetSince": 1,
+              "disengageUntil": 0,
+              "pursuitSince": 1,
+              "waypoint": {
+                "x": 2850,
+                "y": 600,
+                "z": 240
+              },
+              "turn": 0.3155670581457747,
+              "climb": -0.08275424434080146,
+              "memories": []
+            }
+          ],
+          [
+            "B-aircraft-003",
+            {
+              "task": "support",
+              "phase": "approach",
+              "phaseSince": 1,
+              "targetId": null,
+              "noTargetSince": 1,
+              "disengageUntil": 0,
+              "pursuitSince": 1,
+              "waypoint": {
+                "x": 2850,
+                "y": 600,
+                "z": 720
+              },
+              "turn": 0.15973199958972983,
+              "climb": -0.08428275185355481,
+              "memories": []
+            }
+          ],
+          [
+            "B-aircraft-004",
+            {
+              "task": "support",
+              "phase": "approach",
+              "phaseSince": 1,
+              "targetId": null,
+              "noTargetSince": 1,
+              "disengageUntil": 0,
+              "pursuitSince": 1,
+              "waypoint": {
+                "x": 3030,
+                "y": 600,
+                "z": -720
+              },
+              "turn": -0.15031503184774184,
+              "climb": -0.07934103787976707,
+              "memories": []
+            }
+          ],
+          [
+            "B-aircraft-005",
+            {
+              "task": "support",
+              "phase": "approach",
+              "phaseSince": 1,
+              "targetId": null,
+              "noTargetSince": 1,
+              "disengageUntil": 0,
+              "pursuitSince": 1,
+              "waypoint": {
+                "x": 3030,
+                "y": 600,
+                "z": -240
+              },
+              "turn": -0.29737350240308913,
+              "climb": -0.07806199763619347,
+              "memories": []
+            }
+          ]
+        ]
+      },
+      "aa": [
+        [
+          "A-aa-000",
+          {
+            "targetId": null,
+            "aimStartedTick": 1,
+            "requestStartedTick": 1,
+            "hasSlot": false,
+            "direction": {
+              "x": 0.9999735576321775,
+              "y": 0,
+              "z": 0.007272141118421496
+            },
+            "lastShotTick": -1,
+            "interruptedSince": 1,
+            "interruptionWarned": false,
+            "lastSeenTick": -1,
+            "rememberedPosition": null
+          }
+        ],
+        [
+          "A-aa-001",
+          {
+            "targetId": null,
+            "aimStartedTick": 1,
+            "requestStartedTick": 1,
+            "hasSlot": false,
+            "direction": {
+              "x": 0.9999735576321774,
+              "y": 0,
+              "z": -0.007272141118421617
+            },
+            "lastShotTick": -1,
+            "interruptedSince": 1,
+            "interruptionWarned": false,
+            "lastSeenTick": -1,
+            "rememberedPosition": null
+          }
+        ],
+        [
+          "A-aa-002",
+          {
+            "targetId": null,
+            "aimStartedTick": 1,
+            "requestStartedTick": 1,
+            "hasSlot": false,
+            "direction": {
+              "x": 0.9999735576321775,
+              "y": 0,
+              "z": 0.007272141118421496
+            },
+            "lastShotTick": -1,
+            "interruptedSince": 1,
+            "interruptionWarned": false,
+            "lastSeenTick": -1,
+            "rememberedPosition": null
+          }
+        ],
+        [
+          "A-aa-003",
+          {
+            "targetId": null,
+            "aimStartedTick": 1,
+            "requestStartedTick": 1,
+            "hasSlot": false,
+            "direction": {
+              "x": 0.9999735576321774,
+              "y": 0,
+              "z": -0.007272141118421617
+            },
+            "lastShotTick": -1,
+            "interruptedSince": 1,
+            "interruptionWarned": false,
+            "lastSeenTick": -1,
+            "rememberedPosition": null
+          }
+        ],
+        [
+          "B-aa-000",
+          {
+            "targetId": null,
+            "aimStartedTick": 1,
+            "requestStartedTick": 1,
+            "hasSlot": false,
+            "direction": {
+              "x": -0.9999735576321775,
+              "y": 0,
+              "z": 0.007272141118421496
+            },
+            "lastShotTick": -1,
+            "interruptedSince": 1,
+            "interruptionWarned": false,
+            "lastSeenTick": -1,
+            "rememberedPosition": null
+          }
+        ],
+        [
+          "B-aa-001",
+          {
+            "targetId": null,
+            "aimStartedTick": 1,
+            "requestStartedTick": 1,
+            "hasSlot": false,
+            "direction": {
+              "x": -0.9999735576321774,
+              "y": 0,
+              "z": -0.007272141118421617
+            },
+            "lastShotTick": -1,
+            "interruptedSince": 1,
+            "interruptionWarned": false,
+            "lastSeenTick": -1,
+            "rememberedPosition": null
+          }
+        ],
+        [
+          "B-aa-002",
+          {
+            "targetId": null,
+            "aimStartedTick": 1,
+            "requestStartedTick": 1,
+            "hasSlot": false,
+            "direction": {
+              "x": -0.9999735576321775,
+              "y": 0,
+              "z": 0.007272141118421496
+            },
+            "lastShotTick": -1,
+            "interruptedSince": 1,
+            "interruptionWarned": false,
+            "lastSeenTick": -1,
+            "rememberedPosition": null
+          }
+        ],
+        [
+          "B-aa-003",
+          {
+            "targetId": null,
+            "aimStartedTick": 1,
+            "requestStartedTick": 1,
+            "hasSlot": false,
+            "direction": {
+              "x": -0.9999735576321774,
+              "y": 0,
+              "z": -0.007272141118421617
+            },
+            "lastShotTick": -1,
+            "interruptedSince": 1,
+            "interruptionWarned": false,
+            "lastSeenTick": -1,
+            "rememberedPosition": null
+          }
+        ]
+      ],
+      "aaWarnings": [],
+      "turrets": [],
+      "previousPositions": [
+        [
+          "A-aa-000",
+          {
+            "x": -1549.9994444591346,
+            "y": 12,
+            "z": -304.9999959599216
+          }
+        ],
+        [
+          "A-aa-001",
+          {
+            "x": -1550,
+            "y": 12,
+            "z": 305
+          }
+        ],
+        [
+          "A-aa-002",
+          {
+            "x": -1669.9994444591346,
+            "y": 12,
+            "z": -304.9999959599216
+          }
+        ],
+        [
+          "A-aa-003",
+          {
+            "x": -1670,
+            "y": 12,
+            "z": 305
+          }
+        ],
+        [
+          "A-aircraft-000",
+          {
+            "x": -2848.1666666666665,
+            "y": 600,
+            "z": -720
+          }
+        ],
+        [
+          "A-aircraft-001",
+          {
+            "x": -2848.166928912189,
+            "y": 599.9936415178993,
+            "z": -239.992094374028
+          }
+        ],
+        [
+          "A-aircraft-002",
+          {
+            "x": -2848.166928912189,
+            "y": 599.9936415178993,
+            "z": 239.992094374028
+          }
+        ],
+        [
+          "A-aircraft-003",
+          {
+            "x": -2848.166799722048,
+            "y": 599.9935236613443,
+            "z": 719.9959981101136
+          }
+        ],
+        [
+          "A-aircraft-004",
+          {
+            "x": -3028.166791006963,
+            "y": 599.9939033612611,
+            "z": -719.9962340235039
+          }
+        ],
+        [
+          "A-aircraft-005",
+          {
+            "x": -3028.1669122851017,
+            "y": 599.9940020045541,
+            "z": -239.9925500988922
+          }
+        ],
+        [
+          "A-infantry-000",
+          {
+            "x": -1510,
+            "y": 12,
+            "z": -132.4
+          }
+        ],
+        [
+          "A-infantry-001",
+          {
+            "x": -1509.9994878275395,
+            "y": 12,
+            "z": -127.59997315817873
+          }
+        ],
+        [
+          "A-infantry-002",
+          {
+            "x": -1513.5,
+            "y": 12,
+            "z": -132.4
+          }
+        ],
+        [
+          "A-infantry-003",
+          {
+            "x": -1513.498335617442,
+            "y": 12,
+            "z": -127.59991277340626
+          }
+        ],
+        [
+          "A-infantry-004",
+          {
+            "x": -1516.998335617442,
+            "y": 12,
+            "z": -132.39991277340627
+          }
+        ],
+        [
+          "A-infantry-005",
+          {
+            "x": -1516.998335617442,
+            "y": 12,
+            "z": -127.59991277340626
+          }
+        ],
+        [
+          "A-infantry-006",
+          {
+            "x": -1510,
+            "y": 12,
+            "z": -67.4
+          }
+        ],
+        [
+          "A-infantry-007",
+          {
+            "x": -1510,
+            "y": 12,
+            "z": -62.6
+          }
+        ],
+        [
+          "A-infantry-008",
+          {
+            "x": -1513.498335617442,
+            "y": 12,
+            "z": -67.39991277340627
+          }
+        ],
+        [
+          "A-infantry-009",
+          {
+            "x": -1513.499020280402,
+            "y": 12,
+            "z": -62.59994865507154
+          }
+        ],
+        [
+          "A-infantry-010",
+          {
+            "x": -1516.998335617442,
+            "y": 12,
+            "z": -67.39991277340627
+          }
+        ],
+        [
+          "A-infantry-011",
+          {
+            "x": -1516.998335617442,
+            "y": 12,
+            "z": -62.59991277340626
+          }
+        ],
+        [
+          "A-infantry-012",
+          {
+            "x": -1509.9983333333332,
+            "y": 12,
+            "z": -2.4
+          }
+        ],
+        [
+          "A-infantry-013",
+          {
+            "x": -1509.9983333333332,
+            "y": 12,
+            "z": 2.4
+          }
+        ],
+        [
+          "A-infantry-014",
+          {
+            "x": -1513.498335617442,
+            "y": 12,
+            "z": -2.400087226593738
+          }
+        ],
+        [
+          "A-infantry-015",
+          {
+            "x": -1513.498335617442,
+            "y": 12,
+            "z": 2.400087226593738
+          }
+        ],
+        [
+          "A-infantry-016",
+          {
+            "x": -1516.998335617442,
+            "y": 12,
+            "z": -2.400087226593738
+          }
+        ],
+        [
+          "A-infantry-017",
+          {
+            "x": -1516.998335617442,
+            "y": 12,
+            "z": 2.400087226593738
+          }
+        ],
+        [
+          "A-infantry-018",
+          {
+            "x": -1510,
+            "y": 12,
+            "z": 62.6
+          }
+        ],
+        [
+          "A-infantry-019",
+          {
+            "x": -1510,
+            "y": 12,
+            "z": 67.4
+          }
+        ],
+        [
+          "A-infantry-020",
+          {
+            "x": -1513.5,
+            "y": 12,
+            "z": 62.6
+          }
+        ],
+        [
+          "A-infantry-021",
+          {
+            "x": -1513.5,
+            "y": 12,
+            "z": 67.4
+          }
+        ],
+        [
+          "A-infantry-022",
+          {
+            "x": -1517,
+            "y": 12,
+            "z": 62.6
+          }
+        ],
+        [
+          "A-infantry-023",
+          {
+            "x": -1517,
+            "y": 12,
+            "z": 67.4
+          }
+        ],
+        [
+          "A-infantry-024",
+          {
+            "x": -1510,
+            "y": 12,
+            "z": 127.6
+          }
+        ],
+        [
+          "A-infantry-025",
+          {
+            "x": -1510,
+            "y": 12,
+            "z": 132.4
+          }
+        ],
+        [
+          "A-infantry-026",
+          {
+            "x": -1513.5,
+            "y": 12,
+            "z": 127.6
+          }
+        ],
+        [
+          "A-infantry-027",
+          {
+            "x": -1513.5,
+            "y": 12,
+            "z": 132.4
+          }
+        ],
+        [
+          "A-infantry-028",
+          {
+            "x": -1517,
+            "y": 12,
+            "z": 127.6
+          }
+        ],
+        [
+          "A-infantry-029",
+          {
+            "x": -1517,
+            "y": 12,
+            "z": 132.4
+          }
+        ],
+        [
+          "A-infantry-030",
+          {
+            "x": -1564.998335617442,
+            "y": 12,
+            "z": -132.39991277340627
+          }
+        ],
+        [
+          "A-infantry-031",
+          {
+            "x": -1564.9994878275395,
+            "y": 12,
+            "z": -127.59997315817873
+          }
+        ],
+        [
+          "A-infantry-032",
+          {
+            "x": -1568.498335617442,
+            "y": 12,
+            "z": -132.39991277340627
+          }
+        ],
+        [
+          "A-infantry-033",
+          {
+            "x": -1568.498335617442,
+            "y": 12,
+            "z": -127.59991277340626
+          }
+        ],
+        [
+          "A-infantry-034",
+          {
+            "x": -1571.998335617442,
+            "y": 12,
+            "z": -132.39991277340627
+          }
+        ],
+        [
+          "A-infantry-035",
+          {
+            "x": -1571.998335617442,
+            "y": 12,
+            "z": -127.59991277340626
+          }
+        ],
+        [
+          "A-infantry-036",
+          {
+            "x": -1564.998335617442,
+            "y": 12,
+            "z": -67.39991277340627
+          }
+        ],
+        [
+          "A-infantry-037",
+          {
+            "x": -1565,
+            "y": 12,
+            "z": -62.6
+          }
+        ],
+        [
+          "A-infantry-038",
+          {
+            "x": -1568.498335617442,
+            "y": 12,
+            "z": -67.39991277340627
+          }
+        ],
+        [
+          "A-infantry-039",
+          {
+            "x": -1568.499020280402,
+            "y": 12,
+            "z": -62.59994865507154
+          }
+        ],
+        [
+          "A-infantry-040",
+          {
+            "x": -1571.998335617442,
+            "y": 12,
+            "z": -67.39991277340627
+          }
+        ],
+        [
+          "A-infantry-041",
+          {
+            "x": -1571.998335617442,
+            "y": 12,
+            "z": -62.59991277340626
+          }
+        ],
+        [
+          "A-infantry-042",
+          {
+            "x": -1564.9983333333332,
+            "y": 12,
+            "z": -2.4
+          }
+        ],
+        [
+          "A-infantry-043",
+          {
+            "x": -1564.9983333333332,
+            "y": 12,
+            "z": 2.4
+          }
+        ],
+        [
+          "A-infantry-044",
+          {
+            "x": -1568.498335617442,
+            "y": 12,
+            "z": -2.3999127734062617
+          }
+        ],
+        [
+          "A-infantry-045",
+          {
+            "x": -1568.498335617442,
+            "y": 12,
+            "z": 2.3999127734062617
+          }
+        ],
+        [
+          "A-infantry-046",
+          {
+            "x": -1571.998335617442,
+            "y": 12,
+            "z": -2.3999127734062617
+          }
+        ],
+        [
+          "A-infantry-047",
+          {
+            "x": -1571.998335617442,
+            "y": 12,
+            "z": 2.3999127734062617
+          }
+        ],
+        [
+          "A-infantry-048",
+          {
+            "x": -1565,
+            "y": 12,
+            "z": 62.6
+          }
+        ],
+        [
+          "A-infantry-049",
+          {
+            "x": -1565,
+            "y": 12,
+            "z": 67.4
+          }
+        ],
+        [
+          "A-infantry-050",
+          {
+            "x": -1568.5,
+            "y": 12,
+            "z": 62.6
+          }
+        ],
+        [
+          "A-infantry-051",
+          {
+            "x": -1568.498335617442,
+            "y": 12,
+            "z": 67.39991277340627
+          }
+        ],
+        [
+          "A-infantry-052",
+          {
+            "x": -1571.998335617442,
+            "y": 12,
+            "z": 62.59991277340626
+          }
+        ],
+        [
+          "A-infantry-053",
+          {
+            "x": -1571.998335617442,
+            "y": 12,
+            "z": 67.39991277340627
+          }
+        ],
+        [
+          "A-infantry-054",
+          {
+            "x": -1565,
+            "y": 12,
+            "z": 127.6
+          }
+        ],
+        [
+          "A-infantry-055",
+          {
+            "x": -1565,
+            "y": 12,
+            "z": 132.4
+          }
+        ],
+        [
+          "A-infantry-056",
+          {
+            "x": -1568.5,
+            "y": 12,
+            "z": 127.6
+          }
+        ],
+        [
+          "A-infantry-057",
+          {
+            "x": -1568.5,
+            "y": 12,
+            "z": 132.4
+          }
+        ],
+        [
+          "A-infantry-058",
+          {
+            "x": -1572,
+            "y": 12,
+            "z": 127.6
+          }
+        ],
+        [
+          "A-infantry-059",
+          {
+            "x": -1572,
+            "y": 12,
+            "z": 132.4
+          }
+        ],
+        [
+          "A-infantry-060",
+          {
+            "x": -1680,
+            "y": 12,
+            "z": -262.4
+          }
+        ],
+        [
+          "A-infantry-061",
+          {
+            "x": -1679.998335617442,
+            "y": 12,
+            "z": -257.5999127734063
+          }
+        ],
+        [
+          "A-infantry-062",
+          {
+            "x": -1683.5,
+            "y": 12,
+            "z": -262.4
+          }
+        ],
+        [
+          "A-infantry-063",
+          {
+            "x": -1683.498335617442,
+            "y": 12,
+            "z": -257.5999127734063
+          }
+        ],
+        [
+          "A-infantry-064",
+          {
+            "x": -1686.998335617442,
+            "y": 12,
+            "z": -262.39991277340624
+          }
+        ],
+        [
+          "A-infantry-065",
+          {
+            "x": -1686.998335617442,
+            "y": 12,
+            "z": -257.5999127734063
+          }
+        ],
+        [
+          "A-infantry-066",
+          {
+            "x": -1680,
+            "y": 12,
+            "z": 257.6
+          }
+        ],
+        [
+          "A-infantry-067",
+          {
+            "x": -1680,
+            "y": 12,
+            "z": 262.4
+          }
+        ],
+        [
+          "A-infantry-068",
+          {
+            "x": -1683.5,
+            "y": 12,
+            "z": 257.6
+          }
+        ],
+        [
+          "A-infantry-069",
+          {
+            "x": -1683.5,
+            "y": 12,
+            "z": 262.4
+          }
+        ],
+        [
+          "A-infantry-070",
+          {
+            "x": -1687,
+            "y": 12,
+            "z": 257.6
+          }
+        ],
+        [
+          "A-infantry-071",
+          {
+            "x": -1687,
+            "y": 12,
+            "z": 262.4
+          }
+        ],
+        [
+          "A-tank-000",
+          {
+            "x": -1590,
+            "y": 12,
+            "z": -67
+          }
+        ],
+        [
+          "A-tank-001",
+          {
+            "x": -1590,
+            "y": 12,
+            "z": 18
+          }
+        ],
+        [
+          "A-tank-002",
+          {
+            "x": -1590,
+            "y": 12,
+            "z": 103
+          }
+        ],
+        [
+          "A-tank-003",
+          {
+            "x": -1624.9991666983974,
+            "y": 12,
+            "z": -67.00000727211291
+          }
+        ],
+        [
+          "A-tank-004",
+          {
+            "x": -1624.9991666983974,
+            "y": 12,
+            "z": 18.000007272112914
+          }
+        ],
+        [
+          "A-tank-005",
+          {
+            "x": -1625,
+            "y": 12,
+            "z": 103
+          }
+        ],
+        [
+          "A-tank-006",
+          {
+            "x": -1689.9991666983974,
+            "y": 12,
+            "z": -199.99999272788708
+          }
+        ],
+        [
+          "A-tank-007",
+          {
+            "x": -1690,
+            "y": 12,
+            "z": 200
+          }
+        ],
+        [
+          "B-aa-000",
+          {
+            "x": 1549.9994444591346,
+            "y": 12,
+            "z": -304.9999959599216
+          }
+        ],
+        [
+          "B-aa-001",
+          {
+            "x": 1550,
+            "y": 12,
+            "z": 305
+          }
+        ],
+        [
+          "B-aa-002",
+          {
+            "x": 1669.9994444591346,
+            "y": 12,
+            "z": -304.9999959599216
+          }
+        ],
+        [
+          "B-aa-003",
+          {
+            "x": 1670,
+            "y": 12,
+            "z": 305
+          }
+        ],
+        [
+          "B-aircraft-000",
+          {
+            "x": 2848.166799722048,
+            "y": 599.9935236613443,
+            "z": -719.9959981101136
+          }
+        ],
+        [
+          "B-aircraft-001",
+          {
+            "x": 2848.166928912189,
+            "y": 599.9936415178993,
+            "z": -239.992094374028
+          }
+        ],
+        [
+          "B-aircraft-002",
+          {
+            "x": 2848.166928912189,
+            "y": 599.9936415178993,
+            "z": 239.992094374028
+          }
+        ],
+        [
+          "B-aircraft-003",
+          {
+            "x": 2848.166799722048,
+            "y": 599.9935236613443,
+            "z": 719.9959981101136
+          }
+        ],
+        [
+          "B-aircraft-004",
+          {
+            "x": 3028.166791006963,
+            "y": 599.9939033612611,
+            "z": -719.9962340235039
+          }
+        ],
+        [
+          "B-aircraft-005",
+          {
+            "x": 3028.1669122851017,
+            "y": 599.9940020045541,
+            "z": -239.9925500988922
+          }
+        ],
+        [
+          "B-infantry-000",
+          {
+            "x": 1510,
+            "y": 12,
+            "z": -132.4
+          }
+        ],
+        [
+          "B-infantry-001",
+          {
+            "x": 1509.9994878275395,
+            "y": 12,
+            "z": -127.59997315817873
+          }
+        ],
+        [
+          "B-infantry-002",
+          {
+            "x": 1513.5,
+            "y": 12,
+            "z": -132.4
+          }
+        ],
+        [
+          "B-infantry-003",
+          {
+            "x": 1513.498335617442,
+            "y": 12,
+            "z": -127.59991277340626
+          }
+        ],
+        [
+          "B-infantry-004",
+          {
+            "x": 1516.998335617442,
+            "y": 12,
+            "z": -132.39991277340627
+          }
+        ],
+        [
+          "B-infantry-005",
+          {
+            "x": 1516.998335617442,
+            "y": 12,
+            "z": -127.59991277340626
+          }
+        ],
+        [
+          "B-infantry-006",
+          {
+            "x": 1510,
+            "y": 12,
+            "z": -67.4
+          }
+        ],
+        [
+          "B-infantry-007",
+          {
+            "x": 1510,
+            "y": 12,
+            "z": -62.6
+          }
+        ],
+        [
+          "B-infantry-008",
+          {
+            "x": 1513.498335617442,
+            "y": 12,
+            "z": -67.39991277340627
+          }
+        ],
+        [
+          "B-infantry-009",
+          {
+            "x": 1513.499020280402,
+            "y": 12,
+            "z": -62.59994865507154
+          }
+        ],
+        [
+          "B-infantry-010",
+          {
+            "x": 1516.998335617442,
+            "y": 12,
+            "z": -67.39991277340627
+          }
+        ],
+        [
+          "B-infantry-011",
+          {
+            "x": 1516.998335617442,
+            "y": 12,
+            "z": -62.59991277340626
+          }
+        ],
+        [
+          "B-infantry-012",
+          {
+            "x": 1509.9983333333332,
+            "y": 12,
+            "z": -2.4
+          }
+        ],
+        [
+          "B-infantry-013",
+          {
+            "x": 1509.9983333333332,
+            "y": 12,
+            "z": 2.4
+          }
+        ],
+        [
+          "B-infantry-014",
+          {
+            "x": 1513.498335617442,
+            "y": 12,
+            "z": -2.400087226593738
+          }
+        ],
+        [
+          "B-infantry-015",
+          {
+            "x": 1513.498335617442,
+            "y": 12,
+            "z": 2.400087226593738
+          }
+        ],
+        [
+          "B-infantry-016",
+          {
+            "x": 1516.998335617442,
+            "y": 12,
+            "z": -2.400087226593738
+          }
+        ],
+        [
+          "B-infantry-017",
+          {
+            "x": 1516.998335617442,
+            "y": 12,
+            "z": 2.400087226593738
+          }
+        ],
+        [
+          "B-infantry-018",
+          {
+            "x": 1510,
+            "y": 12,
+            "z": 62.6
+          }
+        ],
+        [
+          "B-infantry-019",
+          {
+            "x": 1510,
+            "y": 12,
+            "z": 67.4
+          }
+        ],
+        [
+          "B-infantry-020",
+          {
+            "x": 1513.5,
+            "y": 12,
+            "z": 62.6
+          }
+        ],
+        [
+          "B-infantry-021",
+          {
+            "x": 1513.5,
+            "y": 12,
+            "z": 67.4
+          }
+        ],
+        [
+          "B-infantry-022",
+          {
+            "x": 1517,
+            "y": 12,
+            "z": 62.6
+          }
+        ],
+        [
+          "B-infantry-023",
+          {
+            "x": 1517,
+            "y": 12,
+            "z": 67.4
+          }
+        ],
+        [
+          "B-infantry-024",
+          {
+            "x": 1510,
+            "y": 12,
+            "z": 127.6
+          }
+        ],
+        [
+          "B-infantry-025",
+          {
+            "x": 1510,
+            "y": 12,
+            "z": 132.4
+          }
+        ],
+        [
+          "B-infantry-026",
+          {
+            "x": 1513.5,
+            "y": 12,
+            "z": 127.6
+          }
+        ],
+        [
+          "B-infantry-027",
+          {
+            "x": 1513.5,
+            "y": 12,
+            "z": 132.4
+          }
+        ],
+        [
+          "B-infantry-028",
+          {
+            "x": 1517,
+            "y": 12,
+            "z": 127.6
+          }
+        ],
+        [
+          "B-infantry-029",
+          {
+            "x": 1517,
+            "y": 12,
+            "z": 132.4
+          }
+        ],
+        [
+          "B-infantry-030",
+          {
+            "x": 1564.998335617442,
+            "y": 12,
+            "z": -132.39991277340627
+          }
+        ],
+        [
+          "B-infantry-031",
+          {
+            "x": 1564.9994878275395,
+            "y": 12,
+            "z": -127.59997315817873
+          }
+        ],
+        [
+          "B-infantry-032",
+          {
+            "x": 1568.498335617442,
+            "y": 12,
+            "z": -132.39991277340627
+          }
+        ],
+        [
+          "B-infantry-033",
+          {
+            "x": 1568.498335617442,
+            "y": 12,
+            "z": -127.59991277340626
+          }
+        ],
+        [
+          "B-infantry-034",
+          {
+            "x": 1571.998335617442,
+            "y": 12,
+            "z": -132.39991277340627
+          }
+        ],
+        [
+          "B-infantry-035",
+          {
+            "x": 1571.998335617442,
+            "y": 12,
+            "z": -127.59991277340626
+          }
+        ],
+        [
+          "B-infantry-036",
+          {
+            "x": 1564.998335617442,
+            "y": 12,
+            "z": -67.39991277340627
+          }
+        ],
+        [
+          "B-infantry-037",
+          {
+            "x": 1565,
+            "y": 12,
+            "z": -62.6
+          }
+        ],
+        [
+          "B-infantry-038",
+          {
+            "x": 1568.498335617442,
+            "y": 12,
+            "z": -67.39991277340627
+          }
+        ],
+        [
+          "B-infantry-039",
+          {
+            "x": 1568.499020280402,
+            "y": 12,
+            "z": -62.59994865507154
+          }
+        ],
+        [
+          "B-infantry-040",
+          {
+            "x": 1571.998335617442,
+            "y": 12,
+            "z": -67.39991277340627
+          }
+        ],
+        [
+          "B-infantry-041",
+          {
+            "x": 1571.998335617442,
+            "y": 12,
+            "z": -62.59991277340626
+          }
+        ],
+        [
+          "B-infantry-042",
+          {
+            "x": 1564.9983333333332,
+            "y": 12,
+            "z": -2.4
+          }
+        ],
+        [
+          "B-infantry-043",
+          {
+            "x": 1564.9983333333332,
+            "y": 12,
+            "z": 2.4
+          }
+        ],
+        [
+          "B-infantry-044",
+          {
+            "x": 1568.498335617442,
+            "y": 12,
+            "z": -2.3999127734062617
+          }
+        ],
+        [
+          "B-infantry-045",
+          {
+            "x": 1568.498335617442,
+            "y": 12,
+            "z": 2.3999127734062617
+          }
+        ],
+        [
+          "B-infantry-046",
+          {
+            "x": 1571.998335617442,
+            "y": 12,
+            "z": -2.3999127734062617
+          }
+        ],
+        [
+          "B-infantry-047",
+          {
+            "x": 1571.998335617442,
+            "y": 12,
+            "z": 2.3999127734062617
+          }
+        ],
+        [
+          "B-infantry-048",
+          {
+            "x": 1565,
+            "y": 12,
+            "z": 62.6
+          }
+        ],
+        [
+          "B-infantry-049",
+          {
+            "x": 1565,
+            "y": 12,
+            "z": 67.4
+          }
+        ],
+        [
+          "B-infantry-050",
+          {
+            "x": 1568.5,
+            "y": 12,
+            "z": 62.6
+          }
+        ],
+        [
+          "B-infantry-051",
+          {
+            "x": 1568.498335617442,
+            "y": 12,
+            "z": 67.39991277340627
+          }
+        ],
+        [
+          "B-infantry-052",
+          {
+            "x": 1571.998335617442,
+            "y": 12,
+            "z": 62.59991277340626
+          }
+        ],
+        [
+          "B-infantry-053",
+          {
+            "x": 1571.998335617442,
+            "y": 12,
+            "z": 67.39991277340627
+          }
+        ],
+        [
+          "B-infantry-054",
+          {
+            "x": 1565,
+            "y": 12,
+            "z": 127.6
+          }
+        ],
+        [
+          "B-infantry-055",
+          {
+            "x": 1565,
+            "y": 12,
+            "z": 132.4
+          }
+        ],
+        [
+          "B-infantry-056",
+          {
+            "x": 1568.5,
+            "y": 12,
+            "z": 127.6
+          }
+        ],
+        [
+          "B-infantry-057",
+          {
+            "x": 1568.5,
+            "y": 12,
+            "z": 132.4
+          }
+        ],
+        [
+          "B-infantry-058",
+          {
+            "x": 1572,
+            "y": 12,
+            "z": 127.6
+          }
+        ],
+        [
+          "B-infantry-059",
+          {
+            "x": 1572,
+            "y": 12,
+            "z": 132.4
+          }
+        ],
+        [
+          "B-infantry-060",
+          {
+            "x": 1680,
+            "y": 12,
+            "z": -262.4
+          }
+        ],
+        [
+          "B-infantry-061",
+          {
+            "x": 1679.998335617442,
+            "y": 12,
+            "z": -257.5999127734063
+          }
+        ],
+        [
+          "B-infantry-062",
+          {
+            "x": 1683.5,
+            "y": 12,
+            "z": -262.4
+          }
+        ],
+        [
+          "B-infantry-063",
+          {
+            "x": 1683.498335617442,
+            "y": 12,
+            "z": -257.5999127734063
+          }
+        ],
+        [
+          "B-infantry-064",
+          {
+            "x": 1686.998335617442,
+            "y": 12,
+            "z": -262.39991277340624
+          }
+        ],
+        [
+          "B-infantry-065",
+          {
+            "x": 1686.998335617442,
+            "y": 12,
+            "z": -257.5999127734063
+          }
+        ],
+        [
+          "B-infantry-066",
+          {
+            "x": 1680,
+            "y": 12,
+            "z": 257.6
+          }
+        ],
+        [
+          "B-infantry-067",
+          {
+            "x": 1680,
+            "y": 12,
+            "z": 262.4
+          }
+        ],
+        [
+          "B-infantry-068",
+          {
+            "x": 1683.5,
+            "y": 12,
+            "z": 257.6
+          }
+        ],
+        [
+          "B-infantry-069",
+          {
+            "x": 1683.5,
+            "y": 12,
+            "z": 262.4
+          }
+        ],
+        [
+          "B-infantry-070",
+          {
+            "x": 1687,
+            "y": 12,
+            "z": 257.6
+          }
+        ],
+        [
+          "B-infantry-071",
+          {
+            "x": 1687,
+            "y": 12,
+            "z": 262.4
+          }
+        ],
+        [
+          "B-tank-000",
+          {
+            "x": 1590,
+            "y": 12,
+            "z": -67
+          }
+        ],
+        [
+          "B-tank-001",
+          {
+            "x": 1590,
+            "y": 12,
+            "z": 18
+          }
+        ],
+        [
+          "B-tank-002",
+          {
+            "x": 1590,
+            "y": 12,
+            "z": 103
+          }
+        ],
+        [
+          "B-tank-003",
+          {
+            "x": 1624.9991666983974,
+            "y": 12,
+            "z": -67.00000727211291
+          }
+        ],
+        [
+          "B-tank-004",
+          {
+            "x": 1624.9991666983974,
+            "y": 12,
+            "z": 18.000007272112914
+          }
+        ],
+        [
+          "B-tank-005",
+          {
+            "x": 1625,
+            "y": 12,
+            "z": 103
+          }
+        ],
+        [
+          "B-tank-006",
+          {
+            "x": 1689.9991666983974,
+            "y": 12,
+            "z": -199.99999272788708
+          }
+        ],
+        [
+          "B-tank-007",
+          {
+            "x": 1690,
+            "y": 12,
+            "z": 200
+          }
+        ]
+      ],
+      "lastTick": 1
+    },
+    "controller": {
+      "playerTargetSpeed": 110,
+      "loopHeld": false,
+      "playerLoopActive": false,
+      "loopStartYaw": -1.5707963267948966,
+      "loopStartPitch": 0,
+      "loopStartTurn": 0,
+      "loopStartClimb": 0,
+      "assistTurn": 0,
+      "assistClimb": 0,
+      "responseMultiplier": 1.0416666666666667
+    }
+  }
+}

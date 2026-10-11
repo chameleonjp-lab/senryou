@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "mainSha256": "da95930d4dbcf76a7e8b006d1fa33dc1117090f32200b06abf9bac6fe97e7ed8",
-  "viewSha256": "45f788b129b8f1e0ea7b259118fc9b3f6028373800d6599e265615d8e07a4134",
+  "mainSha256": "34bab9148691171013c12e64e313fc5d279d571fd469832a9671b1f06c1a0746",
+  "viewSha256": "71c0ece6450440bd84e504183792e319125094c660ba95d490c944daa19e0867",
   "terrainSha256": "ee0f8ffbfdea1c3d5750b8d7c4542367d43cec74269bdd475c657dabd8aecf5e",
   "bounds": {
     "sha256": "2a4892998a6fe1f053a040b43f26f5467020afecbc9075703ebcbc9d4a81f581",
@@ -19,7 +19,7 @@
     {
       "name": "instructions",
       "signature": "function instructions():void",
-      "sha256": "0b46383e3ee053d2428cb6db542059498f501047da412f754a19777fb62ae52c",
+      "sha256": "ad6fb638b3a0a6bec6fe3beb5857970398090d740b5a38bcee029d1e84b213d6",
       "identifiers": [
         "app",
         "controls",
@@ -69,16 +69,18 @@
     {
       "name": "setScreen",
       "signature": "function setScreen(next:typeof screen):void",
-      "sha256": "0cc3d1c15c0b7fd256f24ea779acee47f65327c5879834c3bdf5c8770d9d0ba0",
+      "sha256": "4db6b0c5bf72915d27389fb01fc8f7e161758e8cc52aafe87854ac02da9367a5",
       "identifiers": [
         "app",
         "audio",
         "clear",
+        "clearBattleFlightAssistance",
         "close",
         "controls",
         "dataset",
         "el",
         "focus",
+        "game",
         "hidden",
         "next",
         "pendingBomb",
@@ -269,7 +271,7 @@
     {
       "name": "hud",
       "signature": "function hud():void",
-      "sha256": "03e9dcb697125e1eaca318c6a854dcbc1e6ad2f8a2f0b488540df51c5b82b9da",
+      "sha256": "5e09ba176b8c9686c26be1b8a2ee1b26fea6e1c442715fe62c186272b7d9215c",
       "identifiers": [
         "HTMLElement",
         "Math",
@@ -360,6 +362,7 @@
         "targetId",
         "targetPointId",
         "team",
+        "terrainAvoidanceActive",
         "terrainHeight",
         "textContent",
         "tick",

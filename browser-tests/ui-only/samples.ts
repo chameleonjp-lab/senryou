@@ -5,7 +5,7 @@ import type { BattleCombatView, ViewBombGuide, ViewAAWarning } from '../../src/b
 export const UI_FIXTURE_IDS=['home','hud-easy','hud-normal','hud-notice','flying-effective','flying-ineffective','flying-no-prediction','waiting','spectating','settings-touch','settings-keyboard','rules','pause','result-victory','result-defeat','result-draw','result-aborted','startup-error','paused-error'] as const;
 export function assertFixtureId(id:string):void {if(!(UI_FIXTURE_IDS as readonly string[]).includes(id))throw new Error('Unknown UI fixture: '+id);}
 export interface DisplaySample {
- game:{mission:Mission;pilot:Aircraft|null;combat:BattleCombatView & {aaWarnings:ViewAAWarning[]}};player:Aircraft;targets:CombatTarget[];
+ game:{terrainAvoidanceActive:boolean;mission:Mission;pilot:Aircraft|null;combat:BattleCombatView & {aaWarnings:ViewAAWarning[]}};player:Aircraft;targets:CombatTarget[];
  guide:ViewBombGuide|null;score:MissionResult['score'];forces:Record<Team,Record<UnitKind,number>>;
 }
 const counts=()=>({infantry:240,tank:24,aa:8,aircraft:24});
@@ -31,5 +31,5 @@ export function makeSample(id:string):DisplaySample {
  const mission:Mission={id:'ui-display-sample',missionId:'ui-display-sample',rulesVersion:'senryou-rules-v1',seed:1,tick:360,phase:'running',playerTeam:'A',units,points,controlledAircraftId:inactive?null:pilot.id,respawnCandidateId:null,respawnReadyTick:inactive?660:null,playerStatus:id==='spectating'?'spectating':id==='waiting'?'waiting':'flying',waitingReason:'安全な出撃回廊を確認中',nextWaveTick:1200,score:{...score,deaths:new Set(),captures:new Set(),damageIds:new Set(),damage:[]},result:null,deaths:[]};
  const targets:CombatTarget[]=[{kind:'tank',id:enemy.id,team:'enemy',position:new Vector3(enemy.position.x,enemy.position.y,enemy.position.z),velocity:new Vector3(),health:100,maxHealth:300,aimHeight:1.2},{...player,id:friend.id,role:'interceptor',position:new Vector3(friend.position.x,friend.position.y,friend.position.z)},{...player,id:foe.id,team:'enemy',role:'interceptor',position:new Vector3(foe.position.x,foe.position.y,foe.position.z)}];
  const guide=inactive||id==='flying-no-prediction'?null:{position:{x:enemy.position.x+(id==='flying-ineffective'?500:0),y:0,z:enemy.position.z},time:dense?30:2.4,effective:id!=='flying-ineffective'};
- return {game:{mission,pilot:inactive?null:player,combat:{projectiles:[],events:[],aaWarnings:dense?[{gunId:aa.id,targetId:pilot.id,position:aa.position,direction:{x:0,y:1,z:0},stage:'aiming',readyTick:408}]:[]}},player,targets,guide,score,forces:{A:counts(),B:counts()}};
+ return {game:{terrainAvoidanceActive:false,mission,pilot:inactive?null:player,combat:{projectiles:[],events:[],aaWarnings:dense?[{gunId:aa.id,targetId:pilot.id,position:aa.position,direction:{x:0,y:1,z:0},stage:'aiming',readyTick:408}]:[]}},player,targets,guide,score,forces:{A:counts(),B:counts()}};
 }

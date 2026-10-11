@@ -152,6 +152,8 @@ export class BattleView {
   private renderedLowCount = 0;
   private prepared = false;
   private disposed = false;
+  private viewRevision = 0;
+  private staticFrame: { missionId: string; tick: number; mode: GameMode; showHUD: boolean; revision: number } | null = null;
   private readonly ctx: CanvasRenderingContext2D | null;
 
   constructor(private readonly canvas: HTMLCanvasElement, private readonly overlay?: HTMLCanvasElement) {
@@ -226,6 +228,7 @@ export class BattleView {
     const w = width ?? rect.width, h = height ?? rect.height;
     if (!(w > 0 && h > 0) || this.disposed) return;
     this.width = w; this.height = h;
+    this.viewRevision++;
     this.renderer.setSize(w, h, false);
     this.camera.aspect = w / h; this.camera.updateProjectionMatrix();
     if (this.overlay) { this.overlay.width = Math.round(w); this.overlay.height = Math.round(h); }
@@ -287,10 +290,10 @@ export class BattleView {
 
   pollRender(now = performance.now()) { return this.queue.poll(now); }
   resetRenderQueue(): void { this.queue.reset(); }
-  setLOD(lod: BattleLOD): void { this.lod = lod; }
-  setBombGuide(guide: ViewBombGuide | null): void { this.bombGuide = guide; }
+  setLOD(lod: BattleLOD): void { if (this.lod !== lod) this.viewRevision++; this.lod = lod; }
+  setBombGuide(guide: ViewBombGuide | null): void { this.bombGuide = guide; this.viewRevision++; }
   /** Validation hook: display camera only; Easy targeting retains flight-view. */
-  setCameraOverride(camera: { position: Vec3; quaternion: Quaternion } | null): void { this.cameraOverride = camera; }
+  setCameraOverride(camera: { position: Vec3; quaternion: Quaternion } | null): void { this.cameraOverride = camera; this.viewRevision++; }
 
   /** Keep events from every fixed tick even when several ticks precede a frame. */
   queueEvents(events: readonly CombatEvent[], missionId: string): void {
@@ -298,6 +301,7 @@ export class BattleView {
     if (this.pendingMissionId !== missionId) this.pendingEvents.length = 0;
     this.pendingMissionId = missionId;
     for (const event of events) this.pendingEvents.push(event);
+    if (events.length) this.viewRevision++;
   }
 
   render(mission: Mission, mode: GameMode, combat?: BattleCombatView, showHUD = true, presentationDt = 0): boolean {
@@ -305,6 +309,14 @@ export class BattleView {
     if (mission.missionId !== this.currentMissionId) this.resetMission(mission);
     this.consumeEvents(mission, combat?.events ?? []);
     if (this.pollRender() !== 'ready') return false;
+    // A paused mission freezes presentation time as well as logical time. Keep
+    // its last submitted canvas instead of repeatedly drawing the same scene.
+    // Poll first: retaining an image never hides a pending/stalled/lost fence.
+    // A pending draw must not acknowledge a new tick or any view invalidation.
+    const retained = this.staticFrame;
+    if (mission.phase === 'paused' && retained?.missionId === mission.missionId
+      && retained.tick === mission.tick && retained.mode === mode && retained.showHUD === showHUD
+      && retained.revision === this.viewRevision) return false;
     const elapsed = mission.tick / 60;
     const dt = Math.max(0, Math.min(.1, (mission.tick - this.lastTick) / 60));
     this.lastTick = mission.tick;
@@ -334,6 +346,7 @@ export class BattleView {
     this.renderer.render(this.scene, this.camera);
     this.drawOverlay(mission, mode, combat, showHUD);
     if (this.prepared) this.queue.submit(performance.now());
+    this.staticFrame = { missionId: mission.missionId, tick: mission.tick, mode, showHUD, revision: this.viewRevision };
     return true;
   }
 
@@ -346,6 +359,7 @@ export class BattleView {
 
   private resetMission(mission: Mission): void {
     this.currentMissionId = mission.missionId;
+    this.staticFrame = null;
     this.currentPlayerId = null; this.flightPlayer = null;
     this.lastTick = mission.tick; this.visualTime = mission.tick / 60;
     this.bombGuide = null;
