@@ -153,13 +153,38 @@ for(const size of sizes)test(`same-condition before-after ${size.width}x${size.h
     await page.evaluate(()=>{const q=(window as any).__senryou;q.fixture('normal');q.step(1);q.mission.phase='paused';document.getElementById('flight')!.focus();});
     // Both revisions use the same seed, single authoritative tick and stopped mission.
     await page.waitForTimeout(200);
-    records.push(await page.evaluate(()=>{const q=(window as any).__senryou;return {url:location.origin,hash:q.snapshot().hash,tick:q.mission.tick,mode:q.snapshot().mode,dpr:devicePixelRatio,viewport:[innerWidth,innerHeight],screen:document.getElementById('app')!.dataset.screen};}));
+    records.push(await page.evaluate(async()=>{
+      const q=(window as any).__senryou;
+      const {battleHash}=await import('/src/battle/simulation.ts');
+      const {logicalHash}=await import('/src/battle/mission.ts');
+      // The approved Easy lock adds one controller field to the raw product hash.
+      // Preserve that hash and compare every inherited field through its old schema.
+      const {targetLock,...inheritedController}=q.game.controller;
+      const comparisonPayload=JSON.stringify({mode:q.game.mode,core:logicalHash(q.mission),combat:q.game.combat,controller:inheritedController},
+        (key,value)=>key==='missionId'?'mission':value instanceof Map?[...value]:value instanceof Set?[...value]:value);
+      return {url:location.origin,hash:q.snapshot().hash,comparisonHash:battleHash({...q.game,controller:inheritedController}),
+        comparisonPayload:JSON.parse(comparisonPayload),controllerFields:Object.keys(q.game.controller).sort(),
+        hasTargetLock:Object.hasOwn(q.game.controller,'targetLock'),targetLock:targetLock??null,
+        terrainAvoidanceActive:q.game.terrainAvoidanceActive??null,
+        tick:q.mission.tick,mode:q.snapshot().mode,dpr:devicePixelRatio,viewport:[innerWidth,innerHeight],screen:document.getElementById('app')!.dataset.screen};
+    }));
     await page.screenshot({path:info.outputPath('comparison',`${label}-normal.png`)});
     await page.evaluate(()=>(window as any).__senryou.home());await settings(page);await page.locator('#control-preview').scrollIntoViewIfNeeded();
     await page.screenshot({path:info.outputPath('comparison',`${label}-settings.png`)});
   }
-  expect(records[0].tick).toBe(1);expect(records[1].tick).toBe(1);expect(records[0].hash).toBe(records[1].hash);
   await writeFile(info.outputPath('comparison','conditions.json'),JSON.stringify({browserName,size,baseline:'71b0e5bc9ffbe2cbd1f295160b9e8e3c40ad6650',records},null,2));
+  const inheritedFields=['playerTargetSpeed','loopHeld','playerLoopActive','loopStartYaw','loopStartPitch','loopStartSteeringRevision',
+    'loopStartTurn','loopStartClimb','assistTurn','assistClimb','responseMultiplier'].sort();
+  expect(records[0].tick).toBe(1);expect(records[1].tick).toBe(1);
+  expect(records[0].mode).toBe('normal');expect(records[1].mode).toBe('normal');
+  expect(records[0].controllerFields).toEqual(inheritedFields);
+  expect(records[1].controllerFields).toEqual([...inheritedFields,'targetLock'].sort());
+  expect(records[0].hasTargetLock).toBe(false);expect(records[1].hasTargetLock).toBe(true);
+  expect(records[1].targetLock).toEqual({key:null,manual:false,changed:false});
+  expect(records[1].terrainAvoidanceActive).toBe(false);
+  expect(records[0].hash).toBe(records[0].comparisonHash);
+  expect(records[0].comparisonPayload).toEqual(records[1].comparisonPayload);
+  expect(records[0].hash).toBe(records[1].comparisonHash);
 });
 
 

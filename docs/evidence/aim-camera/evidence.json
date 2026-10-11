@@ -90,7 +90,7 @@
     "browser-tests/reference-comparison.spec.ts": "b18bb45e17e7020ecf9bc70ed812f48e2688d4578c902884293023926158656c",
     "browser-tests/reference-render-baseline.spec.ts": "142785179f0e37a025625a9405a8b14aede38f03780c3dc73fb9c497d3f6b6dc",
     "browser-tests/smoke.spec.ts": "f6914e4af00d44c9b452ff5b1612147f865dc298fbca3d3e7874ba0994cbf3d5",
-    "browser-tests/throttle-lever.spec.ts": "963e4fb88aa34eb1f672bc8b5bcf968eb54d80a3ab8752cc5b26585ad5e6e8a3",
+    "browser-tests/throttle-lever.spec.ts": "7bb45fe15fc9ff6f13576162d8449ba422f0343033e96403793e1e91fde985e7",
     "browser-tests/ui-only/canvas-adapter.template.ts": "43a0ddb51338451ecbddb655fe4207692968b5daa3a1c96a32f5d4940dee258d",
     "browser-tests/ui-only/capture.mjs": "007843b17c60fe1e3bdfd0043dae231e7fb067af05a73004c440b975f6be0851",
     "browser-tests/ui-only/check-fixture.mjs": "d39031aca57c3f268adf5013e7b92b3e98aabc44f2d04fea10ed14e2acb114e0",
@@ -108,8 +108,8 @@
       "exit_code": 0,
       "passed": 228,
       "skipped": 0,
-      "log_sha256": "4d78265726dc4f385ae4b1c370f88028e0a6f37f7e6adcc32e0e6f142de39117",
-      "log_utc_mtime": "2026-10-11T16:09:51.550761+00:00"
+      "log_sha256": "295698f6aff219eb13386f82484d4d06ba7b1f9f14ddd459e300b36cc3fe42fe",
+      "log_utc_mtime": "2026-10-11T17:18:04.948589+00:00"
     },
     "build": {
       "command": "npm run build",
@@ -126,6 +126,23 @@
       "exit_code": 0,
       "result_sha256": "bac94b2e8d9ee7351ee2f799c102b2226026d43eb1a12bd6ae7d11bfa57925d5",
       "script_sha256": "032fdacfee2f57530d8c3ebdbedd78651a0237b455aa5f26f9d31a37fd461189"
+    },
+    "legacy_comparison": {
+      "command": "PLAYWRIGHT_BROWSERS_PATH=<browser-cache> THROTTLE_BASELINE_DIR=<pinned-71b0e5-checkout> npm run test:browser -- --config=playwright.throttle.config.ts --project=chromium --grep 'same-condition before-after'",
+      "exit_code": 0,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "237674b81286a08eecd2cd739ec5968b21cd968e4edd50b7fe431609705dea39",
+      "summary_path": "docs/evidence/aim-camera/ci-comparison-followup.json",
+      "summary_sha256": "30551a5fe6af0681095ce7402c37858f4b3701f98997097e5ef7dc65a539f086",
+      "prior_ci": {
+        "head": "9888039e1753faa6712f8528eab61571cc86feb8",
+        "run_id": 38157524049,
+        "result": "failure; 30 passed / 10 existing skipped / 5 failed",
+        "four_failures": "raw battleHash differs only by approved targetLock field; inherited payload comparison and strict neutral lock assertions now pass",
+        "remaining_pc_smoke": "candidate and historical baseline both entered renderer protective pause; no waiver or protection removal"
+      }
     }
   },
   "product_browser": {
