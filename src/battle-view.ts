@@ -728,8 +728,9 @@ export class BattleView {
     if (p.x > b.minX + 300 && p.x < b.maxX - 300 && p.z > b.minZ + 300 && p.z < b.maxZ - 300 && p.y < b.maxY - 300) return;
     c.save(); c.fillStyle = '#ffd27a'; c.font = '600 12px system-ui'; c.textAlign = 'center';
     const text = '作戦空域の境界 · 内側へ旋回';
-    const label = overlayTextPosition(this.overlayLabels, c, text, this.width / 2, Math.max(104, this.height * .21));
-    c.fillText(text, label.x, label.y); c.restore();
+    const lines = this.width <= this.height && this.width <= 430 ? ['作戦空域の境界 ·', '内側へ旋回'] : [text];
+    const label = overlayTextPosition(this.overlayLabels, c, lines[0], this.width / 2, Math.max(104, this.height * .21), 0, 0, lines.slice(1));
+    lines.forEach((line, index) => c.fillText(line, label.x, label.y + index * 15)); c.restore();
   }
 
   private drawPointLabels(c: CanvasRenderingContext2D, mission: Mission): void {
