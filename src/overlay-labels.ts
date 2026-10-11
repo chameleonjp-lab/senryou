@@ -29,18 +29,29 @@ export class OverlayLabels {
     const origin = clamp(preferred);
     let chosen: LabelBox | undefined = fits(origin) ? origin : undefined;
     if (!chosen && this.comparisonsLeft > 0) {
-      const candidates: LabelBox[] = [];
-      for (const obstacle of this.occupied) {
-        const xs = [obstacle.x - preferred.width - gap, obstacle.x + obstacle.width + gap];
-        const ys = [obstacle.y - preferred.height - gap, obstacle.y + obstacle.height + gap];
-        for (const x of xs) candidates.push(clamp({ ...preferred, x, y: origin.y }));
-        for (const y of ys) candidates.push(clamp({ ...preferred, x: origin.x, y }));
-        for (const x of xs) for (const y of ys) candidates.push(clamp({ ...preferred, x, y }));
+      // Explore only edges of the box actually blocking each candidate, rather
+      // than sorting edges of every HUD glyph for every world label.
+      const queue = [origin], visited = new Set<string>();
+      const distance = (box: LabelBox) => (box.x - origin.x) ** 2 + (box.y - origin.y) ** 2;
+      for (let attempts = 0; queue.length && attempts < 128 && this.comparisonsLeft > 0; attempts++) {
+        queue.sort((a, b) => distance(a) - distance(b) || a.y - b.y || a.x - b.x);
+        const box = queue.shift()!, key = `${box.x.toFixed(3)}:${box.y.toFixed(3)}`;
+        if (visited.has(key)) continue;
+        visited.add(key);
+        if (box.x < margin || box.y < margin || box.x + box.width > this.width - margin || box.y + box.height > this.height - margin) continue;
+        let blocker: LabelBox | undefined;
+        for (const obstacle of this.occupied) {
+          if (this.comparisonsLeft-- <= 0) break;
+          if (overlaps(box, obstacle)) { blocker = obstacle; break; }
+        }
+        if (!blocker && this.comparisonsLeft > 0) { chosen = box; break; }
+        if (blocker) {
+          queue.push(clamp({ ...box, x: blocker.x - box.width - gap }),
+            clamp({ ...box, x: blocker.x + blocker.width + gap }),
+            clamp({ ...box, y: blocker.y - box.height - gap }),
+            clamp({ ...box, y: blocker.y + blocker.height + gap }));
+        }
       }
-      candidates.sort((a, b) =>
-        (a.x - origin.x) ** 2 + (a.y - origin.y) ** 2 -
-        ((b.x - origin.x) ** 2 + (b.y - origin.y) ** 2) || a.y - b.y || a.x - b.x);
-      chosen = candidates.find(fits);
     }
     if (!chosen && this.comparisonsLeft > 0) {
       // A bounded final scan also handles intersecting reservations whose edge

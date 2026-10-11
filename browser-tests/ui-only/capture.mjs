@@ -75,7 +75,7 @@ try{
    const context=getContext.call(this,type,...args);
    if(this.id!=='markers'||type!=='2d'||!context)return context;
    if(wrapped.has(context))return wrapped.get(context);
-   let path=[],pathSegments=[],currentPoint=null;
+   let path=[],pathSegments=[],currentPoint=null,sightArc=false;
    const include=(x,y)=>{if(Number.isFinite(x)&&Number.isFinite(y))path.push({x,y});};
    const proxy=new Proxy(context,{get(target,key){
     const value=Reflect.get(target,key,target);if(typeof value!=='function')return value;
@@ -88,7 +88,7 @@ try{
      (window.__uiOnlyCanvasText??=[]).push({text:String(text),left:Math.min(...xs),right:Math.max(...xs),top:Math.min(...ys),bottom:Math.max(...ys)});
      return value.call(target,text,x,y,...values);
     };
-    if(key==='beginPath')return (...values)=>{path=[];pathSegments=[];currentPoint=null;return value.apply(target,values);};
+    if(key==='beginPath')return (...values)=>{path=[];pathSegments=[];currentPoint=null;sightArc=false;return value.apply(target,values);};
     if(key==='arc')return (x,y,r,...values)=>{
      if(Number.isFinite(x)&&Number.isFinite(y)&&Number.isFinite(r)){
       include(x-r,y-r);include(x+r,y+r);
@@ -96,6 +96,7 @@ try{
       const cx=(matrix.a*x+matrix.c*y+matrix.e)*sx,cy=(matrix.b*x+matrix.d*y+matrix.f)*sy;
       const padX=Math.abs(matrix.a)*target.lineWidth*.5*sx,padY=Math.abs(matrix.d)*target.lineWidth*.5*sy;
       const rx=Math.abs(matrix.a)*r*sx+padX,ry=Math.abs(matrix.d)*r*sy+padY;
+      if(r>=20&&Math.abs(cx-rect.width/2)<rect.width*.1)sightArc=true;
       if(Math.min(rx,ry)>=40&&cx>rect.width/2&&cy<rect.height/2){
        window.__uiOnlyCanvasRadar={source:'observed-product-BattleView.drawRadar-Canvas2D-arc',bounds:{left:cx-rx,top:cy-ry,right:cx+rx,bottom:cy+ry},center:{x:cx,y:cy},radius:{x:rx-padX,y:ry-padY},strokePadding:{x:padX,y:padY}};
       }
@@ -105,7 +106,7 @@ try{
     if(key==='moveTo')return (x,y,...values)=>{include(x,y);currentPoint=Number.isFinite(x)&&Number.isFinite(y)?{x,y}:null;return value.call(target,x,y,...values);};
     if(key==='lineTo')return (x,y,...values)=>{include(x,y);const next=Number.isFinite(x)&&Number.isFinite(y)?{x,y}:null;if(currentPoint&&next)pathSegments.push({from:currentPoint,to:next});currentPoint=next;return value.call(target,x,y,...values);};
     if(key==='stroke')return (...values)=>{
-     if(!window.__uiOnlyCanvasSight&&path.length){
+     if(!window.__uiOnlyCanvasSight&&sightArc&&path.length){
       const xs=path.map(point=>point.x),ys=path.map(point=>point.y),pad=(Number(target.lineWidth)||1)/2;
       window.__uiOnlyCanvasSight={source:'observed-product-markers-Canvas2D-first-stroke',strokeStyle:target.strokeStyle,lineWidth:target.lineWidth,
        bounds:{left:Math.min(...xs)-pad,top:Math.min(...ys)-pad,right:Math.max(...xs)+pad,bottom:Math.max(...ys)+pad},pathPoints:path,pathSegments,strokePadding:pad};
@@ -151,6 +152,11 @@ try{
   try{
    await page.setViewportSize({width,height});await page.evaluate(({fixture,mode})=>{window.__uiOnlyCanvasSight=null;window.__uiOnlyCanvasRadar=null;window.__senryouUiOnly.show(fixture,mode);},{fixture:displayFixture,mode});item.scrollReset=await resetScrollPositions();
    if(enlarge)item.textScale=await text200(page);await settle();if(enlarge)item.textScaleVerification=await verifyText200(page);
+   const beforeRepaint=await page.evaluate(()=>window.__senryouUiOnly.missionState());
+   await page.evaluate(()=>window.__senryouUiOnly.repaint());
+   const afterRepaint=await page.evaluate(()=>window.__senryouUiOnly.missionState());
+   if(beforeRepaint!==afterRepaint)throw new Error('Read-only overlay repaint changed the frozen mission');
+   item.readonlyRepaint={missionStateUnchanged:true,continuousLoop:false};
    item.state=await state();item.canvas=await canvasState();
    await saveTopScreenshot(item);await saveBottomScreenshot(item,displayFixture);
    item.layoutObservation=await page.evaluate(()=>{
