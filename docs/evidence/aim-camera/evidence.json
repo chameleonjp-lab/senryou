@@ -3,7 +3,7 @@
   "repository": "chameleonjp-lab/senryou",
   "base_main": "43b1073fd9d9ee2285032787ca691e6a506fa647",
   "branch": "codex/zero-series-aim-camera-20261012",
-  "recorded_at": "2026-10-11T16:44:33.485064+00:00",
+  "recorded_at": "2026-10-11T19:01:04.670Z",
   "source_sha256": {
     "src/aircraft-batch.ts": "cd69fdcd03507faffca251b311f253f4ccd10aa0bb11fbfc767626a4960c5428",
     "src/aircraft-damage.ts": "b0a71f4b39aa1adab948ea3f08d99f0ed60e30deb5087992c8f748c9a5fade83",
@@ -28,7 +28,7 @@
     "src/battle-ground-view.ts": "543c3ce1e2ee8fac60f8f1c78e6a150bc9c1a90840c5d412b771f9ec16aff6fd",
     "src/battle-landscape.ts": "97154aa71280df61ba5e6a5b17928b2b0c21534290449311da1d28bbd2080e05",
     "src/battle-sky.ts": "9e41e7c1a54be8c6f3f4f8dc38f47b7df347e0edb03c73c37029aa4015773143",
-    "src/battle-view.ts": "45f788b129b8f1e0ea7b259118fc9b3f6028373800d6599e265615d8e07a4134",
+    "src/battle-view.ts": "71c0ece6450440bd84e504183792e319125094c660ba95d490c944daa19e0867",
     "src/control-footprints.ts": "f06c165319e21a834f907d7641d7f6c04f95a2d1077ba5fed3d3c9c2ce28f1a9",
     "src/control-obstacles.ts": "cacd1cff5a216dc45a1c9d5eba95b261d2d3343d517290d3b4c0fd85421dac67",
     "src/control-settings.css": "bb70790c5ca8f8bf7407ff502c097f34b082e65a794c5e595bb1c8354ce6bcab",
@@ -44,7 +44,7 @@
     "src/hud-sight-reservation.ts": "a407a91b6ab23efba22bb96fd1dab08a7e7c448db832a797673b77a892c1a298",
     "src/input.ts": "739f001f9d2089e1d530abe89d386b1d11393ef48e1588a78269b61fb7df327d",
     "src/keyboard-settings.ts": "1c82035a0a72bdd5db459d188262d5c8b91876983fb024a526c6e804585bc57b",
-    "src/main.ts": "abbb6e3e5bb496b7ec706909f1249e71e4ef90725804c970bd2bd8e70400b064",
+    "src/main.ts": "34bab9148691171013c12e64e313fc5d279d571fd469832a9671b1f06c1a0746",
     "src/mission.ts": "3bc5b4aaa139cd659dc9ead6318337fa37b2e27ed6053ac22605d4095a0a2c26",
     "src/overlay-labels.ts": "abcd4095ef5a34d2aa0219cc3e74d336d11b0a989df0440b921d6d6ae2218f33",
     "src/render-queue.ts": "8ec4611984beb7168ead1a7e758faf399b0cc0b73939502352be984ab35648f7",
@@ -96,30 +96,34 @@
     "browser-tests/ui-only/check-fixture.mjs": "d39031aca57c3f268adf5013e7b92b3e98aabc44f2d04fea10ed14e2acb114e0",
     "browser-tests/ui-only/entry.ts": "794fba3153197eb354333a74e5f1aa4c067e2b5dde8f0a8760776eae0c467fc2",
     "browser-tests/ui-only/extract-product.mjs": "0e4955d0dbf64d28f1ceb9664f36f4b2de975828f5017d71f126095ad6b14dd4",
-    "browser-tests/ui-only/extraction-contract.json": "537400e9b1d9c4c4326002fc31122a3a0d4e48b0f085b33ff922c84b8c29773c",
+    "browser-tests/ui-only/extraction-contract.json": "210aa5eba1e35dd07912e06a05a8588803c3d9561026e2152fb42262463d70b1",
     "browser-tests/ui-only/samples.ts": "67386b41f25b1901c2ff19d3c124448aa240b3cc962a5b0361da9cfcb7bd1fdd",
     "browser-tests/ui-only/ui-adapter.template.ts": "b49613b63756e618c7a4c326c0c497a20967b846fb93cf0d6a1b885b868eda05",
     "browser-tests/ui-only/validate-vite.mjs": "1e86e0c268e91eef059e6052859099cc632a7f128fd180fb8e34a4dc20234d35",
-    "docs/evidence/aim-camera/verify-normal-fire.mts": "032fdacfee2f57530d8c3ebdbedd78651a0237b455aa5f26f9d31a37fd461189"
+    "docs/evidence/aim-camera/verify-normal-fire.mts": "032fdacfee2f57530d8c3ebdbedd78651a0237b455aa5f26f9d31a37fd461189",
+    "tests/paused-render.test.ts": "9ac5eb7f9f1ae35d8f4d0372cb4f48a9e1112c93e03fd27c6b37bcec1a521a96"
   },
   "checks": {
     "unit": {
       "command": "npm test",
       "exit_code": 0,
-      "passed": 228,
+      "passed": 234,
+      "failed": 0,
       "skipped": 0,
-      "log_sha256": "295698f6aff219eb13386f82484d4d06ba7b1f9f14ddd459e300b36cc3fe42fe",
-      "log_utc_mtime": "2026-10-11T17:18:04.948589+00:00"
+      "log_sha256": "56ed8f803c9a9057e570c4ed2f6df9496af63ebd5d719757843288b8fadba908",
+      "log_utc_mtime": "2026-10-11T18:51:33.019Z"
     },
     "build": {
       "command": "npm run build",
       "exit_code": 0,
-      "log_sha256": "2bcc4d01cea9e1e34b3a9eb33e550d2c0728a8c1aa35e04ab76556da3a9aa8ac"
+      "log_sha256": "3a2d81e8424569b1ea36e52d4a1820027a15f80277fdfb5f0a71177f2604f9af",
+      "log_utc_mtime": "2026-10-11T18:49:40.663Z"
     },
     "related_browser": {
       "command": "PLAYWRIGHT_BROWSERS_PATH=<browser-cache> npx playwright test --config=playwright.throttle.config.ts --project=chromium --project=chromium-smoke --workers=1",
       "result": "20 pass / 4既存skip（合格件数へskipを含めない）。標準UI configの絶対移行元pathは現workspaceと一致せず、そのsuite全体の合格は未確認。",
-      "log_sha256": "8da25c76b6bea38b944922389947e20e8e354097ba2440cd796105c88de91bca"
+      "log_sha256": "8da25c76b6bea38b944922389947e20e8e354097ba2440cd796105c88de91bca",
+      "scope": "historical pre-render-followup head, not a pass of the current full suite"
     },
     "normal_fire": {
       "command": "node --import tsx docs/evidence/aim-camera/verify-normal-fire.mts",
@@ -142,7 +146,17 @@
         "result": "failure; 30 passed / 10 existing skipped / 5 failed",
         "four_failures": "raw battleHash differs only by approved targetLock field; inherited payload comparison and strict neutral lock assertions now pass",
         "remaining_pc_smoke": "candidate and historical baseline both entered renderer protective pause; no waiver or protection removal"
-      }
+      },
+      "scope": "historical pre-render-followup head"
+    },
+    "current_smoke": {
+      "command": "PLAYWRIGHT_BROWSERS_PATH=<browser-cache> npm run test:browser -- --config=playwright.throttle.config.ts --project=chromium-smoke",
+      "exit_code": 0,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "4a93dd902fc6f2b9822139d1ab8f3ba75482d2970cdfe7b59bfa8d8b518e0e4c",
+      "log_utc_mtime": "2026-10-11T18:52:43.479Z"
     }
   },
   "product_browser": {
@@ -1515,18 +1529,380 @@
       "easy-852x393-dpr2.png": "b122196300f8a600642d8bb7b12110f789ff07b65b423a06f6e3e06c68d00241",
       "easy-568x320-dpr2.png": "2b5c4b409ffd3ffec377d547cd61ac4c0616aa50dc9fd755b269307bf0ea062a",
       "easy-1280x720-dpr2.png": "3977b08227afaac82723706cf7b094bad96552273b1f3bbd6397f60534b83e79"
+    },
+    "captured_before_ci_followup": true,
+    "capture_source_sha256": {
+      "src/main.ts": "abbb6e3e5bb496b7ec706909f1249e71e4ef90725804c970bd2bd8e70400b064",
+      "src/battle-view.ts": "45f788b129b8f1e0ea7b259118fc9b3f6028373800d6599e265615d8e07a4134"
     }
   },
   "committed_images": {
     "pause-settings.jpg": "b9ce32a6c342dc83410e92ed5455c8a1436db84baa5d219c9354ab7125117181",
     "portrait-comparison.jpg": "945939bba4e0823fcbb9d6c8646c995b37609f71566c3baba5c5297aef8d053f",
     "viewport-contact.jpg": "559f56acaf232e27d230e8eb449e113a2e8c4dbf634c3d3186cc75c9970b17ab",
-    "viewport-dpr2.jpg": "53fa7488f0e8e0a4ae1b77e0b2f836183ef1eb2950885c8a4eac738fde845f03"
+    "viewport-dpr2.jpg": "53fa7488f0e8e0a4ae1b77e0b2f836183ef1eb2950885c8a4eac738fde845f03",
+    "ci-resume-pc-hud.png": "c1c4458dbd6da282ae97dbd2b1989afc439f611886672d736acda2f877ec3955",
+    "ci-resume-pc-pause.png": "940428b035f6b376a297d0575898db9dc1298959353ad66bb3df5e5a71bc8d00"
   },
   "unconfirmed": [
     "physical iPhone Safari symptom/acceptance",
     "WebKit automation (browser download unavailable)",
     "actual render 30/60/120Hz comparison",
     "product bundle 200% text/safe-area overrides (UI-only checks separate)"
-  ]
+  ],
+  "ci_followup": {
+    "previous_head": "56b5eb3db9ce0ae954df2651324c885ea195d03a",
+    "independent_review": {
+      "mode": "read-only code and evidence review",
+      "required_fixes": 0,
+      "real_device_acceptance": false
+    },
+    "limits": [
+      "fallback Chromium 153.0.8010.0 / SwiftShader differs from Playwright 1.61.1 expected Chromium",
+      "physical iPhone Safari and local WebKit unavailable; no acceptance claim",
+      "required new-head CI must be read independently of local checks"
+    ],
+    "prior_ci": {
+      "run_id": 38159359366,
+      "job_id": 114528844671,
+      "conclusion": "failure",
+      "browser": {
+        "passed": 34,
+        "existing_skipped": 10,
+        "failed": 1
+      },
+      "failure": "PC resume button hidden after renderer protective stop; original 120000ms timeout unchanged"
+    },
+    "scope": {
+      "paused_frame": "retain completed identical tick/mission/mode/HUD/revision only; still poll GL first",
+      "graphics_failure": "stop subsequent scheduling and rendering when !ready or lost",
+      "watchdog_ms": 1000,
+      "simulation_hz": 60,
+      "quality_changed": false,
+      "ci_changed": false
+    },
+    "paused_render_observation": {
+      "method": "normal native Start/Pause, read-only draw callbacks and queue snapshots; not GPU performance acceptance",
+      "probe_sha256": "6ce26a6fd7917e517227fe6e629fb2a7463cd712b2ec1f491fd7433d396a5030",
+      "before": {
+        "log_sha256": "cbc8d0ab8ca20f308c9edecb4acb77f870f03cbb4040c5f6b306e67e09089471",
+        "log_utc_mtime": "2026-10-11T18:46:22.362Z",
+        "paused": {
+          "before": {
+            "tick": 84,
+            "screen": "paused",
+            "ready": true,
+            "queue": {
+              "status": "pending",
+              "failure": null,
+              "pendingMs": 594.5,
+              "lastCompletedPendingMs": 448.90000000596046,
+              "completedFrameIntervalMs": 578.7999999970198,
+              "submittedCount": 3,
+              "completedCount": 2,
+              "skippedCount": 119
+            }
+          },
+          "after": {
+            "tick": 84,
+            "screen": "paused",
+            "ready": false,
+            "queue": {
+              "status": "pending",
+              "failure": null,
+              "pendingMs": 128.5,
+              "lastCompletedPendingMs": 161.70000000298023,
+              "completedFrameIntervalMs": 166.3999999910593,
+              "submittedCount": 14,
+              "completedCount": 13,
+              "skippedCount": 507
+            }
+          }
+        },
+        "calls": 199,
+        "triangles": 258666
+      },
+      "after": {
+        "log_sha256": "31e7cd960a40211756b4ebe0ba85164dcf01df348095c8d9b5f759f7cc5beafc",
+        "log_utc_mtime": "2026-10-11T18:49:46.519Z",
+        "paused": {
+          "before": {
+            "tick": 79,
+            "screen": "paused",
+            "ready": true,
+            "queue": {
+              "status": "pending",
+              "failure": null,
+              "pendingMs": 61,
+              "lastCompletedPendingMs": 625.5,
+              "completedFrameIntervalMs": 640.6999999880791,
+              "submittedCount": 4,
+              "completedCount": 3,
+              "skippedCount": 147
+            }
+          },
+          "after": {
+            "tick": 79,
+            "screen": "paused",
+            "ready": true,
+            "queue": {
+              "status": "ready",
+              "failure": null,
+              "pendingMs": 0,
+              "lastCompletedPendingMs": 376.5,
+              "completedFrameIntervalMs": 383.40000000596046,
+              "submittedCount": 5,
+              "completedCount": 5,
+              "skippedCount": 251
+            }
+          }
+        },
+        "calls": 199,
+        "triangles": 258666
+      }
+    },
+    "smoke": [
+      {
+        "viewport": {
+          "id": "phone-portrait-393x648",
+          "width": 393,
+          "height": 648,
+          "isMobile": true,
+          "hasTouch": true
+        },
+        "raw_evidence_sha256": "d922af790506ee8c01a7daf3dc4bee4539a704b594040fb863c984b3b3a6dc9e",
+        "actions": [
+          "home → touch settings → keyboard settings → cancel",
+          {
+            "action": "home → rules → back",
+            "rulesScroll": {
+              "scrollHeight": 3401,
+              "clientHeight": 471,
+              "reachedBottom": true
+            }
+          },
+          "easy: start → pause → resume",
+          "pause → end mission → result",
+          "result → home → select normal → start"
+        ],
+        "pageErrors": [],
+        "consoleErrors": [],
+        "blockedExternal": [],
+        "easy": {
+          "screen": "playing",
+          "ready": true,
+          "lost": false,
+          "mode": "easy",
+          "mission": {
+            "phase": "running",
+            "tick": 110,
+            "result": null
+          },
+          "queue": {
+            "status": "pending",
+            "failure": null,
+            "pendingMs": 18.19999998807907,
+            "lastCompletedPendingMs": 56,
+            "completedFrameIntervalMs": 66.59999999403954,
+            "submittedCount": 15,
+            "completedCount": 14,
+            "skippedCount": 206
+          },
+          "calls": 185,
+          "triangles": 254534
+        },
+        "normal": {
+          "screen": "playing",
+          "ready": true,
+          "lost": false,
+          "mode": "normal",
+          "mission": {
+            "phase": "running",
+            "tick": 7,
+            "result": null
+          },
+          "queue": {
+            "status": "pending",
+            "failure": null,
+            "pendingMs": 49.70000000298023,
+            "lastCompletedPendingMs": 74.79999999701977,
+            "completedFrameIntervalMs": 100,
+            "submittedCount": 31,
+            "completedCount": 30,
+            "skippedCount": 334
+          },
+          "calls": 183,
+          "triangles": 256418
+        }
+      },
+      {
+        "viewport": {
+          "id": "phone-landscape-568x320",
+          "width": 568,
+          "height": 320,
+          "isMobile": true,
+          "hasTouch": true
+        },
+        "raw_evidence_sha256": "98ce93263c7eda26ec47f414f6e60735b8152d1491dcf3c1b6e91bb9b5340002",
+        "actions": [
+          "home → touch settings → keyboard settings → cancel",
+          {
+            "action": "home → rules → back",
+            "rulesScroll": {
+              "scrollHeight": 2494,
+              "clientHeight": 165,
+              "reachedBottom": true
+            }
+          },
+          "easy: start → pause → resume",
+          "pause → end mission → result",
+          "result → home → select normal → start"
+        ],
+        "pageErrors": [],
+        "consoleErrors": [],
+        "blockedExternal": [],
+        "easy": {
+          "screen": "playing",
+          "ready": true,
+          "lost": false,
+          "mode": "easy",
+          "mission": {
+            "phase": "running",
+            "tick": 95,
+            "result": null
+          },
+          "queue": {
+            "status": "pending",
+            "failure": null,
+            "pendingMs": 51.5,
+            "lastCompletedPendingMs": 67.90000000596046,
+            "completedFrameIntervalMs": 83.09999999403954,
+            "submittedCount": 21,
+            "completedCount": 20,
+            "skippedCount": 174
+          },
+          "calls": 201,
+          "triangles": 259218
+        },
+        "normal": {
+          "screen": "playing",
+          "ready": true,
+          "lost": false,
+          "mode": "normal",
+          "mission": {
+            "phase": "running",
+            "tick": 3,
+            "result": null
+          },
+          "queue": {
+            "status": "pending",
+            "failure": null,
+            "pendingMs": 21,
+            "lastCompletedPendingMs": 48.099999994039536,
+            "completedFrameIntervalMs": 66.59999999403954,
+            "submittedCount": 38,
+            "completedCount": 37,
+            "skippedCount": 288
+          },
+          "calls": 189,
+          "triangles": 256506
+        }
+      },
+      {
+        "viewport": {
+          "id": "pc-1280x720",
+          "width": 1280,
+          "height": 720,
+          "isMobile": false,
+          "hasTouch": false
+        },
+        "raw_evidence_sha256": "5457c5beb1d0b84b8cf4d23cdd168b827b7a9bc0e3c45753a00b660a41a3a768",
+        "actions": [
+          "home → touch settings → keyboard settings → cancel",
+          {
+            "action": "home → rules → back",
+            "rulesScroll": {
+              "scrollHeight": 2242,
+              "clientHeight": 543,
+              "reachedBottom": true
+            }
+          },
+          "easy: start → pause → resume",
+          "pause → end mission → result",
+          "result → home → select normal → start"
+        ],
+        "pageErrors": [],
+        "consoleErrors": [],
+        "blockedExternal": [],
+        "easy": {
+          "screen": "playing",
+          "ready": true,
+          "lost": false,
+          "mode": "easy",
+          "mission": {
+            "phase": "running",
+            "tick": 108,
+            "result": null
+          },
+          "queue": {
+            "status": "pending",
+            "failure": null,
+            "pendingMs": 339.3999999910593,
+            "lastCompletedPendingMs": 444,
+            "completedFrameIntervalMs": 462.70000000298023,
+            "submittedCount": 7,
+            "completedCount": 6,
+            "skippedCount": 214
+          },
+          "calls": 201,
+          "triangles": 259218
+        },
+        "normal": {
+          "screen": "playing",
+          "ready": true,
+          "lost": false,
+          "mode": "normal",
+          "mission": {
+            "phase": "running",
+            "tick": 6,
+            "result": null
+          },
+          "queue": {
+            "status": "pending",
+            "failure": null,
+            "pendingMs": 20.900000005960464,
+            "lastCompletedPendingMs": 91.59999999403954,
+            "completedFrameIntervalMs": 96.29999999701977,
+            "submittedCount": 18,
+            "completedCount": 17,
+            "skippedCount": 470
+          },
+          "calls": 189,
+          "triangles": 256506
+        }
+      }
+    ],
+    "smoke_before": {
+      "passed": 1,
+      "failed": 0,
+      "scope": "unchanged local PC smoke passed; original CI failure not fully reproduced in identical conditions",
+      "log_sha256": "572c8d60e14d2419f3cc21f218ba102bfb0253e6d8ccf264f26c623605e5531b",
+      "log_utc_mtime": "2026-10-11T18:41:34.745Z"
+    },
+    "throttle_partial": {
+      "expected_tests": 21,
+      "observed_passes": 10,
+      "tool_reported_exit_code": 0,
+      "final_summary_available": false,
+      "accepted_as_suite_pass": false,
+      "log_sha256": "29de4a0fc06ae0e8b21a8b264c303f26a968c52a60a3e558775ab9df886a2239",
+      "log_utc_mtime": "2026-10-11T18:53:29.067Z"
+    },
+    "extraction_contract": {
+      "whole_file_sha_updates": 2,
+      "unchanged_ui_functions": 13,
+      "unchanged_canvas_methods": 8,
+      "contract_sha256": "210aa5eba1e35dd07912e06a05a8588803c3d9561026e2152fb42262463d70b1"
+    }
+  }
 }

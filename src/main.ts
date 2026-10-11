@@ -184,7 +184,9 @@ canvas.addEventListener('webglcontextlost',event=>{
 });
 canvas.addEventListener('webglcontextrestored',()=>{lost=true;el('announcement').textContent='描画の復旧には再読み込みが必要です';});
 function frame(_timestamp:number):void{
-  if(disposed)return;frameId=requestAnimationFrame(frame);
+  // graphicsFailure is fail-closed until reload. A late GPU completion must
+  // not restart rendering behind the disabled resume/start controls.
+  if(disposed||!ready||lost)return;frameId=requestAnimationFrame(frame);
   const now=performance.now();
   const delta=lastFrame?Math.max(0,(now-lastFrame)/1000):0;lastFrame=now;
   const renderStatus=view?.pollRender(now);

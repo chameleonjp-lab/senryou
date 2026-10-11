@@ -14,9 +14,10 @@
 
 | 層 | コマンド/証拠 | 結果・限界 |
 | --- | --- | --- |
-| 単体 | `npm test` | **228 pass / 0 fail / 0 skip、終了0**。最新の製品sourceとtestを検査。 |
+| 単体 | `npm test` | **234 pass / 0 fail / 0 skip、終了0**。描画停止回帰6件を含む最新の製品sourceとtestを検査。 |
 | 型/製品build | `npm run build` | 終了0。TypeScript noEmitとVite製品bundle。既存chunk-size警告あり。 |
-| 関連browser | `PLAYWRIGHT_BROWSERS_PATH=<browser-cache> npx playwright test --config=playwright.throttle.config.ts --project=chromium --project=chromium-smoke --workers=1` | 20 pass / 4既存skip（合格件数へskipを含めない）。標準UI configの絶対移行元pathは現workspaceと一致せず、そのsuite全体の合格は未確認。 |
+| 関連browser（前回head） | `PLAYWRIGHT_BROWSERS_PATH=<browser-cache> npx playwright test --config=playwright.throttle.config.ts --project=chromium --project=chromium-smoke --workers=1` | 20 pass / 4既存skip（合格件数へskipを含めない）。前回headの記録で、今回の描画修正後の全suite合格を意味しない。 |
+| 今回の実DOM smoke | `PLAYWRIGHT_BROWSERS_PATH=<browser-cache> npm run test:browser -- --config=playwright.throttle.config.ts --project=chromium-smoke` | **3 pass / 0 fail / 0 skip、終了0**。393×648、568×320、1280×720で設定・ルール・Easy開始・停止/再開・終了/result・Normal再開始。page/console errorと外部通信違反0。 |
 | 旧版Normal比較 | `PLAYWRIGHT_BROWSERS_PATH=<browser-cache> THROTTLE_BASELINE_DIR=<pinned-71b0e5-checkout> npm run test:browser -- --config=playwright.throttle.config.ts --project=chromium --grep 'same-condition before-after'` | **4 pass / 0 fail / 0 skip、終了0**。4viewport、同seed・1tick・paused。旧schema全fieldのpayload一致＋新targetLock厳密中立性。製品raw hashは保持。 |
 | Normal実進行 | `node --import tsx docs/evidence/aim-camera/verify-normal-fire.mts` | 同seed20261011、3操縦条件×12tickのfire on/off、位置/姿勢/速度/名目camera一致。自機発射8対0、36tick組。製品公開simulation APIを実行。 |
 | 製品画面 | 5viewport×DPR1/2×Normal/Easy=20画像 | Chromium 153.0.8010.0 / SwiftShader、実buildと通常DOM操作。fixture注入なし。日本語fontあり、page error 0。回転/負荷で保護停止のlast frameが含まれ、20枚すべての連続飛行は主張しない。 |
@@ -30,7 +31,13 @@
 
 初回head `9888039e1753faa6712f8528eab61571cc86feb8` のActions run `38157524049` は30 pass / 10既存skip / 5 fail。4件のbefore-afterは追加したcontroller.targetLockだけでraw hashが変わるため失敗した。製品battleHashを変更せず、検査側でその1fieldだけを分け、旧controllerの11field一覧とmode/core/combat/controllerの全payload一致、旧raw hashと新旧schema hash一致を検査する。新targetLockは余分fieldも許さず `{key:null,manual:false,changed:false}` を要求し、地形保護も非介入を確認。raw hashと両版の比較payloadはassert前に保存する。変更後4viewportとも合格、実測payload・hashは[比較記録](evidence/aim-camera/ci-comparison-followup.json)に保存した。元の勝利/停止・入力・保存検査をskip化せず、時間制限も変更していない。
 
-残るPC smokeは初回CIでcandidate・pinned baselineの両方がSwiftShader描画待ちの保護停止になった。旧版の失敗は診断でありcandidateの免除にはしない。描画停止保護や必須CIを解除せず、最新headのCI結果と残件をPR本文へ記す。ローカル4件の比較成功は、このPC smokeや実iPhoneの受入成功を意味しない。
+前回head `56b5eb3db9ce0ae954df2651324c885ea195d03a` のrun `38159359366` は34 pass / 10既存skip / 1 fail。PC smokeの再開ボタンが描画保護後に隠れ、120000msで失敗した。初回CIではcandidate・pinned baselineの両方が保護停止になったが、旧版の失敗は免除にしない。
+
+今回、pausedでtickが変わらない同一3D画面の再送信と、graphics failure後も次のrAF/描画を続ける実経路を修正した。最後の必要なpausedフレームは描き、tick/mode/HUD/resize/LOD/guide/camera/mission変更は失効させる。保持フレームの前にもGLをpollし、pending中に変更を消費しない。runningとresultの描画、固定60Hz論理、1000ms watchdog、モデル・画質・解像度を変更しない。UI抽出manifestはwhole-file SHA2件だけを再固定し、13 UI function / 8 Canvas methodのdigestと拒否検査を維持した。
+
+実ブラウザーの観測では、変更前はpaused tick84固定のままsubmitted3→14、ready=true→false。変更後はtick79固定でsubmitted4→5（最後の変更フレーム）→完了、ready=trueを維持した。同じ描画内容は258666 triangles / 199 calls。これはLinux SwiftShaderの限定観測で、実機FPSやあらゆる負荷の保証ではない。変更前PC smoke自体はローカル1件合格だったため、元CIの失敗を同一条件で完全再現したとは扱わない。修正後の3 smokeは合格。21件予定の追加Chromium throttle実行は10件の成功までのlogしか残らず、最終summary未取得のためsuite合格として数えない。最新headの必須CIは別途確認してPR本文に記す。
+
+今回のPC画像：[Easy HUD](evidence/aim-camera/ci-resume-pc-hud.png)、[停止と有効な再開ボタン](evidence/aim-camera/ci-resume-pc-pause.png)。既存のsmoke証拠は上書きせず、今回のhash・観測値・logは[evidence.json](evidence/aim-camera/evidence.json)のci_followupへ分離した。独立読取reviewで追加差分に必須修正指摘なし。実iPhone/WebKitの受入は未実施のまま。
 
 最初のbrowser取得/実行には環境起因の不正archive・SwiftShader準備timeoutがあった。ウチオトセの初回はasset接続resetで1失敗し、同sourceの再実行で合格。ファンタジアの旧font横protected 200%配置は変更前mainでも失敗し、実測fixtureを追加して製品layoutを修正。日本語fontの縦respawnで追加失敗を見つけ、旧fontも守る15000回probe＋残予算fallbackで修正し、最新469単体と指定8browserを再検査。失敗をskipやbudget縮小/寸法縮小で隠していない。これらは各作品へ同じ失敗を帰属させる説明ではなく、シリーズ共通の検証環境と個別是正の記録。
 
