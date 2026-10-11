@@ -75,11 +75,20 @@ try{
    const context=getContext.call(this,type,...args);
    if(this.id!=='markers'||type!=='2d'||!context)return context;
    if(wrapped.has(context))return wrapped.get(context);
-   let path=[],pathSegments=[],currentPoint=null;
+   let path=[],pathSegments=[],currentPoint=null,sightArc=false;
    const include=(x,y)=>{if(Number.isFinite(x)&&Number.isFinite(y))path.push({x,y});};
    const proxy=new Proxy(context,{get(target,key){
     const value=Reflect.get(target,key,target);if(typeof value!=='function')return value;
-    if(key==='beginPath')return (...values)=>{path=[];pathSegments=[];currentPoint=null;return value.apply(target,values);};
+    if(key==='clearRect')return (...values)=>{window.__uiOnlyCanvasText=[];return value.apply(target,values);};
+    if(key==='fillText')return (text,x,y,...values)=>{
+     const m=target.measureText(String(text)),matrix=target.getTransform(),rect=canvas.getBoundingClientRect(),sx=rect.width/canvas.width,sy=rect.height/canvas.height;
+     const corners=[[x-m.actualBoundingBoxLeft,y-m.actualBoundingBoxAscent],[x+m.actualBoundingBoxRight,y-m.actualBoundingBoxAscent],[x-m.actualBoundingBoxLeft,y+m.actualBoundingBoxDescent],[x+m.actualBoundingBoxRight,y+m.actualBoundingBoxDescent]]
+      .map(([px,py])=>({x:rect.left+(matrix.a*px+matrix.c*py+matrix.e)*sx,y:rect.top+(matrix.b*px+matrix.d*py+matrix.f)*sy}));
+     const xs=corners.map(p=>p.x),ys=corners.map(p=>p.y);
+     (window.__uiOnlyCanvasText??=[]).push({text:String(text),left:Math.min(...xs),right:Math.max(...xs),top:Math.min(...ys),bottom:Math.max(...ys)});
+     return value.call(target,text,x,y,...values);
+    };
+    if(key==='beginPath')return (...values)=>{path=[];pathSegments=[];currentPoint=null;sightArc=false;return value.apply(target,values);};
     if(key==='arc')return (x,y,r,...values)=>{
      if(Number.isFinite(x)&&Number.isFinite(y)&&Number.isFinite(r)){
       include(x-r,y-r);include(x+r,y+r);
@@ -87,6 +96,7 @@ try{
       const cx=(matrix.a*x+matrix.c*y+matrix.e)*sx,cy=(matrix.b*x+matrix.d*y+matrix.f)*sy;
       const padX=Math.abs(matrix.a)*target.lineWidth*.5*sx,padY=Math.abs(matrix.d)*target.lineWidth*.5*sy;
       const rx=Math.abs(matrix.a)*r*sx+padX,ry=Math.abs(matrix.d)*r*sy+padY;
+      if(r>=20&&Math.abs(cx-rect.width/2)<rect.width*.1)sightArc=true;
       if(Math.min(rx,ry)>=40&&cx>rect.width/2&&cy<rect.height/2){
        window.__uiOnlyCanvasRadar={source:'observed-product-BattleView.drawRadar-Canvas2D-arc',bounds:{left:cx-rx,top:cy-ry,right:cx+rx,bottom:cy+ry},center:{x:cx,y:cy},radius:{x:rx-padX,y:ry-padY},strokePadding:{x:padX,y:padY}};
       }
@@ -96,7 +106,7 @@ try{
     if(key==='moveTo')return (x,y,...values)=>{include(x,y);currentPoint=Number.isFinite(x)&&Number.isFinite(y)?{x,y}:null;return value.call(target,x,y,...values);};
     if(key==='lineTo')return (x,y,...values)=>{include(x,y);const next=Number.isFinite(x)&&Number.isFinite(y)?{x,y}:null;if(currentPoint&&next)pathSegments.push({from:currentPoint,to:next});currentPoint=next;return value.call(target,x,y,...values);};
     if(key==='stroke')return (...values)=>{
-     if(!window.__uiOnlyCanvasSight&&path.length){
+     if(!window.__uiOnlyCanvasSight&&sightArc&&path.length){
       const xs=path.map(point=>point.x),ys=path.map(point=>point.y),pad=(Number(target.lineWidth)||1)/2;
       window.__uiOnlyCanvasSight={source:'observed-product-markers-Canvas2D-first-stroke',strokeStyle:target.strokeStyle,lineWidth:target.lineWidth,
        bounds:{left:Math.min(...xs)-pad,top:Math.min(...ys)-pad,right:Math.max(...xs)+pad,bottom:Math.max(...ys)+pad},pathPoints:path,pathSegments,strokePadding:pad};
@@ -113,7 +123,7 @@ try{
  await page.goto(origin+'/__ui_only__/',{waitUntil:'domcontentloaded'});await page.waitForFunction(()=>document.documentElement.dataset.uiOnlyReady==='true');report.productUiStarted=true;
  report.setupMs=performance.now()-started;report.setupAttemptElapsedMs=report.setupMs;report.setupStatus='completed';uiStart=performance.now();uiWatchdog=setTimeout(()=>void timeoutStop('UI capture deadline exceeded; missing work is not a pass'),budgets.uiMs);
  const settle=()=>bounded(page.evaluate(async()=>{await document.fonts.ready;await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}),budgets.settleMs,'fonts/frame settling');
- const canvasState=()=>page.locator('#markers').evaluate(canvas=>{const c=canvas.getContext('2d'),d=c.getImageData(0,0,canvas.width,canvas.height).data;let painted=0;for(let i=3;i<d.length;i+=4)if(d[i])painted++;return {width:canvas.width,height:canvas.height,paintedPixels:painted,sight:window.__uiOnlyCanvasSight??null,radar:window.__uiOnlyCanvasRadar??null};});
+ const canvasState=()=>page.locator('#markers').evaluate(canvas=>{const c=canvas.getContext('2d'),d=c.getImageData(0,0,canvas.width,canvas.height).data;let painted=0;for(let i=3;i<d.length;i+=4)if(d[i])painted++;return {width:canvas.width,height:canvas.height,paintedPixels:painted,sight:window.__uiOnlyCanvasSight??null,radar:window.__uiOnlyCanvasRadar??null,textPaints:window.__uiOnlyCanvasText??[]};});
  const state=()=>page.evaluate(()=>({...window.__senryouUiOnly.snapshot(),telemetry:window.__senryouUiOnly.telemetry}));
  const resetScrollPositions=()=>page.evaluate(()=>{
   window.scrollTo(0,0);
@@ -142,6 +152,11 @@ try{
   try{
    await page.setViewportSize({width,height});await page.evaluate(({fixture,mode})=>{window.__uiOnlyCanvasSight=null;window.__uiOnlyCanvasRadar=null;window.__senryouUiOnly.show(fixture,mode);},{fixture:displayFixture,mode});item.scrollReset=await resetScrollPositions();
    if(enlarge)item.textScale=await text200(page);await settle();if(enlarge)item.textScaleVerification=await verifyText200(page);
+   const beforeRepaint=await page.evaluate(()=>window.__senryouUiOnly.missionState());
+   await page.evaluate(()=>window.__senryouUiOnly.repaint());
+   const afterRepaint=await page.evaluate(()=>window.__senryouUiOnly.missionState());
+   if(beforeRepaint!==afterRepaint)throw new Error('Read-only overlay repaint changed the frozen mission');
+   item.readonlyRepaint={missionStateUnchanged:true,continuousLoop:false};
    item.state=await state();item.canvas=await canvasState();
    await saveTopScreenshot(item);await saveBottomScreenshot(item,displayFixture);
    item.layoutObservation=await page.evaluate(()=>{
@@ -223,7 +238,18 @@ try{
     const previewLabelOverflow=previewLabels.filter(item=>previewBox&&(item.left<previewBox.left-1||item.right>previewBox.right+1||item.top<previewBox.top-1||item.bottom>previewBox.bottom+1)).map(item=>item.text);
     const previewControlOverflow=[...document.querySelectorAll('#control-settings .preview-control')].filter(visible).map(element=>({id:element.dataset.control,...rectOf(element)})).filter(item=>previewBox&&(item.left<previewBox.left-1||item.right>previewBox.right+1||item.top<previewBox.top-1||item.bottom>previewBox.bottom+1)).map(item=>item.id);
     const outsideFlightControls=controls.filter(item=>item.left<0||item.right>view.width||item.top<0||item.bottom>view.height).map(item=>item.id);
-    return {viewport:view,targetBox,targetChildren,sight,sightSource:sight?.source??'no-product-Canvas2D-sight-observed',radar,radarSource:radar?.source??'no-product-Canvas2D-radar-observed',targetSightOverlap,targetTextRects,targetTextOverflow:targetText,targetCounts,hudContent,hudContentOverlaps,hudControlOverlaps,flightControlOverlaps,canvasRegionOverlaps,outsideHudText,previewControls,previewControlOverlaps,previewControlCenterMisses,previewLabels,previewLabelOverlaps,previewLabelControlOverlaps,outsidePreviewLabels,previewLabelOverflow,previewControlOverflow,outsideFlightControls,flightControls:controls,layoutObservationPhase:document.querySelector('#control-settings .settings-main')?.scrollTop?'after-required-settings-bottom-scroll':'top-state',centerHitRemainsObservational:true};
+    const worldTexts=(window.__uiOnlyCanvasText??[]).filter(item=>item.text!=='2.4km');
+    const worldLabelIssues=[];
+    if(view.width>view.height&&view.height<=360&&document.querySelector('#app')?.dataset.screen==='playing'){
+     const hudButtons=[...document.querySelectorAll('#hud button,[data-flight-control]')].filter(visible).map(rectOf);
+     for(const label of worldTexts){
+      if(label.left<0||label.right>view.width||label.top<0||label.bottom>view.height)worldLabelIssues.push({text:label.text,kind:'outside-viewport'});
+      if(hudContent.some(content=>content.textRects.some(rect=>rectanglesOverlap(label,rect)))||hudButtons.some(rect=>rectanglesOverlap(label,rect)))worldLabelIssues.push({text:label.text,kind:'hud-or-control-overlap'});
+      if([sight,radar].some(region=>region&&rectanglesOverlap(label,region.bounds)))worldLabelIssues.push({text:label.text,kind:'sight-or-radar-overlap'});
+     }
+     for(let i=0;i<worldTexts.length;i++)for(let j=i+1;j<worldTexts.length;j++)if(rectanglesOverlap(worldTexts[i],worldTexts[j]))worldLabelIssues.push({text:worldTexts[i].text,other:worldTexts[j].text,kind:'world-text-overlap'});
+    }
+    return {viewport:view,targetBox,targetChildren,sight,sightSource:sight?.source??'no-product-Canvas2D-sight-observed',radar,radarSource:radar?.source??'no-product-Canvas2D-radar-observed',targetSightOverlap,targetTextRects,targetTextOverflow:targetText,targetCounts,hudContent,hudContentOverlaps,hudControlOverlaps,flightControlOverlaps,canvasRegionOverlaps,outsideHudText,previewControls,previewControlOverlaps,previewControlCenterMisses,previewLabels,previewLabelOverlaps,previewLabelControlOverlaps,outsidePreviewLabels,previewLabelOverflow,previewControlOverflow,outsideFlightControls,flightControls:controls,worldTexts,worldLabelIssues,layoutObservationPhase:document.querySelector('#control-settings .settings-main')?.scrollTop?'after-required-settings-bottom-scroll':'top-state',centerHitRemainsObservational:true};
    });
    item.layoutIssues=[];
    const sightExpected=['hud-easy','hud-normal','hud-notice','flying-effective','flying-ineffective','flying-no-prediction'].includes(displayFixture);
@@ -245,6 +271,10 @@ try{
    if(item.layoutObservation.previewLabelOverflow.length)item.layoutIssues.push('Touch preview label extends beyond its clipped preview frame');
    if(item.layoutObservation.previewControlOverflow.length)item.layoutIssues.push('Touch preview control extends beyond its visible preview frame');
    if(item.layoutObservation.outsideFlightControls.length)item.layoutIssues.push('flight control extends beyond viewport');
+   if(item.layoutObservation.worldLabelIssues.length)item.layoutIssues.push('compact world labels overlap protected HUD/controls/sight/radar or each other');
+   if(id==='L-normal')for(const text of ['対空照準 1門','作戦空域の境界 · 内側へ旋回','爆弾の落下目安 · 30.0秒','P3 競合','619m']){
+    if(!item.layoutObservation.worldTexts.some(item=>item.text===text))item.layoutIssues.push('Required world label was not painted: '+text);
+   }
    const playing=item.state.screen==='playing'||item.state.screen==='paused';
    if(playing&&item.canvas.paintedPixels===0)throw new Error('Required actual Canvas2D HUD was not painted');
    if(!playing&&item.canvas.paintedPixels!==0)throw new Error('Canvas HUD not cleared on non-game screen');

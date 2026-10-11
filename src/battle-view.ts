@@ -23,6 +23,7 @@ import { targetAimPoint } from './flight-assist';
 import { EASY_AIM_RADIUS, FLIGHT_FOV, getFlightCameraPose, projectFlightTarget } from './flight-view';
 import { projectGunSight } from './gun-sight';
 import { RenderQueue } from './render-queue';
+import { compactOverlayLabels, overlayTextPosition, overlayLabelLeader, type OverlayLabels } from './overlay-labels';
 import type { Aircraft, Bullet, GameMode } from './types';
 
 export const DETAIL_CAPACITY = 96;
@@ -140,6 +141,7 @@ export class BattleView {
   private currentPlayerId: string | null = null;
   private flightPlayer: Aircraft | null = null;
   private bombGuide: ViewBombGuide | null = null;
+  private overlayLabels: OverlayLabels | null = null;
   private cameraOverride: { position: Vec3; quaternion: Quaternion } | null = null;
   private lod: BattleLOD = 'normal';
   private width = 1;
@@ -595,12 +597,15 @@ export class BattleView {
     const c = this.ctx, w = this.width, h = this.height;
     if (!c) return;
     c.clearRect(0, 0, w, h); c.shadowBlur = 0;
+    this.overlayLabels = null;
     if (!show) return;
+    this.overlayLabels = compactOverlayLabels(c.canvas, w, h);
     const player = this.flightPlayer;
     if (player) {
       const targets = targetsForFlight(mission, player);
       const sight = mode === 'normal' ? projectGunSight(player, targets, w, h) : { x: w / 2, y: h / 2 };
       const radius = mode === 'normal' ? Math.max(26, Math.min(38, Math.min(w, h) * .085)) : Math.min(w, h) * EASY_AIM_RADIUS;
+      this.overlayLabels?.reserve({ x: sight.x - radius - 8, y: sight.y - radius - 8, width: 2 * (radius + 8), height: 2 * (radius + 8) });
       let aimColor = '#ffffff';
       for (const target of targets) {
         const projection = projectFlightTarget(player, targetAimPoint(target), w / h, mode);
@@ -628,10 +633,17 @@ export class BattleView {
         c.strokeStyle = '#ffd27a'; c.lineWidth = 3;
         c.beginPath(); c.arc(sight.x, sight.y, radius + 7, -Math.PI / 2, -Math.PI / 2 + progress * Math.PI * 2); c.stroke();
       }
-      this.drawBombGuide(c);
-      this.drawTargets(c, mission, player);
-      this.drawAAWarnings(c, mission, combat?.aaWarnings ?? []);
-      this.drawBoundaryWarning(c, unit);
+      if (this.overlayLabels) {
+        this.drawAAWarnings(c, mission, combat?.aaWarnings ?? []);
+        this.drawBoundaryWarning(c, unit);
+        this.drawBombGuide(c);
+        this.drawTargets(c, mission, player);
+      } else {
+        this.drawBombGuide(c);
+        this.drawTargets(c, mission, player);
+        this.drawAAWarnings(c, mission, combat?.aaWarnings ?? []);
+        this.drawBoundaryWarning(c, unit);
+      }
     }
     this.drawPointLabels(c, mission);
     this.drawRadar(c, mission);
@@ -653,10 +665,13 @@ export class BattleView {
       else { c.moveTo(x, y - 6); c.lineTo(x + 5, y); c.lineTo(x, y + 6); c.lineTo(x - 5, y); c.closePath(); }
       c.stroke();
       if (!friendly) {
-        c.fillStyle = 'rgba(7,24,32,.8)'; c.fillRect(x - 19, y + 12, 38, 3);
-        c.fillStyle = '#ffc69b'; c.fillRect(x - 19, y + 12, 38 * target.health / target.maxHealth, 3);
+        const text = `${target.kind === 'tank' ? '戦車 ' : target.kind === 'aa' ? '対空 ' : ''}${Math.round(distance)}m`;
+        const label = overlayTextPosition(this.overlayLabels, c, text, x, y + 28, 7, 38);
+        c.fillStyle = 'rgba(7,24,32,.8)'; c.fillRect(label.x - 19, label.y - 16, 38, 3);
+        c.fillStyle = '#ffc69b'; c.fillRect(label.x - 19, label.y - 16, 38 * target.health / target.maxHealth, 3);
         c.fillStyle = '#f4e3c8';
-        c.fillText(`${target.kind === 'tank' ? '戦車 ' : target.kind === 'aa' ? '対空 ' : ''}${Math.round(distance)}m`, x, y + 28);
+        if (this.overlayLabels) overlayLabelLeader(c, { x, y }, label);
+        c.fillText(text, label.x, label.y);
       }
     }
     c.shadowBlur = 0;
@@ -678,8 +693,10 @@ export class BattleView {
     c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
     c.font = '600 10px system-ui'; c.textAlign = 'left';
     const label = `爆弾の落下目安 · ${guide.time.toFixed(1)}秒`, labelWidth = Math.ceil(c.measureText(label).width) + 12;
-    const labelX = x + 32 + labelWidth < this.width - 12 ? x + 32 : x - 32 - labelWidth;
-    const labelY = Math.max(76, Math.min(this.height - 60, y - 36));
+    const preferredX = x + 32 + labelWidth < this.width - 12 ? x + 32 : x - 32 - labelWidth;
+    const preferredY = Math.max(76, Math.min(this.height - 60, y - 36));
+    const labelBox = this.overlayLabels?.place({ x: preferredX, y: preferredY, width: labelWidth, height: 20 });
+    const labelX = labelBox?.x ?? preferredX, labelY = labelBox?.y ?? preferredY;
     c.strokeStyle = 'rgba(183,239,206,.55)'; c.lineWidth = .75;
     c.beginPath(); c.moveTo(x + (labelX > x ? 9 : -9), y); c.lineTo(labelX > x ? labelX : labelX + labelWidth, labelY + 19); c.stroke();
     c.fillStyle = 'rgba(4,24,34,.78)'; c.fillRect(labelX, labelY, labelWidth, 20);
@@ -690,7 +707,9 @@ export class BattleView {
     const active = warnings.filter(warning => warning.targetId === mission.controlledAircraftId);
     if (!active.length) return;
     c.save(); c.font = '600 11px system-ui'; c.textAlign = 'center'; c.fillStyle = '#ffd27a';
-    c.fillText(`対空照準 ${active.length}門`, this.width / 2, Math.max(80, this.height * .16));
+    const text = `対空照準 ${active.length}門`;
+    const label = overlayTextPosition(this.overlayLabels, c, text, this.width / 2, Math.max(80, this.height * .16));
+    c.fillText(text, label.x, label.y);
     for (const warning of active) {
       const projection = this.project(warning.position);
       let dx = projection.x - this.width / 2, dy = projection.y - this.height / 2;
@@ -708,7 +727,9 @@ export class BattleView {
     const b = BATTLEFIELD.bounds, p = unit.position;
     if (p.x > b.minX + 300 && p.x < b.maxX - 300 && p.z > b.minZ + 300 && p.z < b.maxZ - 300 && p.y < b.maxY - 300) return;
     c.save(); c.fillStyle = '#ffd27a'; c.font = '600 12px system-ui'; c.textAlign = 'center';
-    c.fillText('作戦空域の境界 · 内側へ旋回', this.width / 2, Math.max(104, this.height * .21)); c.restore();
+    const text = '作戦空域の境界 · 内側へ旋回';
+    const label = overlayTextPosition(this.overlayLabels, c, text, this.width / 2, Math.max(104, this.height * .21));
+    c.fillText(text, label.x, label.y); c.restore();
   }
 
   private drawPointLabels(c: CanvasRenderingContext2D, mission: Mission): void {
@@ -718,8 +739,10 @@ export class BattleView {
       if (!projection.visible || Math.abs(projection.nx) > .94 || Math.abs(projection.ny) > .75) continue;
       c.fillStyle = point.contested ? '#ffd27a' : point.owner === 'N' ? '#e4c88b' : point.owner === mission.playerTeam ? '#77dacb' : '#ffb28b';
       c.shadowColor = 'rgba(4,24,34,.9)'; c.shadowBlur = 4;
-      c.fillText(`${point.id}${point.contested ? ' 競合' : point.phase !== 'stable' ? ` ${Math.round(point.progress * 100)}%` : ''}`,
-        projection.x, projection.y);
+      const text = `${point.id}${point.contested ? ' 競合' : point.phase !== 'stable' ? ` ${Math.round(point.progress * 100)}%` : ''}`;
+      const label = overlayTextPosition(this.overlayLabels, c, text, projection.x, projection.y);
+      if (this.overlayLabels) overlayLabelLeader(c, projection, label);
+      c.fillText(text, label.x, label.y);
     }
     c.restore();
   }

@@ -11,7 +11,7 @@ export const UI_ONLY_SOURCE_PATHS = [
  'src/style.css','src/control-settings.css',
  'src/main.ts','src/control-settings.ts','src/control-obstacles.ts','src/control-footprints.ts','src/hud-geometry.ts','src/hud-notification-reservations.ts','src/hud-sight-reservation.ts','src/settings-storage.ts','src/dialog-focus.ts',
  'src/input.ts','src/throttle-control.ts','src/throttle-lever.ts','src/keyboard-settings.ts','src/rules-guide.ts','src/flight-assist.ts','src/gun-sight.ts','src/flight-view.ts',
- 'src/battle-view.ts','src/battle/terrain.ts','src/battle/rules.ts',
+ 'src/battle-view.ts','src/overlay-labels.ts','src/battle/terrain.ts','src/battle/rules.ts',
  'browser-tests/ui-only/canvas-adapter.template.ts','browser-tests/ui-only/capture.mjs','browser-tests/ui-only/check-fixture.mjs','browser-tests/ui-only/entry.ts','browser-tests/ui-only/extract-product.mjs','browser-tests/ui-only/extraction-contract.json','browser-tests/ui-only/samples.ts','browser-tests/ui-only/ui-adapter.template.ts','browser-tests/ui-only/validate-vite.mjs',
  'tests/ui-only-extraction.test.ts','tsconfig.ui-only.json','vite.ui-only.config.ts',
 ].sort();

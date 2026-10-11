@@ -58,6 +58,6 @@ export function mountProductUi(){
   flush();
   return {id,screen,mode};
  }
- return {show,commands,snapshot:()=>({screen,mode,settings:settings.isOpen,rules:rules.isOpen,scope:'UI display samples, no gameplay evidence',canvasTextScale:1,presentationFlushes}),
+ return {show,commands,repaint:()=>{view.render(game.mission,mode,game.combat,screen==='playing'||screen==='paused');presentationFlushes++;},missionState:()=>JSON.stringify(game.mission),snapshot:()=>({screen,mode,settings:settings.isOpen,rules:rules.isOpen,scope:'UI display samples, no gameplay evidence',canvasTextScale:1,presentationFlushes}),
   input:()=>controls.peek(),dispose:()=>{controls.dispose();settings.dispose();rules.dispose();unsubscribeKeyboard();unsubscribePresentation();presentation.dispose();}};
 }

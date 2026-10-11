@@ -6,7 +6,7 @@ const evidence=resolve(process.env.UI_ONLY_EVIDENCE_DIR??'../senryou-ui-only-evi
 mkdirSync(evidence,{recursive:true});
 const batch=loadUiOnlyBatch(evidence);
 const server=await createServer({configFile:'vite.ui-only.config.ts',mode:'ui-only',server:{middlewareMode:true,watch:null,ws:false},optimizeDeps:{noDiscovery:true}});
-const routes=['/browser-tests/ui-only/entry.ts','/browser-tests/ui-only/samples.ts','/src/style.css','/src/control-settings.css','/src/input.ts','/src/control-settings.ts','/src/keyboard-settings.ts','/src/rules-guide.ts','/src/flight-assist.ts','/src/gun-sight.ts','/src/flight-view.ts','/src/battle/rules.ts','/src/hud-notification-reservations.ts','\0virtual:senryou-ui','\0virtual:senryou-canvas'];
+const routes=['/browser-tests/ui-only/entry.ts','/browser-tests/ui-only/samples.ts','/src/style.css','/src/overlay-labels.ts','/src/control-settings.css','/src/input.ts','/src/control-settings.ts','/src/keyboard-settings.ts','/src/rules-guide.ts','/src/flight-assist.ts','/src/gun-sight.ts','/src/flight-view.ts','/src/battle/rules.ts','/src/hud-notification-reservations.ts','\0virtual:senryou-ui','\0virtual:senryou-canvas'];
 const transformed=[];
 try{
  for(const id of routes){const result=await server.transformRequest(id);if(!result?.code)throw new Error('No transform result: '+id);transformed.push({id,bytes:result.code.length});}
