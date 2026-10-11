@@ -15,7 +15,7 @@ test('source hashes, signatures, identifiers and this-members remain fail-closed
  assert.deepEqual(extractionContract(source),expected);
  assert.equal(expected.mainSha256,createHash('sha256').update(readFileSync(new URL('../src/main.ts',import.meta.url))).digest('hex'));
  const used=[...new Set(source.canvas.flatMap((m:{thisMembers:string[]})=>m.thisMembers))].sort();
- assert.deepEqual(used,['bombGuide','camera','ctx','drawAAWarnings','drawBombGuide','drawBoundaryWarning','drawOverlay','drawPointLabels','drawRadar','drawTargets','flightPlayer','height','position','project','width'].filter(n=>n!=='drawOverlay').sort());
+ assert.deepEqual(used,['bombGuide','camera','ctx','drawAAWarnings','drawBombGuide','drawBoundaryWarning','drawOverlay','drawPointLabels','drawRadar','drawTargets','flightPlayer','height','overlayLabels','position','project','width'].filter(n=>n!=='drawOverlay').sort());
 });
 test('fixture does not import a runtime renderer, simulation, weapons, terrain or audio module',()=>{
  const text=[modules.ui,modules.canvas,readFileSync(new URL('../browser-tests/ui-only/samples.ts',import.meta.url),'utf8')].join('\n');

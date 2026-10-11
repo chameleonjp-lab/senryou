@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "mainSha256": "da95930d4dbcf76a7e8b006d1fa33dc1117090f32200b06abf9bac6fe97e7ed8",
-  "viewSha256": "0a21a6dc70b64778a0e3a2bec6b5b86b0fb358bd639a98263986b96b76bd6a12",
+  "viewSha256": "af34df5f45cabcac8fae1777f83434e6a1e4053c638c6a0747607e3500b6a5ad",
   "terrainSha256": "ee0f8ffbfdea1c3d5750b8d7c4542367d43cec74269bdd475c657dabd8aecf5e",
   "bounds": {
     "sha256": "2a4892998a6fe1f053a040b43f26f5467020afecbc9075703ebcbc9d4a81f581",
@@ -461,7 +461,7 @@
     {
       "name": "drawOverlay",
       "signature": "private drawOverlay(mission: Mission, mode: GameMode, combat: BattleCombatView | undefined, show: boolean): void",
-      "sha256": "b2db2907f46067a79cc010f2d4afb918e27816a88ac1f543a97225d48c26d531",
+      "sha256": "a4ba599ce1bdbfa2d47e10418d4a00d39ef81ffe3500c4620f26da56d55cfebc",
       "identifiers": [
         "BattleCombatView",
         "EASY_AIM_RADIUS",
@@ -474,8 +474,10 @@
         "arc",
         "beginPath",
         "c",
+        "canvas",
         "clearRect",
         "combat",
+        "compactOverlayLabels",
         "ctx",
         "drawAAWarnings",
         "drawBombGuide",
@@ -499,6 +501,7 @@
         "mission",
         "mode",
         "moveTo",
+        "overlayLabels",
         "player",
         "progress",
         "projectFlightTarget",
@@ -506,6 +509,7 @@
         "projection",
         "radius",
         "reloadUntil",
+        "reserve",
         "shadowBlur",
         "show",
         "sight",
@@ -535,13 +539,14 @@
         "drawTargets",
         "flightPlayer",
         "height",
+        "overlayLabels",
         "width"
       ]
     },
     {
       "name": "drawTargets",
       "signature": "private drawTargets(c: CanvasRenderingContext2D, mission: Mission, player: Aircraft): void",
-      "sha256": "5bd51b86955a3f983b82288097152886ea4112458644f2ef2e5272ce2ff30c64",
+      "sha256": "1bd0db76ffeb848c1d37c8355895937236a7973e7d0bc536256dac280e77c530",
       "identifiers": [
         "Aircraft",
         "CanvasRenderingContext2D",
@@ -563,6 +568,7 @@
         "friendly",
         "health",
         "kind",
+        "label",
         "lineTo",
         "lineWidth",
         "maxHealth",
@@ -570,6 +576,9 @@
         "moveTo",
         "nx",
         "ny",
+        "overlayLabelLeader",
+        "overlayLabels",
+        "overlayTextPosition",
         "player",
         "position",
         "project",
@@ -584,6 +593,7 @@
         "targetAimPoint",
         "targetsForFlight",
         "team",
+        "text",
         "textAlign",
         "visible",
         "world",
@@ -591,13 +601,14 @@
         "y"
       ],
       "thisMembers": [
+        "overlayLabels",
         "project"
       ]
     },
     {
       "name": "drawBombGuide",
       "signature": "private drawBombGuide(c: CanvasRenderingContext2D): void",
-      "sha256": "9099bd2ec5e7663485456c9d2bcee97a457c66c776992075d3ca99b919bbfe48",
+      "sha256": "8a541ea58b3c6d5283047d8b387aa75bdcfe47e33087290cbc372c73177704ae",
       "identifiers": [
         "CanvasRenderingContext2D",
         "Math",
@@ -621,6 +632,7 @@
         "height",
         "i",
         "label",
+        "labelBox",
         "labelWidth",
         "labelX",
         "labelY",
@@ -632,7 +644,11 @@
         "moveTo",
         "nx",
         "ny",
+        "overlayLabels",
+        "place",
         "position",
+        "preferredX",
+        "preferredY",
         "project",
         "projection",
         "restore",
@@ -653,6 +669,7 @@
       "thisMembers": [
         "bombGuide",
         "height",
+        "overlayLabels",
         "project",
         "width"
       ]
@@ -660,7 +677,7 @@
     {
       "name": "drawAAWarnings",
       "signature": "private drawAAWarnings(c: CanvasRenderingContext2D, mission: Mission, warnings: readonly ViewAAWarning[]): void",
-      "sha256": "9241e5b5a31f7d049a92fb96932be5338f3fdd7bb482dfe7e45ae5dcff09d627",
+      "sha256": "c7e7767579746389f86e799eb61a7cacf24fadd064efda2e414e364360d43896",
       "identifiers": [
         "CanvasRenderingContext2D",
         "Math",
@@ -684,12 +701,15 @@
         "font",
         "height",
         "hypot",
+        "label",
         "length",
         "lineTo",
         "max",
         "min",
         "mission",
         "moveTo",
+        "overlayLabels",
+        "overlayTextPosition",
         "position",
         "project",
         "projection",
@@ -698,6 +718,7 @@
         "rotate",
         "save",
         "targetId",
+        "text",
         "textAlign",
         "translate",
         "warning",
@@ -708,6 +729,7 @@
       ],
       "thisMembers": [
         "height",
+        "overlayLabels",
         "project",
         "width"
       ]
@@ -715,7 +737,7 @@
     {
       "name": "drawBoundaryWarning",
       "signature": "private drawBoundaryWarning(c: CanvasRenderingContext2D, unit: Unit): void",
-      "sha256": "12e0fd3d8d9ea88cd31b58b60629664686b44dc61e560f551d655bce6bff6768",
+      "sha256": "88faa5879e1b6a370c316b0893d391ee45615657c1cbce961024c3eb26b07160",
       "identifiers": [
         "BATTLEFIELD",
         "CanvasRenderingContext2D",
@@ -729,16 +751,20 @@
         "fillText",
         "font",
         "height",
+        "label",
         "max",
         "maxX",
         "maxY",
         "maxZ",
         "minX",
         "minZ",
+        "overlayLabels",
+        "overlayTextPosition",
         "p",
         "position",
         "restore",
         "save",
+        "text",
         "textAlign",
         "unit",
         "width",
@@ -748,13 +774,14 @@
       ],
       "thisMembers": [
         "height",
+        "overlayLabels",
         "width"
       ]
     },
     {
       "name": "drawPointLabels",
       "signature": "private drawPointLabels(c: CanvasRenderingContext2D, mission: Mission): void",
-      "sha256": "8f761a8d2dcaf64afaba0e5353a23d238c713bcd1bc901ef5b3e3ccc0580983c",
+      "sha256": "cdb9711db35cf5319fb0b2ae45c251587c47e356debb1a1a2b5964992738afec",
       "identifiers": [
         "CanvasRenderingContext2D",
         "Math",
@@ -767,9 +794,13 @@
         "fillText",
         "font",
         "id",
+        "label",
         "mission",
         "nx",
         "ny",
+        "overlayLabelLeader",
+        "overlayLabels",
+        "overlayTextPosition",
         "owner",
         "phase",
         "playerTeam",
@@ -784,12 +815,14 @@
         "save",
         "shadowBlur",
         "shadowColor",
+        "text",
         "textAlign",
         "visible",
         "x",
         "y"
       ],
       "thisMembers": [
+        "overlayLabels",
         "project"
       ]
     },

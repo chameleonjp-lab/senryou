@@ -20,6 +20,13 @@ Scope: based on main commit a5ac5f4517855ca99d6d285acd148f6417808d38. A passing 
 
 ## Local verification commands
 
+The 2026-10-11 compact-landscape label follow-up is recorded in
+`docs/UI_LABELS_20261011.md`. It adds the product `src/overlay-labels.ts`
+dependency to the pinned source batch and records actual Canvas2D text bounds.
+The dedicated same-repository `codex/senryou-ui-labels-20261011` PR branch uses
+the same bounded UI-only job; other branches retain the legacy automatic job.
+This does not turn the legacy GPU/gameplay failure or real-device gates into a pass.
+
 1. node browser-tests/ui-only/check-fixture.mjs
 2. npx tsc --noEmit --project tsconfig.ui-only.json
 3. node browser-tests/ui-only/validate-vite.mjs
