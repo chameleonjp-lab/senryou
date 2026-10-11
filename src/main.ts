@@ -7,7 +7,7 @@ import { KeyboardSettings, ControlInputPresentation } from './keyboard-settings'
 import { RulesGuide } from './rules-guide';
 import { BattleView } from './battle-view';
 import { BattleAudio } from './battle-audio';
-import { createBattle, stepBattle, battleHash, NEUTRAL_INPUT, type BattleGame } from './battle/simulation';
+import { clearBattleFlightAssistance, createBattle, stepBattle, battleHash, NEUTRAL_INPUT, type BattleGame } from './battle/simulation';
 import { rosterCounts } from './battle/roster';
 import { supplyConnections } from './battle/capture';
 import { scoreSnapshot } from './battle/scoring';
@@ -43,7 +43,7 @@ function instructions():void{
   const touch=presentation.value==='touch';
   el('input-guide').textContent=touch?'画面をドラッグして操縦':'キーボードで操縦';
   el('flight-tip').textContent=touch?'ドラッグで操縦':'キーで操縦';
-  el('mode-guide').textContent=mode==='easy'?'照準円内・1.2km以内へ自動射撃 · 爆弾は手動投下':'手動射撃 · 速度レバーは上で加速・下で減速、離すと速度を保持';
+  el('mode-guide').textContent=mode==='easy'?'照準円内・1.2km以内へ自動射撃 · 危険時は地形回避で上昇 · 爆弾は手動投下':'手動射撃 · 速度レバーは上で加速・下で減速、離すと速度を保持';
   el('keyboard-guide').hidden=touch;el('keyboard-guide').textContent=keyboard.describe(mode);
 }
 const unsubscribeKeyboard=keyboard.subscribe(instructions),unsubscribePresentation=presentation.subscribe(instructions);
@@ -58,6 +58,7 @@ function sound():void{
   }
 }
 function setScreen(next:typeof screen):void{
+  clearBattleFlightAssistance(game);
   settings.close();rules.close();controls.clear();pendingLoop=false;pendingBomb=false;audio.stop();
   screen=next;app.dataset.screen=next;
   el('home').hidden=next!=='home';el('hud').hidden=next!=='playing'&&next!=='paused';
@@ -113,7 +114,7 @@ function hud():void{
   const bombReload=player?Math.max(0,player.bombReloadUntil-m.tick)/60:0;
   el('bomb-ammo').textContent=bombReload?`装填 ${bombReload.toFixed(1)}秒`:`残り${player?.bombs??0}発`;
   el('loop-status').textContent=(player?.loopCooldown??0)>0?`待ち ${(player!.loopCooldown!).toFixed(1)}秒`:'すぐ使える';
-  el('control-status').textContent=m.playerStatus==='flying'?'':`${m.playerStatus==='spectating'?'観戦':'復帰待ち'} · ${m.waitingReason}${m.respawnReadyTick&&m.tick<m.respawnReadyTick?` · ${((m.respawnReadyTick-m.tick)/60).toFixed(1)}秒`:''}`;
+  el('control-status').textContent=m.playerStatus==='flying'?(game.terrainAvoidanceActive?'地形回避 · 自動上昇中':''):`${m.playerStatus==='spectating'?'観戦':'復帰待ち'} · ${m.waitingReason}${m.respawnReadyTick&&m.tick<m.respawnReadyTick?` · ${((m.respawnReadyTick-m.tick)/60).toFixed(1)}秒`:''}`;
   if(m.groundAI?.warnings.length)el('control-status').textContent+=` 経路待機 ${m.groundAI.warnings.length}体 · ${m.groundAI.warnings[0].reason}`;
   const supply=supplyConnections(m.points);
   for(const point of m.points){

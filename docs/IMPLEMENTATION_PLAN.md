@@ -242,3 +242,7 @@ R18の式をevent ledgerから導く。各unitIdの死亡は一度、拠点初�
 文書策定時に対象基点/README/既存PRなしを確認し、Kaisen/FF固定版の重点28ファイルを取得して各Git blob SHAを照合した。HTML/CSS/設定/input/aircraft/flight-view/scene等の関連実装を読み、共通2ファイルの全文差分も確認した。ファイルの取得や関連部分読解は全機能の実行保証ではない。
 
 この文書工程ではゲーム実装、build、単体/ブラウザ検査、8画面/機体の実画像比較、実機性能測定は行っていない。全P工程とA合格は後続の実装承認後に実施する。文書の独立レビューで仕様矛盾を修正しても、実装品質/ゲームバランスが検証済みになったとは扱わない。
+
+## 2026-10-11依頼：操作・標的・照準の共通追補
+
+今回の採用契約は [ZERO_SERIES_AIM_CONTRACT.md](ZERO_SERIES_AIM_CONTRACT.md)、実行結果と未確認項目は [ZERO_SERIES_AIM_VERIFICATION.md](ZERO_SERIES_AIM_VERIFICATION.md)。R1–R8の対象・意図的な作品差・基点を明示する。過去の「未実施」「文書のみ」は当時の工程の記録で、この追補の結果やSafari実機受入とは別。main宛てDraft PRまでとし、公開/mergeは今回実施しない。

@@ -5,7 +5,7 @@ import type { Quaternion, Vector3 } from 'three';
  */
 export type Team = 'friendly' | 'enemy';
 export type GameMode = 'normal' | 'easy';
-export interface FlightInput {
+export interface FlightInput { steeringActive?: boolean;
   turn: number;
   climb: number;
   fire: boolean;

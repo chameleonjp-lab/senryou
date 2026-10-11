@@ -11,7 +11,7 @@ const ground=` 経路待機 ${HUD_TEXT_BOUNDS.groundCount}体 · ${LONGEST_GROUN
 const warning=`対空 照準予告 ${HUD_TEXT_BOUNDS.aaPerTarget}門 · 方位360° / 低空注意 · 機首を上げて / 空域境界 · 内側へ旋回`;
 export function notificationReservations(phase:HudReservationPhase):readonly HudReservationText[]{
  if(phase!=='flying')return [{id:phase,phase,warning:'',reload:'',payload:'',status:(phase==='waiting'?'復帰待ち · 安全な出撃回廊を確認中':'観戦 · 航空戦力なし・地上戦を観戦')+' · 5.0秒'+ground,bombAmmo:'残り0発',bombHint:'予測なし',loop:'すぐ使える'}];
- const common={phase,warning,reload:'機銃・機関砲 装填 6.0秒',status:ground,bombAmmo:'装填 20.0秒',loop:'待ち 2.0秒'};
+ const common={phase,warning,reload:'機銃・機関砲 装填 6.0秒',status:'地形回避 · 自動上昇中'+ground,bombAmmo:'装填 20.0秒',loop:'待ち 2.0秒'};
  return [
   {...common,id:'flying-effective',payload:'爆弾予測：敵地上軍の60m内 · 命中保証ではありません',bombHint:'有効圏 30.0秒'},
   {...common,id:'flying-ineffective',payload:'',bombHint:'地形着弾 30.0秒'},

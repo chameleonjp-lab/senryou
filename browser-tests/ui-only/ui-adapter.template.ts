@@ -15,6 +15,7 @@ export function mountProductUi(){
  let ready=true,lost=false,accumulator=0,lastFrame=0,lastPilot:string|null=null,pendingLoop=false,pendingBomb=false;
  const intervals:number[]=[],updates:number[]=[],commands:string[]=[];
  // Fixed-data boundaries substitute only unavailable game/audio dependencies, never DOM/CSS/listeners.
+ const clearBattleFlightAssistance=(displayGame:DisplaySample['game'])=>{displayGame.terrainAvoidanceActive=false;};
  const createBattle=(_seed=1,_mode=mode)=>{sample=makeSample('ready');return sample.game;};
  const rosterCounts=(_m:unknown,team:Team,kind:UnitKind)=>({reserve:sample.forces[team][kind],pending:0,active:0});
  const supplyConnections=(_points:Mission['points'])=>({A:new Set(['HA','P1']),B:new Set(['HB','P5'])});
