@@ -1499,10 +1499,13 @@ p {
   }
   #app[data-hud-reservation-phase="flying"] #hud .hud-readouts .flight-data {
     grid-column: 1 / 3;
-    width: min(210px, calc(100% - 16px));
-    max-width: 210px;
+    width: 100%;
+    max-width: none;
     justify-self: start;
+    grid-template-columns: max-content minmax(0, 1fr);
+    grid-template-areas: 'health health' 'bar bar' 'instrument wing' 'score score' 'ammo ammo';
   }
+  #app[data-hud-reservation-phase="flying"] #hud .hud-readouts .flight-data .instrument { flex-wrap: nowrap; }
   #app[data-hud-reservation-phase="flying"] #hud .hud-notice-shared {
     width: min(144px, calc(100% - var(--hud-radar-radius) - var(--hud-radar-radius) - 36px));
     max-width: min(144px, calc(100% - var(--hud-radar-radius) - var(--hud-radar-radius) - 36px));
@@ -1522,10 +1525,12 @@ p {
   #app[data-hud-reservation-phase="flying"] #hud .flight-tip {
     top: auto;
     right: max(8px, env(safe-area-inset-right));
-    bottom: calc(110px + var(--safe-bottom));
+    bottom: calc(2px + var(--safe-bottom));
     left: auto;
     width: max-content;
     max-width: calc(100% - 230px);
+    margin: 0;
+    line-height: 1.25;
     transform: none;
     white-space: normal;
     overflow-wrap: anywhere;
@@ -1539,4 +1544,5 @@ p {
     width: max(72px, calc(var(--hud-center-gap) - 24px));
     max-width: max(72px, calc(var(--hud-center-gap) - 24px));
   }
+  #app[data-mode="easy"] #hud .flight-tip { bottom: calc(78px + var(--safe-bottom)); }
 }

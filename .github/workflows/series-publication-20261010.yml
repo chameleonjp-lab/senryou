@@ -34,7 +34,7 @@ jobs:
           python - <<'PYAPPROVAL'
           import os,subprocess
           paths=subprocess.check_output(['git','diff','--no-renames','--name-only',os.environ['APPROVED_PRODUCT_SOURCE'],'HEAD'],text=True).splitlines()
-          assert sorted(paths)==['.github/workflows/series-publication-20261010.yml','.github/workflows/throttle-lever.yml','browser-tests/ui-only/samples.ts','docs/ZERO_SERIES_PUBLICATION_20261010.md','tests/ui-only-extraction.test.ts','tsconfig.ui-only.json'], paths
+          assert sorted(paths)==['.github/workflows/series-publication-20261010.yml','.github/workflows/throttle-lever.yml','browser-tests/ui-only/capture.mjs','browser-tests/ui-only/samples.ts','docs/ZERO_SERIES_PUBLICATION_20261010.md','src/style.css','tests/ui-only-extraction.test.ts','tsconfig.ui-only.json'], paths
           PYAPPROVAL
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
