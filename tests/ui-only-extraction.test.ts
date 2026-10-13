@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { generateProductModules, inspectExtraction, extractionContract, replaceExactlyOnce, UI_ONLY_SOURCE_PATHS, collectUiOnlySourceHashes, uiOnlySourceHashFingerprint } from '../browser-tests/ui-only/extract-product.mjs';
@@ -46,6 +47,10 @@ test('UI-only and legacy workflows hand off on the same repository, branch, and 
  const legacy=readFileSync(new URL('../.github/workflows/throttle-lever.yml',import.meta.url),'utf8');
  const ui=readFileSync(new URL('../.github/workflows/ui-only.yml',import.meta.url),'utf8');
  const branch="'codex/senryou-ui-only-context-fix-20261008'";
+ const publicationBranch="'codex/senryou-publication-esm-fix-20261014'";
+ const uiJob=legacy.split('  verify:')[0],verifyJob=legacy.split('  verify:')[1];
+ assert.ok(uiJob.includes(`github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == ${publicationBranch} && github.event.pull_request.base.ref == 'main'`));
+ assert.doesNotMatch(verifyJob,/codex\/senryou-publication-esm-fix-20261014/);
  assert.ok(legacy.includes(`head.repo.full_name != github.repository || github.event.pull_request.head.ref != ${branch} || github.event.pull_request.base.ref != 'main'`));
  assert.ok(legacy.includes(`github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == ${branch} && github.event.pull_request.base.ref == 'main'`));
  assert.ok(legacy.includes('Normal unit tests'));
@@ -106,3 +111,20 @@ test('capture binds each image to one source batch and records center-hit observ
 });
 
 test('unknown fixture IDs fail before display and every capture row is known',()=>{assert.throws(()=>assertFixtureId('typo-hud'));assert.throws(()=>makeSample('typo-hud'));assert.doesNotThrow(()=>makeSample('ready'));const capture=readFileSync(new URL('../browser-tests/ui-only/capture.mjs',import.meta.url),'utf8');const ids=[...capture.matchAll(/\['[^']+',\d+,\d+,'([^']+)'/g)].map(m=>m[1]);assert.equal(ids.length,22);for(const id of ids)assert.doesNotThrow(()=>assertFixtureId(id));for(const id of ['hud-notice','waiting','spectating'])assert.ok(ids.includes(id));assert.ok(modules.ui.includes("assertFixtureId(id);if(nextMode!=='easy'&&nextMode!=='normal')throw"));});
+
+test('plain Node ESM imports and constructs every UI sample without a TS loader or browser',()=>{
+ const samplesUrl=new URL('../browser-tests/ui-only/samples.ts',import.meta.url).href;
+ const script=`
+  import assert from 'node:assert/strict';
+  import { UI_FIXTURE_IDS, makeSample, resultSample } from ${JSON.stringify(samplesUrl)};
+  for (const id of UI_FIXTURE_IDS) {
+   const sample=makeSample(id);
+   assert.equal(sample.game.mission.id,'ui-display-sample');
+   assert.equal(sample.player.id,'sample-player');
+  }
+  assert.equal(makeSample('ready').game.mission.rulesVersion,resultSample('victory').rulesVersion);
+ `;
+ const child=spawnSync(process.execPath,['--input-type=module','-e',script],{cwd:new URL('..',import.meta.url),env:{...process.env,NODE_OPTIONS:''},encoding:'utf8'});
+ assert.equal(child.error,undefined,child.error?.message);
+ assert.equal(child.status,0,child.stderr||child.stdout);
+});

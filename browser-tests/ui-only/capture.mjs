@@ -272,7 +272,7 @@ try{
    if(item.layoutObservation.previewControlOverflow.length)item.layoutIssues.push('Touch preview control extends beyond its visible preview frame');
    if(item.layoutObservation.outsideFlightControls.length)item.layoutIssues.push('flight control extends beyond viewport');
    if(item.layoutObservation.worldLabelIssues.length)item.layoutIssues.push('compact world labels overlap protected HUD/controls/sight/radar or each other');
-   if(id==='L-normal'||id==='T-normal')for(const text of ['対空照準 1門','作戦空域の境界 · 内側へ旋回','爆弾の落下目安 · 30.0秒','P3 競合','619m','戦車 294m','2.4km']){
+   if(id==='L-normal'||id==='T-normal')for(const text of ['対空照準 1門','作戦空域の境界 · 内側へ旋回','爆弾の落下目安 · 30.0秒','P3 競合','619m','戦車 294m','1.2km']){
     if(!item.layoutObservation.worldTexts.map(item=>item.text).join(' ').includes(text))item.layoutIssues.push('Required world label was not painted: '+text);
    }
    const playing=item.state.screen==='playing'||item.state.screen==='paused';

@@ -1,3 +1,29 @@
+# PR #21 UI-only captureと表示修正
+
+PR #21のUI-only captureは22ケースを実行して37枚のPNGを記録した。artifact `11842111597`（ZIP SHA-256 `f9a2c0027a863512de7b77994634456d3706fd7ccc8e57d3ce0e43395f540583`）のreportはbatch `58db1239-f8f2-4fe8-bde0-b65103ce3e82` を示し、source hashはcapture中も安定し、report errorsは0件だった。ただし `P-easy`、`L-normal`、`T-normal` の3ケースは失敗し、残り19ケースも `captured-needs-visual-review` であるため、全体合格とは扱わない。
+
+`P-easy`（320×568）では `flight-data` の最終行と `flight-tip` の文字矩形が約0.3px重なった。`L-normal`（568×320）では実際のレーダー距離が1.2kmなのに、必須ラベル検査が古い `2.4km` を要求していたため、captureの期待値だけを `1.2km` に合わせる。距離ラベル自体は引き続き必須とする。`T-normal`（393×852、DOM文字倍率2）では敵軍残存数の末尾行と `flight-tip` が重なり、機銃・機関砲の文字がviewport下端を越えた。こちらも古い `2.4km` 期待値で失敗している。
+
+その後のhead `3de4545354e95ffb16232167d2df0cbb6017fee4` の[CI run 38456579687](https://github.com/chameleonjp-lab/senryou/actions/runs/38456579687)では、単体テスト242件成功、candidate browser checks 35件成功・10件skip・失敗0件、baseline 3件成功・失敗0件、UI-only capture 37枚成功だった。throttle artifact `11842317576`（ZIP SHA-256 `ab91ee0afaa2b6d6c9239c268d4b1ca5810a925da5e8dc9608b54e614e6b42f3`）とUI artifact `11843376511`（ZIP SHA-256 `186d8e0a8767bfd76692ee52fadee75e4d077fbe4bbee262e459bfcbbe526a8b`、batch `4eac6ba2-d8b1-4ad8-8b5f-acd99021a9ec`）を保存した。独立照合では40 source hashesと37 PNG hashesが一致し、22 capture caseのgeometry issueは空だった。37枚の独立した目視レビューは完了し、blocking visual issueは確認されなかった。この成功は次の `bottom:72px` 調整より前のheadに対する結果である。
+
+head `3de4545` では、`T-normal` の計器レイアウトが26px縮み、機銃・機関砲の最終行はy=844.75px、飛行案内の文字下端はy=848.5pxだった（viewport高852px）。`P-easy` の `bottom:78px` は元のbottom80px位置から2pxしか下がらず、ammo文字下端y=460.609pxと飛行案内glyph上端y=462.3125pxの隙間は1.703125pxだった。Sol MAXのgeometry案に従いEasy案内を `bottom:72px` に変更した。計算上の位置はglyph y=468.3125〜481.3125、ammoとの隙間7.703125pxであるが、この72px変更後の実測はまだない。新headで再度UI-only captureと全必須検査を行う。
+
+`src/style.css` の変更は表示配置に限定する。390〜700px縦画面の飛行中HUDでは、計器領域を左列と中央列まで広げて二列にし、高さを節約するため計器と僚機情報を同じ行へ置き、スコアと弾薬は下の行へ保つ。飛行案内は右下へ移し、余白と行高を明示する。359px以下の縦画面ではEasyの飛行案内を8px下げる。HUD情報、reticle、文字倍率、フォントサイズ、44px以上の操作領域、照準・レーダー位置と通知予約、captureの検査条件は維持する。全22ケース・37画像・geometry/source-hash/pixel検査と失敗条件を維持し、skip・retry・timeout延長・条件緩和は行わない。
+
+同PRの先行headの必須browser checksではcandidateが34件成功・PC 1件失敗、旧baselineが2件成功・PC 1件失敗だった。artifact `11842540607`（ZIP SHA-256 `607e599ed621974833079df5fcf2074682f4aeb0f19a84a87bdd8349dcf92c87`）には比較画像と結果を保存した。candidateのPC PNGとaccessibility treeには「描画処理が停止しました。再読み込みしてください」というpause表示がある。この表示は既存CIでも見られた描画停止の表示と一致するが、停止原因の内訳は未確定であり、そのheadの必須失敗は成功扱いしない。後の3de headで成功したbrowser checksの結果は上記のとおりである。
+
+公開workflowは固定source `fe2bbaecc28f5d26c433f1cd602192cf418b2818` からの変更が厳密に次の8 pathであることを検査する: `.github/workflows/series-publication-20261010.yml`、`.github/workflows/throttle-lever.yml`、`browser-tests/ui-only/capture.mjs`、`browser-tests/ui-only/samples.ts`、`docs/ZERO_SERIES_PUBLICATION_20261010.md`、`src/style.css`、`tests/ui-only-extraction.test.ts`、`tsconfig.ui-only.json`。製品ロジック・設定、依存関係、lockfile、抽出契約は変更しない。
+
+# 2026-10-14 先行ESM修正時点の公開失敗と修正（履歴）
+
+PR #20をユーザーがmainへマージした後の公開run [38372859765](https://github.com/chameleonjp-lab/senryou/actions/runs/38372859765) は、job [115213886754](https://github.com/chameleonjp-lab/senryou/actions/runs/38372859765/job/115213886754) の「Current bounded UI-only checks; no gameplay」で失敗した。エラーは `ERR_MODULE_NOT_FOUND` で、Node.js 24.19.0が `browser-tests/ui-only/samples.ts` から `src/battle/rules` を解決できなかった。`capture.mjs` はNode.js上で動き、npm testのtsx loaderはこの実行経路には適用されない。失敗は `node --input-type=module -e "await import('./browser-tests/ui-only/samples.ts')"` で再現する。失敗したbuildはdeployへ進まず、現在公開中のページは20分版のままである。
+
+当時の修正は公開失敗を直すための6ファイルに限定した。`samples.ts` の実行時importを `.ts` 付きにし、その拡張子を許可する設定は `tsconfig.ui-only.json` だけへ追加した。回帰テストはtsx loaderを使わない独立したNode.js子プロセスから全fixture sampleを構築した。pull requestでは、この同じリポジトリのブランチとmain宛ての場合だけUI-only capture jobを実行する条件を追加し、既存のlegacy verify条件と37件のcapture、既存35件のbrowser checksを維持した。先行時点の公開workflowは承認済み製品sourceを `fe2bbaecc28f5d26c433f1cd602192cf418b2818` に固定し、そのsourceからの差分が厳密に6 pathであることを検査した。現在の8 path scopeは上記のとおりである。
+
+先行ESM修正時点の対象pathは `.github/workflows/series-publication-20261010.yml`、`.github/workflows/throttle-lever.yml`、`browser-tests/ui-only/samples.ts`、`docs/ZERO_SERIES_PUBLICATION_20261010.md`、`tests/ui-only-extraction.test.ts`、`tsconfig.ui-only.json` の6ファイルである。その段階では製品ロジック・設定、依存関係、lockfile、抽出契約を変更していない。後続の表示上の問題は、製品ロジックを変えず `src/style.css` のCSS-only調整で対応する。修正後のPRでUI-only captureと通常の必須検査を完了する。再公開はmain採用後のworkflowが全検査に成功してからとなる。
+
+このUI-only確認は固定した画面状態の検査であり、ゲームプレイ、本編の正式受け入れ、物理iPhone/Safariの操作・性能・VoiceOverを保証しない。
+
 # 2026-10-13 10分版の公開準備
 
 この記録は、本人の作業再開依頼に基づく10分版の検証ビルド公開準備である。今回の公開元は、[PR #19](https://github.com/chameleonjp-lab/senryou/pull/19)でmainへ採用された `3782f0834a96445fe97c883801f479a97210b1d1`（tree `3c7967ffbbfa5e28adee53697897828d906a5b05`）。製品変更は10分の戦闘時間、拠点間距離とレーダー範囲の半減、戦闘に参加できなくなった部隊の補助データなどを作戦時計30秒ごとに整理する処理である。前回の公開head `43b1073fd9d9ee2285032787ca691e6a506fa647` は20分タイマーのまま配信されており、今回の10分版はまだ公開されていない。

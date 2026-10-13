@@ -18,7 +18,7 @@ jobs:
       pages: read
     env:
       SOURCE_COMMIT: ${{ github.sha }}
-      APPROVED_PRODUCT_SOURCE: 3782f0834a96445fe97c883801f479a97210b1d1
+      APPROVED_PRODUCT_SOURCE: fe2bbaecc28f5d26c433f1cd602192cf418b2818
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -34,7 +34,7 @@ jobs:
           python - <<'PYAPPROVAL'
           import os,subprocess
           paths=subprocess.check_output(['git','diff','--no-renames','--name-only',os.environ['APPROVED_PRODUCT_SOURCE'],'HEAD'],text=True).splitlines()
-          assert sorted(paths)==['.github/workflows/series-publication-20261010.yml','docs/ZERO_SERIES_PUBLICATION_20261010.md'], paths
+          assert sorted(paths)==['.github/workflows/series-publication-20261010.yml','.github/workflows/throttle-lever.yml','browser-tests/ui-only/capture.mjs','browser-tests/ui-only/samples.ts','docs/ZERO_SERIES_PUBLICATION_20261010.md','src/style.css','tests/ui-only-extraction.test.ts','tsconfig.ui-only.json'], paths
           PYAPPROVAL
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
@@ -82,7 +82,7 @@ jobs:
           manifest_path=root/'deployment.json'
           manifest=json.loads(manifest_path.read_text()) if manifest_path.exists() else {'repository':'chameleonjp-lab/senryou','commit':os.environ['SOURCE_COMMIT'],'files':{x['path']:x['sha256'] for x in files}}
           assert manifest['commit']==os.environ['SOURCE_COMMIT']
-          manifest.update({'sourceTree':os.popen('git rev-parse HEAD^{tree}').read().strip(),'workflowCommit':os.environ['WORKFLOW_COMMIT'],'publicationAuthorizationDate':'2026-10-13','publicationScope':'User-requested ten-minute verification build; physical-phone and gameplay acceptance are not claimed'})
+          manifest.update({'sourceTree':os.popen('git rev-parse HEAD^{tree}').read().strip(),'workflowCommit':os.environ['WORKFLOW_COMMIT'],'publicationAuthorizationDate':'2026-10-14','publicationScope':'User-requested ten-minute verification build; physical-phone and gameplay acceptance are not claimed'})
           manifest_path.write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
           PYVALIDATE
       - name: Preserve checks and pictures separately from the public site
