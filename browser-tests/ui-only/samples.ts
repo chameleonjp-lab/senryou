@@ -1,5 +1,5 @@
 import { Quaternion, Vector3 } from 'three';
-import { RULES_VERSION } from '../../src/battle/rules';
+import { RULES_VERSION } from '../../src/battle/rules.ts';
 import type { Mission, MissionResult, Unit, CapturePoint, Team, UnitKind } from '../../src/battle/types';
 import type { Aircraft, CombatTarget } from '../../src/types';
 import type { BattleCombatView, ViewBombGuide, ViewAAWarning } from '../../src/battle-view';

@@ -1,3 +1,13 @@
+# 2026-10-14 公開失敗と修正
+
+PR #20をユーザーがmainへマージした後の公開run [38372859765](https://github.com/chameleonjp-lab/senryou/actions/runs/38372859765) は、job [115213886754](https://github.com/chameleonjp-lab/senryou/actions/runs/38372859765/job/115213886754) の「Current bounded UI-only checks; no gameplay」で失敗した。エラーは `ERR_MODULE_NOT_FOUND` で、Node.js 24.19.0が `browser-tests/ui-only/samples.ts` から `src/battle/rules` を解決できなかった。`capture.mjs` はNode.js上で動き、npm testのtsx loaderはこの実行経路には適用されない。失敗は `node --input-type=module -e "await import('./browser-tests/ui-only/samples.ts')"` で再現する。失敗したbuildはdeployへ進まず、現在公開中のページは20分版のままである。
+
+修正は公開失敗を直すための次の6ファイルに限定する。`samples.ts` の実行時importを `.ts` 付きにし、その拡張子を許可する設定は `tsconfig.ui-only.json` だけへ追加する。回帰テストはtsx loaderを使わない独立したNode.js子プロセスから全fixture sampleを構築する。pull requestでは、この同じリポジトリのブランチとmain宛ての場合だけUI-only capture jobを実行する条件を追加し、既存のlegacy verify条件と37件のcapture、既存35件のbrowser checksを維持する。公開workflowは承認済み製品sourceを `fe2bbaecc28f5d26c433f1cd602192cf418b2818` に固定し、そのsourceからの差分が厳密にこの6 pathであることを検査する。
+
+対象pathは `.github/workflows/series-publication-20261010.yml`、`.github/workflows/throttle-lever.yml`、`browser-tests/ui-only/samples.ts`、`docs/ZERO_SERIES_PUBLICATION_20261010.md`、`tests/ui-only-extraction.test.ts`、`tsconfig.ui-only.json`。製品source、製品設定、依存関係、lockfile、抽出契約は変更しない。修正後のPRでUI-only captureと通常の必須検査を完了する。再公開はmain採用後のworkflowが全検査に成功してからとなる。
+
+このUI-only確認は固定した画面状態の検査であり、ゲームプレイ、本編の正式受け入れ、物理iPhone/Safariの操作・性能・VoiceOverを保証しない。
+
 # 2026-10-13 10分版の公開準備
 
 この記録は、本人の作業再開依頼に基づく10分版の検証ビルド公開準備である。今回の公開元は、[PR #19](https://github.com/chameleonjp-lab/senryou/pull/19)でmainへ採用された `3782f0834a96445fe97c883801f479a97210b1d1`（tree `3c7967ffbbfa5e28adee53697897828d906a5b05`）。製品変更は10分の戦闘時間、拠点間距離とレーダー範囲の半減、戦闘に参加できなくなった部隊の補助データなどを作戦時計30秒ごとに整理する処理である。前回の公開head `43b1073fd9d9ee2285032787ca691e6a506fa647` は20分タイマーのまま配信されており、今回の10分版はまだ公開されていない。
