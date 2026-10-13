@@ -52,6 +52,14 @@ for (const [from, to] of CONNECTIONS) {
   }
 }
 
+// The height blend only uses roads within 36m. These fixed broad-phase bounds
+// avoid checking every segment for every visibility-ray sample on a hill.
+const roadHeightSegments = roads.flatMap(road => road.points.slice(1).map((b, index) => {
+  const a = road.points[index], margin = 36 + 1e-9;
+  return { a, b, minX: Math.min(a.x, b.x) - margin, maxX: Math.max(a.x, b.x) + margin,
+    minZ: Math.min(a.z, b.z) - margin, maxZ: Math.max(a.z, b.z) + margin };
+}));
+
 const hills: HillFeature[] = [
   { id: 'hill-nw', x: scaleMapHorizontal(-2600), z: scaleMapHorizontal(-1450), radius: 650, height: 95 },
   { id: 'hill-ne', x: scaleMapHorizontal(2600), z: scaleMapHorizontal(-1450), radius: 650, height: 95 },
@@ -149,8 +157,10 @@ export function terrainHeight(x: number, z: number): number {
   }
   if (height !== LAND_Y) {
     let distance = Infinity;
-    for (const road of roads) for (let i = 1; i < road.points.length; i++) {
-      distance = Math.min(distance, distanceToSegment(x, z, road.points[i - 1], road.points[i]));
+    for (const segment of roadHeightSegments) {
+      if (x < segment.minX || x > segment.maxX || z < segment.minZ || z > segment.maxZ) continue;
+      distance = Math.min(distance, distanceToSegment(x, z, segment.a, segment.b));
+      if (distance <= 12) return LAND_Y;
     }
     // Flat 24m road, then a smooth embankment. It cannot flatten the deep river.
     const blend = Math.max(0, Math.min(1, (distance - 12) / 24));

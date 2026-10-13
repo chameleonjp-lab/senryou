@@ -1,0 +1,21 @@
+{
+  "samplesCompared": 1570,
+  "exactTerrainMatch": true,
+  "matchingBattleHash": "7fd4d2aa",
+  "ticks": 300,
+  "wallMs": 2527.395671,
+  "p50": 7.9084569999999985,
+  "p95": 10.7494200000001,
+  "scope": "Local CPU simulation and numeric equivalence; no phone or GPU performance claim",
+  "beforeSourceHead": "de54b5e55748ff3b43690ed3a217fbabb023c91b",
+  "beforeTerrainBlob": "99eda938b77d4aed43251a21e81b77aed414a263",
+  "afterTerrainBlob": "e20846ca0f3bede9bde7cb4ba11c95112c261833",
+  "beforeTiming": {
+    "ticks": 300,
+    "wallMs": 8117.276969,
+    "p50": 26.285061999999925,
+    "p95": 34.509186
+  },
+  "conditions": "seed=1, Easy, 300 fixed ticks, neutral input, bomb prediction each tick; profiler enabled. Container load may vary.",
+  "oracleSha256": "d0818b92909cc3833c09e790ad0c73e08358104ad809f3e2ab33270e971a98c1"
+}
