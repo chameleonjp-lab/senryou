@@ -1,7 +1,7 @@
 import type { UnitKind, Team } from './types';
-export const RULES_VERSION = 'senryou-rules-v1';
+export const RULES_VERSION = 'senryou-rules-v2-10min';
 export const TICK_RATE = 60;
-export const MAX_TICKS = 72000;
+export const MAX_TICKS = 36000;
 export const TOTAL: Record<UnitKind, number> = { infantry: 240, tank: 24, aa: 8, aircraft: 24 };
 export const INITIAL: Record<UnitKind, number> = { infantry: 72, tank: 8, aa: 4, aircraft: 6 };
 export const CAP: Record<UnitKind, number> = { infantry: 120, tank: 12, aa: 4, aircraft: 6 };

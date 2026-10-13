@@ -1,5 +1,6 @@
 import type { CapturePoint, Mission, SpawnResolver, Team, Unit, UnitKind, Vec3 } from './types';
 import { CONNECTIONS } from './rules';
+import { MAP_POINT_LAYOUT, scaleMapHorizontal } from './map-layout';
 
 /** Metres, x east / z south. These definitions belong to the simulation, not LOD. */
 export interface BoxFeature { id: string; center: Vec3; size: Vec3; yaw: number }
@@ -13,13 +14,9 @@ export interface TerrainSweepOptions { ignoreColliderId?: string; ignoreInitialC
 export interface GroundSurface { height: number; walkable: boolean; road: boolean; waterDepth: number; slopeDegrees: number; colliderId: string }
 
 const LAND_Y = 12;
-const point = (x: number, z: number): Vec3 => ({ x, y: LAND_Y, z });
-export const MAP_POINTS = [
-  { id: 'HA', position: point(-2400, 0) }, { id: 'P1', position: point(-1400, 0) },
-  { id: 'P2', position: point(0, -900) }, { id: 'P3', position: point(0, 0) },
-  { id: 'P4', position: point(0, 900) }, { id: 'P5', position: point(1400, 0) },
-  { id: 'HB', position: point(2400, 0) },
-] as const;
+const worldPoint = (x: number, z: number): Vec3 => ({ x, y: LAND_Y, z });
+export const MAP_POINTS = MAP_POINT_LAYOUT.map(({ id, x, z }) => ({ id,
+  position: worldPoint(scaleMapHorizontal(x), scaleMapHorizontal(z)) }));
 const pointById = new Map<string, Vec3>(MAP_POINTS.map(p => [p.id, p.position]));
 const roads: RoadFeature[] = [];
 const bridges: BridgeFeature[] = [];
@@ -35,45 +32,45 @@ for (const [from, to] of CONNECTIONS) {
     if (!central) {
       roads.push({ id, from, to, variant, width: 24, points: variant === 0
         ? [{ ...a }, { ...b }]
-        : [{ ...a }, point((a.x + b.x) / 2, 160), { ...b }] });
+        : [{ ...a }, worldPoint((a.x + b.x) / 2, scaleMapHorizontal(160)), { ...b }] });
       continue;
     }
-    const riverX = a.x < 0 ? -620 : 620;
+    const riverX = scaleMapHorizontal(a.x < 0 ? -620 : 620);
     const f = (riverX - a.x) / (b.x - a.x);
     const baseZ = a.z + (b.z - a.z) * f;
     const lane = from === 'P1' ? to : from;
-    const offset = variant === 0 ? 0 : lane === 'P2' ? -120 : lane === 'P4' ? 120 : 150;
+    const offset = scaleMapHorizontal(variant === 0 ? 0 : lane === 'P2' ? -120 : lane === 'P4' ? 120 : 150);
     const yaw = Math.atan2(b.z - a.z, b.x - a.x);
-    const length = 120 / Math.cos(yaw);
+    const length = scaleMapHorizontal(120) / Math.cos(yaw);
     const bridgeId = `bridge-${id}`;
-    const center = point(riverX, baseZ + offset);
+    const center = worldPoint(riverX, baseZ + offset);
     bridges.push({ id: bridgeId, center, length, width: 18, thickness: 2, yaw });
-    const approach = length / 2 + 25;
-    const entry = point(center.x - Math.cos(yaw) * approach, center.z - Math.sin(yaw) * approach);
-    const exit = point(center.x + Math.cos(yaw) * approach, center.z + Math.sin(yaw) * approach);
+    const approach = length / 2 + scaleMapHorizontal(25);
+    const entry = worldPoint(center.x - Math.cos(yaw) * approach, center.z - Math.sin(yaw) * approach);
+    const exit = worldPoint(center.x + Math.cos(yaw) * approach, center.z + Math.sin(yaw) * approach);
     roads.push({ id, from, to, variant, width: 24, bridgeId, points: [{ ...a }, entry, exit, { ...b }] });
   }
 }
 
 const hills: HillFeature[] = [
-  { id: 'hill-nw', x: -2600, z: -1450, radius: 650, height: 95 },
-  { id: 'hill-ne', x: 2600, z: -1450, radius: 650, height: 95 },
-  { id: 'hill-sw', x: -2600, z: 1500, radius: 720, height: 115 },
-  { id: 'hill-se', x: 2600, z: 1500, radius: 720, height: 115 },
-  { id: 'hill-west', x: -1020, z: -1600, radius: 390, height: 58 },
-  { id: 'hill-east', x: 1020, z: -1600, radius: 390, height: 58 },
-  { id: 'hill-south', x: 0, z: 2080, radius: 570, height: 88 },
+  { id: 'hill-nw', x: scaleMapHorizontal(-2600), z: scaleMapHorizontal(-1450), radius: 650, height: 95 },
+  { id: 'hill-ne', x: scaleMapHorizontal(2600), z: scaleMapHorizontal(-1450), radius: 650, height: 95 },
+  { id: 'hill-sw', x: scaleMapHorizontal(-2600), z: scaleMapHorizontal(1500), radius: 720, height: 115 },
+  { id: 'hill-se', x: scaleMapHorizontal(2600), z: scaleMapHorizontal(1500), radius: 720, height: 115 },
+  { id: 'hill-west', x: scaleMapHorizontal(-1020), z: scaleMapHorizontal(-1600), radius: 390, height: 58 },
+  { id: 'hill-east', x: scaleMapHorizontal(1020), z: scaleMapHorizontal(-1600), radius: 390, height: 58 },
+  { id: 'hill-south', x: 0, z: scaleMapHorizontal(2080), radius: 570, height: 88 },
 ];
 const rivers: RiverFeature[] = [
-  { id: 'river-west', minX: -656, maxX: -584, minZ: -2200, maxZ: 2200, waterY: 0 },
-  { id: 'river-east', minX: 584, maxX: 656, minZ: -2200, maxZ: 2200, waterY: 0 },
-  { id: 'river-north', minX: -656, maxX: 656, minZ: -2236, maxZ: -2164, waterY: 0 },
+  { id: 'river-west', minX: scaleMapHorizontal(-656), maxX: scaleMapHorizontal(-584), minZ: scaleMapHorizontal(-2200), maxZ: scaleMapHorizontal(2200), waterY: 0 },
+  { id: 'river-east', minX: scaleMapHorizontal(584), maxX: scaleMapHorizontal(656), minZ: scaleMapHorizontal(-2200), maxZ: scaleMapHorizontal(2200), waterY: 0 },
+  { id: 'river-north', minX: scaleMapHorizontal(-656), maxX: scaleMapHorizontal(656), minZ: scaleMapHorizontal(-2236), maxZ: scaleMapHorizontal(-2164), waterY: 0 },
 ];
 const trenches: TrenchFeature[] = [
-  { id: 'trench-west-north', minX: -2050, maxX: -1100, z: -370, width: 10, depth: 0.4 },
-  { id: 'trench-east-north', minX: 1100, maxX: 2050, z: -370, width: 10, depth: 0.4 },
-  { id: 'trench-west-south', minX: -2050, maxX: -1100, z: 370, width: 10, depth: 0.4 },
-  { id: 'trench-east-south', minX: 1100, maxX: 2050, z: 370, width: 10, depth: 0.4 },
+  { id: 'trench-west-north', minX: scaleMapHorizontal(-2050), maxX: scaleMapHorizontal(-1100), z: scaleMapHorizontal(-370), width: 10, depth: 0.4 },
+  { id: 'trench-east-north', minX: scaleMapHorizontal(1100), maxX: scaleMapHorizontal(2050), z: scaleMapHorizontal(-370), width: 10, depth: 0.4 },
+  { id: 'trench-west-south', minX: scaleMapHorizontal(-2050), maxX: scaleMapHorizontal(-1100), z: scaleMapHorizontal(370), width: 10, depth: 0.4 },
+  { id: 'trench-east-south', minX: scaleMapHorizontal(1100), maxX: scaleMapHorizontal(2050), z: scaleMapHorizontal(370), width: 10, depth: 0.4 },
 ];
 const buildings: BoxFeature[] = [];
 for (const sign of [-1, 1]) {
@@ -84,7 +81,7 @@ for (const sign of [-1, 1]) {
   ].entries()) {
     const [x, z, sx, sy, sz] = spec;
     buildings.push({ id: `building-${sign < 0 ? 'west' : 'east'}-${i}`,
-      center: { x: x * sign, y: LAND_Y + sy / 2, z }, size: { x: sx, y: sy, z: sz }, yaw: 0 });
+      center: { x: scaleMapHorizontal(x * sign), y: LAND_Y + sy / 2, z: scaleMapHorizontal(z) }, size: { x: sx, y: sy, z: sz }, yaw: 0 });
   }
 }
 
@@ -327,20 +324,20 @@ function slotInSquad(index: number): { lateral: number; longitudinal: number } {
 /** Initial forward 10 / rear 2 squads, 6 / 2 tanks, and 2 / 2 AA. Stable slots survive casualties. */
 export function initialUnitPosition(team: Team, kind: UnitKind, index: number): Vec3 {
   const direction = team === 'A' ? 1 : -1;
-  if (kind === 'aircraft') return { x: -direction * (2850 + Math.floor(index / 4) * 180), y: 600,
+  if (kind === 'aircraft') return { x: -direction * scaleMapHorizontal(2850 + Math.floor(index / 4) * 180), y: 600,
     z: [-720, -240, 240, 720][index % 4] };
   let x: number, z: number;
   if (kind === 'infantry') {
     const squad = Math.floor(index / 6), slot = slotInSquad(index % 6);
     const rear = squad >= 10;
-    x = -direction * (1400 + (rear ? 280 : 110 + Math.floor(squad / 5) * 55) + slot.longitudinal);
-    z = rear ? (squad === 10 ? -260 : 260) + slot.lateral : (squad % 5 - 2) * 65 + slot.lateral;
+    x = -direction * (scaleMapHorizontal(1400 + (rear ? 280 : 110 + Math.floor(squad / 5) * 55)) + slot.longitudinal);
+    z = scaleMapHorizontal(rear ? (squad === 10 ? -260 : 260) : (squad % 5 - 2) * 65) + slot.lateral;
   } else if (kind === 'tank') {
-    x = -direction * (1400 + (index >= 6 ? 290 : 190 + Math.floor(index / 3) * 35));
-    z = index >= 6 ? (index === 6 ? -200 : 200) : (index % 3 - 1) * 85 + 18;
+    x = -direction * scaleMapHorizontal(1400 + (index >= 6 ? 290 : 190 + Math.floor(index / 3) * 35));
+    z = index >= 6 ? scaleMapHorizontal(index === 6 ? -200 : 200) : (index % 3 - 1) * 85 + 18;
   } else {
-    x = -direction * (1400 + (index >= 2 ? 270 : 150));
-    z = index % 2 === 0 ? -305 : 305;
+    x = -direction * scaleMapHorizontal(1400 + (index >= 2 ? 270 : 150));
+    z = scaleMapHorizontal(index % 2 === 0 ? -305 : 305);
   }
   return { x, y: walkableSurface(x, z, kind).height, z };
 }
@@ -401,7 +398,7 @@ export function groundSpawnCandidates(team: Team, source: CapturePoint, kind: Un
   const candidates: Vec3[] = [];
   // Two mouth groups, with several separated rows to accommodate one atomic wave.
   for (const side of [-1, 1]) for (let row = 0; row < 4; row++) {
-    const x = source.position.x - direction * (200 + row * 18 + formation.longitudinal);
+    const x = source.position.x - direction * (scaleMapHorizontal(200) + row * 18 + formation.longitudinal);
     const z = source.position.z + side * 45 + formation.lateral;
     candidates.push({ x, y: walkableSurface(x, z, kind).height, z });
   }
@@ -410,7 +407,7 @@ export function groundSpawnCandidates(team: Team, source: CapturePoint, kind: Un
 
 export function airSpawnCandidates(team: Team): Vec3[] {
   const direction = team === 'A' ? 1 : -1;
-  return [-900, -300, 300, 900].map(z => ({ x: -direction * 2900, y: 600, z }));
+  return [-900, -300, 300, 900].map(z => ({ x: -direction * scaleMapHorizontal(2900), y: 600, z }));
 }
 
 export function airSpawnSafe(position: Vec3, unit: Unit, mission: Mission): boolean {

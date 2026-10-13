@@ -7,7 +7,7 @@ for (const mode of ['normal', 'easy'] as const) {
     test(`${mode}/${input}: rules explain infantry capture, finite forces, survival and score`, () => {
       const sections = ruleSections({ mode, input, keyboardDescription: 'CUSTOM KEYS' });
       const text = sections.flatMap(section => section.paragraphs).join('\n');
-      for (const required of ['歩兵で敵本拠地', '両軍の歩兵が1人以上', '中立化してから占領', '飛び越し占領', '20作戦秒', '予備から', '5作戦秒', '地上戦を観戦', '20分', '同じ瞬間', 'Time −', '最初の接触', '20秒で再装填', '最後に一度だけ', '自動で再開しません']) {
+      for (const required of ['歩兵で敵本拠地', '両軍の歩兵が1人以上', '中立化してから占領', '飛び越し占領', '20作戦秒', '予備から', '5作戦秒', '地上戦を観戦', '10分', '同じ瞬間', 'Time −', '最初の接触', '20秒で再装填', '最後に一度だけ', '自動で再開しません']) {
         assert.ok(text.includes(required), `Missing rule: ${required}`);
       }
       assert.doesNotMatch(text, /魚雷|艦隊|HPが15回復|40秒ごと|順位送信/);

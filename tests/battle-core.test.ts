@@ -4,6 +4,7 @@ import { createMission, finalizeMission, stepMission, logicalHash } from '../src
 import { assertRoster, rosterCounts, updateRoster, updateRespawn } from '../src/battle/roster';
 import { createPoints, updateCapture, supplyConnections } from '../src/battle/capture';
 import { applyDamage, markLost, scoreCaptures } from '../src/battle/scoring';
+import { MAX_TICKS, RULES_VERSION, TICK_RATE } from '../src/battle/rules';
 import type { Unit } from '../src/battle/types';
 function troops(count: number, team: 'A' | 'B', point = 'P2'): Unit[] { const m = createMission(); const p = m.points.find(p => p.id === point)!; return m.units.filter(u => u.team === team && u.kind === 'infantry').slice(0, count).map(u => ({ ...u, state: 'active', position: { ...p.position } })); }
 test('frontline stability restarts after supply reconnection and after neutralization decay', () => {
@@ -47,7 +48,38 @@ test('respawn preserves survivor HP/ammunition, waits 300 ticks, no aircraft gen
     if (u.team === 'A' && u.kind === 'aircraft' && u.state === 'reserve')
         u.state = 'lost'; const id = m.controlledAircraftId!; markLost(m, id); const survivor = m.units.find(u => u.team === 'A' && u.kind === 'aircraft' && u.state === 'active')!; survivor.hp = 2; survivor.hpFixed = 2000; survivor.ammo = 0; survivor.reloadUntil = 500; updateRespawn(m); assert.equal(m.respawnCandidateId, survivor.id); m.tick = 299; updateRespawn(m); assert.equal(m.controlledAircraftId, null); m.tick = 300; updateRespawn(m); assert.equal(m.controlledAircraftId, survivor.id); assert.equal(survivor.hp, 2); assert.equal(survivor.ammo, 0); assert.equal(survivor.reloadUntil, 500); });
 test('blocked reservations return finite reserves and retry only next wave', () => { const m = createMission(); markLost(m, m.controlledAircraftId!); updateRoster(m, () => null); m.tick = 300; updateRoster(m, () => null); m.tick = 3900; updateRoster(m, () => null); const cancelled = m.units.filter(u => u.kind === 'aircraft' && u.retryNotBefore === 4800); assert(cancelled.length > 0); assertRoster(m); });
-test('simultaneous HQ fall draw; capture priority over time; frozen result', () => { const m = createMission(); m.points.find(p => p.id === 'HA')!.owner = 'B'; m.points.find(p => p.id === 'HB')!.owner = 'A'; assert.equal(finalizeMission(m)!.reason, '同時本拠地占領'); assert.equal(m.result!.score.capture, 0); const win = createMission(); win.score.support = 1000; win.tick = 36000; win.points.find(p => p.id === 'HB')!.owner = 'A'; const result = finalizeMission(win)!; assert.equal(result.score.time, 1250); assert(Object.isFrozen(result)); win.points.find(p => p.id === 'HB')!.owner = 'B'; assert.equal(finalizeMission(win), result); const late = createMission(); late.tick = 72000; late.points.find(p => p.id === 'HB')!.owner = 'A'; assert.equal(finalizeMission(late)!.outcome, 'victory'); });
+test('ten-minute deadline, same-tick HQ capture priority, and frozen result', () => {
+  assert.equal(MAX_TICKS / TICK_RATE, 600);
+  assert.equal(RULES_VERSION, 'senryou-rules-v2-10min');
+  const simultaneous = createMission();
+  simultaneous.points.find(p => p.id === 'HA')!.owner = 'B'; simultaneous.points.find(p => p.id === 'HB')!.owner = 'A';
+  assert.equal(finalizeMission(simultaneous)!.reason, '同時本拠地占領'); assert.equal(simultaneous.result!.score.capture, 0);
+
+  const midway = createMission(); midway.score.support = 1000; midway.tick = MAX_TICKS / 2;
+  midway.points.find(p => p.id === 'HB')!.owner = 'A';
+  const midResult = finalizeMission(midway)!;
+  assert.equal(midResult.score.time, 1250);
+  assert(Object.isFrozen(midResult));
+  midway.points.find(p => p.id === 'HB')!.owner = 'B'; assert.equal(finalizeMission(midway), midResult);
+
+  const finalTickCapture = createMission(); finalTickCapture.score.support = 2000; finalTickCapture.tick = MAX_TICKS - 1;
+  for (const point of finalTickCapture.points) point.owner = 'A';
+  const home = finalTickCapture.points.find(p => p.id === 'HB')!;
+  home.owner = 'N'; home.progressTeam = 'A'; home.phase = 'capturing';
+  home.progressNumerator = 10800 - 6; home.progress = home.progressNumerator / 10800;
+  for (const unit of finalTickCapture.units.filter(u => u.team === 'A' && u.kind === 'infantry').slice(0, 6)) {
+    unit.position = { ...home.position }; unit.state = 'active';
+  }
+  stepMission(finalTickCapture);
+  assert.equal(finalTickCapture.tick, MAX_TICKS);
+  assert.equal(finalTickCapture.result?.reason, '敵本拠地占領');
+  assert.equal(finalTickCapture.result?.score.time, 0);
+
+  const timeout = createMission(); timeout.tick = MAX_TICKS - 1; stepMission(timeout);
+  assert.equal(timeout.tick, MAX_TICKS); assert.equal(timeout.result?.reason, '時間切れ');
+  const paused = createMission(); paused.tick = MAX_TICKS - 1; paused.phase = 'paused'; stepMission(paused);
+  assert.equal(paused.tick, MAX_TICKS - 1); assert.equal(paused.result, null);
+});
 test('same seed logical replay hashes match; paused ticks do not advance', () => { const a = createMission(42), b = createMission(42); for (let i = 0; i < 1200; i++) {
     stepMission(a);
     stepMission(b);

@@ -1,12 +1,13 @@
 import type { Mission, Unit, Team, UnitKind, SpawnResolver } from './types';
 import { TOTAL, INITIAL, CAP, WAVE, HP, KINDS, TEAMS } from './rules';
 import { supplyConnections } from './capture';
+import { scaleMapHorizontal } from './map-layout';
 export function initialRoster(): Unit[] { const units: Unit[] = []; for (const team of TEAMS)
     for (const kind of KINDS)
         for (let i = 0; i < TOTAL[kind]; i++) {
             const sign = team === 'A' ? -1 : 1;
             const active = i < INITIAL[kind];
-            units.push({ id: `${team}-${kind}-${String(i).padStart(3, '0')}`, team, kind, state: active ? 'active' : 'reserve', role: 'ai', hp: HP[kind], hpFixed: HP[kind] * 1000, maxHpFixed: HP[kind] * 1000, position: { x: sign * (1600 + Math.floor(i / 12) * 12), y: kind === 'aircraft' ? 350 + i * 35 : 0, z: (i % 12 - 5.5) * 12 }, velocity: { x: 0, y: 0, z: 0 }, heading: team === 'A' ? -Math.PI / 2 : Math.PI / 2, squadId: kind === 'infantry' ? `${team}-squad-${Math.floor(i / 6)}` : undefined, ammo: kind === 'aircraft' ? 288 : kind === 'infantry' ? 12 : kind === 'tank' ? 4 : 16, cannonAmmo: 96, bombs: 2, reloadUntil: 0, bombReloadUntil: 0, lastFireTick: -10000, lastCannonTick: -10000, lastBombTick: -10000, retryNotBefore: 0 });
+            units.push({ id: `${team}-${kind}-${String(i).padStart(3, '0')}`, team, kind, state: active ? 'active' : 'reserve', role: 'ai', hp: HP[kind], hpFixed: HP[kind] * 1000, maxHpFixed: HP[kind] * 1000, position: { x: sign * scaleMapHorizontal(1600 + Math.floor(i / 12) * 12), y: kind === 'aircraft' ? 350 + i * 35 : 0, z: (i % 12 - 5.5) * 12 }, velocity: { x: 0, y: 0, z: 0 }, heading: team === 'A' ? -Math.PI / 2 : Math.PI / 2, squadId: kind === 'infantry' ? `${team}-squad-${Math.floor(i / 6)}` : undefined, ammo: kind === 'aircraft' ? 288 : kind === 'infantry' ? 12 : kind === 'tank' ? 4 : 16, cannonAmmo: 96, bombs: 2, reloadUntil: 0, bombReloadUntil: 0, lastFireTick: -10000, lastCannonTick: -10000, lastBombTick: -10000, retryNotBefore: 0 });
         } return units; }
 export function rosterCounts(m: Mission, team: Team, kind: UnitKind) { const out = { reserve: 0, pending: 0, active: 0, lost: 0 }; for (const u of m.units)
     if (u.team === team && u.kind === kind)
