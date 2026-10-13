@@ -192,7 +192,9 @@ const expectedSpawnAnchors = {
     'A-aa-000': { x: -775, y: 12, z: -152.5 }, 'B-aa-000': { x: 775, y: 12, z: -152.5 },
   },
 } as const;
-const comparisonInput = { turn: .25, climb: .12, fire: false, loop: false, bomb: false, throttle: 1 };
+// Send the same command through both the old button schema and the analog axis.
+const comparisonInput = { turn: .25, climb: .12, fire: false, loop: false, bomb: false,
+  throttle: 1, accelerate: true, brake: false };
 
 for (const size of sizes) test('same-condition before-after ' + size.width + 'x' + size.height, async ({ page, browserName }, info) => {
   test.skip(browserName === 'webkit', 'WebGL baseline/candidate comparison is verified in Chromium only');
@@ -442,7 +444,7 @@ for (const size of sizes) test('same-condition before-after ' + size.width + 'x'
     expect(record.after.hasTargetLock).toBe(label === 'after');
     expect(record.after.targetLock).toEqual(label === 'before' ? null : { key: null, manual: false, changed: false });
     expect(record.after.inheritedControllerState.playerTargetSpeed).toBe(110.3);
-    expect(record.after.terrainAvoidanceActive).toBe(false);
+    expect(record.after.terrainAvoidanceActive).toBe(label === 'before' ? null : false);
     expect(record.after.screen).toBe('playing');
     expect(record.raw.after.battle).toBe(record.raw.after.battleHashFunction);
     expect(record.raw.after.mission).toMatch(/^[a-f0-9]{8}$/);
