@@ -59,6 +59,29 @@ test('native slider keyup clears prior global handover blocking before a fresh p
     (window as any).focusControls = new FlightControls(get('surface'), {fire:get('fire') as HTMLButtonElement,loop:get('loop') as HTMLButtonElement,bomb:get('bomb') as HTMLButtonElement,throttle:get('throttle')}, () => true);
   });
   try {
+    // Ignore the browser's deferred startup resize before measuring input
+    // release behavior. Any resize restarts the four-frame quiet window.
+    await page.evaluate(()=>new Promise<void>(resolve=>{
+      let quietFrames=0;
+      const viewportKey=()=>[innerWidth,innerHeight,visualViewport?.width??null,visualViewport?.height??null].join('x');
+      let viewport=viewportKey();
+      const onResize=()=>{quietFrames=0;viewport=viewportKey();};
+      const nextFrame=()=>{
+        const current=viewportKey();
+        if(current!==viewport){viewport=current;quietFrames=0;}else quietFrames++;
+        if(quietFrames>=4){
+          removeEventListener('resize',onResize);
+          removeEventListener('orientationchange',onResize);
+          visualViewport?.removeEventListener('resize',onResize);
+          resolve();return;
+        }
+        requestAnimationFrame(nextFrame);
+      };
+      addEventListener('resize',onResize);
+      addEventListener('orientationchange',onResize);
+      visualViewport?.addEventListener('resize',onResize);
+      requestAnimationFrame(nextFrame);
+    }));
     const climb = () => page.evaluate(() => (window as any).focusControls.sample(false).climb);
     await page.locator('#surface').focus(); await page.keyboard.down('ArrowUp'); expect(await climb()).toBe(1);
     await page.locator('#throttle').focus(); expect(await climb()).toBe(0);
@@ -141,50 +164,323 @@ for(const style of ['text','zoom'])test(`settings retain footer and scrolling at
   await page.screenshot({path:info.outputPath(`settings-200-${style}.png`)});
   await page.locator('#control-cancel').click();await expect(page.locator('#control-settings')).not.toBeVisible();
 });
-for(const size of sizes)test(`same-condition before-after ${size.width}x${size.height}`,async({page,browserName},info)=>{
-  test.skip(browserName==='webkit', 'WebGL baseline/candidate comparison is verified in Chromium only');
-  test.skip(!process.env.THROTTLE_BASELINE_DIR,'Pinned baseline checkout is required for real comparison');
+const expectedMapPoints = {
+  before: [
+    { id: 'HA', x: -2400, y: 12, z: 0 }, { id: 'P1', x: -1400, y: 12, z: 0 },
+    { id: 'P2', x: 0, y: 12, z: -900 }, { id: 'P3', x: 0, y: 12, z: 0 },
+    { id: 'P4', x: 0, y: 12, z: 900 }, { id: 'P5', x: 1400, y: 12, z: 0 },
+    { id: 'HB', x: 2400, y: 12, z: 0 },
+  ],
+  after: [
+    { id: 'HA', x: -1200, y: 12, z: 0 }, { id: 'P1', x: -700, y: 12, z: 0 },
+    { id: 'P2', x: 0, y: 12, z: -450 }, { id: 'P3', x: 0, y: 12, z: 0 },
+    { id: 'P4', x: 0, y: 12, z: 450 }, { id: 'P5', x: 700, y: 12, z: 0 },
+    { id: 'HB', x: 1200, y: 12, z: 0 },
+  ],
+} as const;
+const expectedSpawnAnchors = {
+  before: {
+    'A-aircraft-000': { x: -2850, y: 600, z: -720 }, 'B-aircraft-000': { x: 2850, y: 600, z: -720 },
+    'A-infantry-000': { x: -1510, y: 12, z: -132.4 }, 'B-infantry-000': { x: 1510, y: 12, z: -132.4 },
+    'A-tank-000': { x: -1590, y: 12, z: -67 }, 'B-tank-000': { x: 1590, y: 12, z: -67 },
+    'A-aa-000': { x: -1550, y: 12, z: -305 }, 'B-aa-000': { x: 1550, y: 12, z: -305 },
+  },
+  after: {
+    'A-aircraft-000': { x: -1425, y: 600, z: -720 }, 'B-aircraft-000': { x: 1425, y: 600, z: -720 },
+    'A-infantry-000': { x: -755, y: 12, z: -67.4 }, 'B-infantry-000': { x: 755, y: 12, z: -67.4 },
+    'A-tank-000': { x: -795, y: 12, z: -67 }, 'B-tank-000': { x: 795, y: 12, z: -67 },
+    'A-aa-000': { x: -775, y: 12, z: -152.5 }, 'B-aa-000': { x: 775, y: 12, z: -152.5 },
+  },
+} as const;
+// Send the same command through both the old button schema and the analog axis.
+const comparisonInput = { turn: .25, climb: .12, fire: false, loop: false, bomb: false,
+  throttle: 1, accelerate: true, brake: false };
+
+for (const size of sizes) test('same-condition before-after ' + size.width + 'x' + size.height, async ({ page, browserName }, info) => {
+  test.skip(browserName === 'webkit', 'WebGL baseline/candidate comparison is verified in Chromium only');
+  test.skip(!process.env.THROTTLE_BASELINE_DIR, 'Pinned baseline checkout is required for real comparison');
   await page.setViewportSize(size);
-  await mkdir(info.outputPath('comparison'),{recursive:true});
-  const records=[];
-  for(const [label,url]of [['before','http://127.0.0.1:4177/'],['after','http://127.0.0.1:4178/']]){
-    await page.goto(url);await ready(page);
-    await page.screenshot({path:info.outputPath('comparison',`${label}-home.png`)});
-    await page.evaluate(()=>{const q=(window as any).__senryou;q.fixture('normal');q.step(1);q.mission.phase='paused';document.getElementById('flight')!.focus();});
-    // Both revisions use the same seed, single authoritative tick and stopped mission.
+  await mkdir(info.outputPath('comparison'), { recursive: true });
+  const records: any[] = [];
+
+  for (const { label, url } of [
+    { label: 'before', url: 'http://127.0.0.1:4177/' },
+    { label: 'after', url: 'http://127.0.0.1:4178/' },
+  ]) {
+    await page.goto(url);
+    await ready(page);
+    await page.screenshot({ path: info.outputPath('comparison', label + '-home.png') });
+    records.push(await page.evaluate(async ({ label, input }: {
+      label: string;
+      input: typeof comparisonInput & { viewAspect: number };
+    }) => {
+      const [{ MAX_TICKS, TICK_RATE, RULES_VERSION }, { logicalHash }, { battleHash }, { MAP_POINTS, initialUnitPosition }] =
+        await Promise.all([
+          import('/src/battle/rules.ts'),
+          import('/src/battle/mission.ts'),
+          import('/src/battle/simulation.ts'),
+          import('/src/battle/terrain.ts'),
+        ]);
+      const q = (window as any).__senryou;
+      q.fixture('normal');
+      const mission = q.mission, game = q.game;
+      const initialTick = mission.tick;
+      const serialize = (value: unknown) => JSON.stringify(value,
+        (_key, item) => item instanceof Map ? [...item] : item instanceof Set ? [...item] : item);
+      const hash = (text: string) => {
+        let value = 2166136261;
+        for (let i = 0; i < text.length; i++) value = Math.imul(value ^ text.charCodeAt(i), 16777619);
+        return (value >>> 0).toString(16).padStart(8, '0');
+      };
+      const changedTopLevel = (left: string, right: string) => {
+        const a = JSON.parse(left), b = JSON.parse(right);
+        return [...new Set([...Object.keys(a), ...Object.keys(b)])]
+          .filter(key => JSON.stringify(a[key]) !== JSON.stringify(b[key])).sort();
+      };
+      const flight = (unit: any) => {
+        const magnitude = Math.hypot(unit.velocity.x, unit.velocity.y, unit.velocity.z);
+        return {
+          id: unit.id, team: unit.team, kind: unit.kind, role: unit.role,
+          position: { ...unit.position }, velocity: { ...unit.velocity },
+          heading: unit.heading,
+          pitch: unit.pitch ?? Math.atan2(unit.velocity.y, Math.hypot(unit.velocity.x, unit.velocity.z)),
+          bank: unit.bank ?? 0, speed: unit.speed ?? (magnitude || 110),
+          loopProgress: unit.loopProgress ?? 0, loopCooldown: unit.loopCooldown ?? 0,
+          hp: unit.hp, hpFixed: unit.hpFixed, ammo: unit.ammo, cannonAmmo: unit.cannonAmmo, bombs: unit.bombs,
+        };
+      };
+
+      const missionTextBefore = serialize(mission), combatTextBefore = serialize(game.combat);
+      const sourcePoints = MAP_POINTS.map(({ id, position }: any) =>
+        ({ id, x: position.x, y: position.y, z: position.z }));
+      const missionPoints = mission.points.map((point: any) =>
+        ({ id: point.id, x: point.position.x, y: point.position.y, z: point.position.z }));
+      const counts: Record<string, number> = {};
+      const activeStarts = mission.units.filter((unit: any) => unit.state === 'active')
+        .sort((a: any, b: any) => a.id.localeCompare(b.id)).map((unit: any) => {
+          const key = unit.team + '/' + unit.kind, index = counts[key] ?? 0;
+          counts[key] = index + 1;
+          const expected = initialUnitPosition(unit.team, unit.kind, index);
+          return {
+            id: unit.id, team: unit.team, kind: unit.kind, position: { ...unit.position }, expected: { ...expected },
+            matchesSource: unit.position.x === expected.x && unit.position.y === expected.y && unit.position.z === expected.z,
+          };
+        });
+      const pilotBeforeUnit = mission.units.find((unit: any) => unit.id === mission.controlledAircraftId)!;
+      const pilotBefore = flight(pilotBeforeUnit);
+      const initialRaw = {
+        mission: hash(missionTextBefore), combat: hash(combatTextBefore),
+        battle: q.snapshot().hash, logicalMission: logicalHash(mission),
+      };
+
+      q.step(1, input);
+      mission.phase = 'paused';
+      document.getElementById('flight')!.focus();
+      const pilotAfterUnit = mission.units.find((unit: any) => unit.id === mission.controlledAircraftId)!;
+      const pilotAfter = flight(pilotAfterUnit);
+      const missionTextAfter = serialize(mission), combatTextAfter = serialize(game.combat);
+      const { targetLock, ...inheritedController } = game.controller;
+      const inheritedControllerState = Object.fromEntries(Object.entries(inheritedController).map(([key, value]) =>
+        [key, value === undefined ? { $type: 'undefined' } : value]));
+      const displacement = {
+        x: pilotAfter.position.x - pilotBefore.position.x,
+        y: pilotAfter.position.y - pilotBefore.position.y,
+        z: pilotAfter.position.z - pilotBefore.position.z,
+      };
+      const pilotMotion = {
+        displacement,
+        attitude: { heading: pilotAfter.heading, pitch: pilotAfter.pitch, bank: pilotAfter.bank },
+        attitudeDelta: {
+          heading: pilotAfter.heading - pilotBefore.heading,
+          pitch: pilotAfter.pitch - pilotBefore.pitch,
+          bank: pilotAfter.bank - pilotBefore.bank,
+        },
+        velocity: { ...pilotAfter.velocity },
+        speed: pilotAfter.speed,
+        speedDelta: pilotAfter.speed - pilotBefore.speed,
+        resources: {
+          hp: pilotAfter.hp, hpFixed: pilotAfter.hpFixed, ammo: pilotAfter.ammo,
+          cannonAmmo: pilotAfter.cannonAmmo, bombs: pilotAfter.bombs,
+        },
+        loop: { progress: pilotAfter.loopProgress, cooldown: pilotAfter.loopCooldown },
+      };
+      const initialShared = { ...pilotBefore };
+      delete (initialShared as any).position;
+      const afterShared = { ...pilotAfter };
+      delete (afterShared as any).position;
+      delete (afterShared as any).velocity;
+      const afterBattleHash = q.snapshot().hash;
+
+      return {
+        label, url: location.origin, input: { ...input },
+        rules: {
+          maxTicks: MAX_TICKS, tickRate: TICK_RATE, seconds: MAX_TICKS / TICK_RATE,
+          version: RULES_VERSION, missionVersion: mission.rulesVersion,
+        },
+        initial: {
+          tick: initialTick, missionPoints, sourcePoints, activeStartCount: activeStarts.length,
+          activeStarts, allActiveStartsMatchSource: activeStarts.every(start => start.matchesSource),
+          pilot: pilotBefore, pilotShared: initialShared,
+          rawMissionHash: initialRaw.mission, rawCombatHash: initialRaw.combat,
+          battleHash: initialRaw.battle, logicalMissionHash: initialRaw.logicalMission,
+        },
+        after: {
+          tick: mission.tick, mode: game.mode,
+          missionPoints: mission.points.map((point: any) =>
+            ({ id: point.id, x: point.position.x, y: point.position.y, z: point.position.z })),
+          pilot: pilotAfter, pilotShared: afterShared, pilotMotion,
+          controllerFields: Object.keys(game.controller).sort(), inheritedControllerState,
+          hasTargetLock: Object.hasOwn(game.controller, 'targetLock'), targetLock: targetLock ?? null,
+          terrainAvoidanceActive: game.terrainAvoidanceActive ?? null,
+          screen: document.getElementById('app')!.dataset.screen,
+        },
+        raw: {
+          initial: initialRaw,
+          after: {
+            mission: hash(missionTextAfter), combat: hash(combatTextAfter), battle: afterBattleHash,
+            battleHashFunction: battleHash(game), logicalMission: logicalHash(mission),
+            missionBytes: missionTextAfter.length, combatBytes: combatTextAfter.length,
+            combatJson: combatTextAfter,
+            missionChangedTopLevel: changedTopLevel(missionTextBefore, missionTextAfter),
+            combatChangedTopLevel: changedTopLevel(combatTextBefore, combatTextAfter),
+          },
+        },
+        dpr: devicePixelRatio, viewport: [innerWidth, innerHeight],
+      };
+    }, { label, input: { ...comparisonInput, viewAspect: size.width / size.height } }));
+
+    // Preserve the original settling window before capturing the live normal-mode screen.
     await page.waitForTimeout(200);
-    records.push(await page.evaluate(async()=>{
-      const q=(window as any).__senryou;
-      const {battleHash}=await import('/src/battle/simulation.ts');
-      const {logicalHash}=await import('/src/battle/mission.ts');
-      // The approved Easy lock adds one controller field to the raw product hash.
-      // Preserve that hash and compare every inherited field through its old schema.
-      const {targetLock,...inheritedController}=q.game.controller;
-      const comparisonPayload=JSON.stringify({mode:q.game.mode,core:logicalHash(q.mission),combat:q.game.combat,controller:inheritedController},
-        (key,value)=>key==='missionId'?'mission':value instanceof Map?[...value]:value instanceof Set?[...value]:value);
-      return {url:location.origin,hash:q.snapshot().hash,comparisonHash:battleHash({...q.game,controller:inheritedController}),
-        comparisonPayload:JSON.parse(comparisonPayload),controllerFields:Object.keys(q.game.controller).sort(),
-        hasTargetLock:Object.hasOwn(q.game.controller,'targetLock'),targetLock:targetLock??null,
-        terrainAvoidanceActive:q.game.terrainAvoidanceActive??null,
-        tick:q.mission.tick,mode:q.snapshot().mode,dpr:devicePixelRatio,viewport:[innerWidth,innerHeight],screen:document.getElementById('app')!.dataset.screen};
-    }));
-    await page.screenshot({path:info.outputPath('comparison',`${label}-normal.png`)});
-    await page.evaluate(()=>(window as any).__senryou.home());await settings(page);await page.locator('#control-preview').scrollIntoViewIfNeeded();
-    await page.screenshot({path:info.outputPath('comparison',`${label}-settings.png`)});
+    await page.screenshot({ path: info.outputPath('comparison', label + '-normal.png') });
+    await page.evaluate(() => (window as any).__senryou.home());
+    await settings(page);
+    await page.locator('#control-preview').scrollIntoViewIfNeeded();
+    await page.screenshot({ path: info.outputPath('comparison', label + '-settings.png') });
   }
-  await writeFile(info.outputPath('comparison','conditions.json'),JSON.stringify({browserName,size,baseline:'71b0e5bc9ffbe2cbd1f295160b9e8e3c40ad6650',records},null,2));
-  const inheritedFields=['playerTargetSpeed','loopHeld','playerLoopActive','loopStartYaw','loopStartPitch','loopStartSteeringRevision',
-    'loopStartTurn','loopStartClimb','assistTurn','assistClimb','responseMultiplier'].sort();
-  expect(records[0].tick).toBe(1);expect(records[1].tick).toBe(1);
-  expect(records[0].mode).toBe('normal');expect(records[1].mode).toBe('normal');
-  expect(records[0].controllerFields).toEqual(inheritedFields);
-  expect(records[1].controllerFields).toEqual([...inheritedFields,'targetLock'].sort());
-  expect(records[0].hasTargetLock).toBe(false);expect(records[1].hasTargetLock).toBe(true);
-  expect(records[1].targetLock).toEqual({key:null,manual:false,changed:false});
-  expect(records[1].terrainAvoidanceActive).toBe(false);
-  expect(records[0].hash).toBe(records[0].comparisonHash);
-  expect(records[0].comparisonPayload).toEqual(records[1].comparisonPayload);
-  expect(records[0].hash).toBe(records[1].comparisonHash);
+
+  const startPositionDiffs = records[0].initial.activeStarts.map((before: any) => {
+    const after = records[1].initial.activeStarts.find((item: any) => item.id === before.id);
+    return {
+      id: before.id, before: before.position, after: after?.position,
+      delta: after ? {
+        x: after.position.x - before.position.x,
+        y: after.position.y - before.position.y,
+        z: after.position.z - before.position.z,
+      } : null,
+    };
+  });
+  const pointPositionDiffs = records[0].initial.missionPoints.map((before: any) => {
+    const after = records[1].initial.missionPoints.find((item: any) => item.id === before.id);
+    return {
+      id: before.id, before, after,
+      delta: after ? { x: after.x - before.x, y: after.y - before.y, z: after.z - before.z } : null,
+    };
+  });
+  const evidence = {
+    browserName, size, baseline: '71b0e5bc9ffbe2cbd1f295160b9e8e3c40ad6650',
+    comparison: {
+      expectedRuleAndMapChanges: { seconds: { before: 1200, after: 600 }, points: pointPositionDiffs },
+      rawHashDiffs: {
+        battleChanged: records[0].raw.after.battle !== records[1].raw.after.battle,
+        initialMissionChanged: records[0].raw.initial.mission !== records[1].raw.initial.mission,
+        afterMissionChanged: records[0].raw.after.mission !== records[1].raw.after.mission,
+        initialCombatChanged: records[0].raw.initial.combat !== records[1].raw.initial.combat,
+        afterCombatChanged: records[0].raw.after.combat !== records[1].raw.after.combat,
+      },
+      activeStartPositionDiffs: startPositionDiffs,
+      pilotStartDelta: {
+        x: records[1].initial.pilot.position.x - records[0].initial.pilot.position.x,
+        y: records[1].initial.pilot.position.y - records[0].initial.pilot.position.y,
+        z: records[1].initial.pilot.position.z - records[0].initial.pilot.position.z,
+      },
+    },
+    records,
+  };
+  await writeFile(info.outputPath('comparison', 'conditions.json'), JSON.stringify(evidence, null, 2));
+  expect(evidence.comparison.rawHashDiffs.battleChanged).toBe(true);
+  expect(evidence.comparison.rawHashDiffs.initialMissionChanged).toBe(true);
+  expect(evidence.comparison.rawHashDiffs.afterMissionChanged).toBe(true);
+  expect(evidence.comparison.pilotStartDelta).toEqual({ x: 1425, y: 0, z: 0 });
+
+  const inheritedFields = [
+    'playerTargetSpeed', 'loopHeld', 'playerLoopActive', 'loopStartYaw', 'loopStartPitch',
+    'loopStartSteeringRevision', 'loopStartTurn', 'loopStartClimb', 'assistTurn', 'assistClimb', 'responseMultiplier',
+  ].sort();
+  const initialUnitCounts = {
+    'A/aircraft': 6, 'A/aa': 4, 'A/infantry': 72, 'A/tank': 8,
+    'B/aircraft': 6, 'B/aa': 4, 'B/infantry': 72, 'B/tank': 8,
+  };
+
+  for (let index = 0; index < records.length; index++) {
+    const record = records[index], label = index === 0 ? 'before' : 'after';
+    expect(record.rules).toEqual({
+      maxTicks: label === 'before' ? 72000 : 36000, tickRate: 60,
+      seconds: label === 'before' ? 1200 : 600,
+      version: label === 'before' ? 'senryou-rules-v1' : 'senryou-rules-v2-10min',
+      missionVersion: label === 'before' ? 'senryou-rules-v1' : 'senryou-rules-v2-10min',
+    });
+    expect(record.initial.missionPoints).toEqual(expectedMapPoints[label]);
+    expect(record.initial.sourcePoints).toEqual(expectedMapPoints[label]);
+    expect(record.after.missionPoints).toEqual(expectedMapPoints[label]);
+    expect(record.initial.activeStartCount).toBe(180);
+    expect(record.initial.tick).toBe(0);
+    expect(record.initial.allActiveStartsMatchSource).toBe(true);
+    const startCounts = Object.fromEntries(record.initial.activeStarts.reduce((counts: Map<string, number>, unit: any) => {
+      counts.set(unit.team + '/' + unit.kind, (counts.get(unit.team + '/' + unit.kind) ?? 0) + 1);
+      return counts;
+    }, new Map()));
+    expect(startCounts).toEqual(initialUnitCounts);
+    for (const [id, position] of Object.entries(expectedSpawnAnchors[label])) {
+      expect(record.initial.activeStarts.find((unit: any) => unit.id === id)?.position).toEqual(position);
+    }
+    expect(record.initial.pilotShared).toEqual(records[0].initial.pilotShared);
+    expect(record.initial.pilot.position).toEqual(label === 'before'
+      ? { x: -2850, y: 600, z: -720 } : { x: -1425, y: 600, z: -720 });
+    expect(record.initial.rawMissionHash).toMatch(/^[a-f0-9]{8}$/);
+    expect(record.initial.rawCombatHash).toMatch(/^[a-f0-9]{8}$/);
+    expect(record.after.tick).toBe(1);
+    expect(record.after.mode).toBe('normal');
+    expect(record.after.controllerFields).toEqual(label === 'before' ? inheritedFields : [...inheritedFields, 'targetLock'].sort());
+    expect(record.after.hasTargetLock).toBe(label === 'after');
+    expect(record.after.targetLock).toEqual(label === 'before' ? null : { key: null, manual: false, changed: false });
+    expect(record.after.inheritedControllerState.playerTargetSpeed).toBe(110.3);
+    expect(record.after.terrainAvoidanceActive).toBe(label === 'before' ? null : false);
+    expect(record.after.screen).toBe('playing');
+    expect(record.raw.after.battle).toBe(record.raw.after.battleHashFunction);
+    expect(record.raw.after.mission).toMatch(/^[a-f0-9]{8}$/);
+    expect(record.raw.after.combat).toMatch(/^[a-f0-9]{8}$/);
+    expect(record.raw.after.combatJson.length).toBe(record.raw.after.combatBytes);
+    expect(record.dpr).toBe(1);
+    expect(record.viewport).toEqual([size.width, size.height]);
+    expect(record.input).toEqual({ ...comparisonInput, viewAspect: size.width / size.height });
+    const initialResources = {
+      hp: record.initial.pilot.hp, hpFixed: record.initial.pilot.hpFixed,
+      ammo: record.initial.pilot.ammo, cannonAmmo: record.initial.pilot.cannonAmmo, bombs: record.initial.pilot.bombs,
+    };
+    expect(record.after.pilotMotion.resources).toEqual(initialResources);
+  }
+
+  expect(records[0].initial.pilotShared).toEqual(records[1].initial.pilotShared);
+  expect(records[0].after.inheritedControllerState).toEqual(records[1].after.inheritedControllerState);
+  expect(records[0].after.pilotMotion.attitude).toEqual(records[1].after.pilotMotion.attitude);
+  expect(records[0].after.pilotMotion.attitudeDelta).toEqual(records[1].after.pilotMotion.attitudeDelta);
+  expect(records[0].after.pilotMotion.speed).toBe(records[1].after.pilotMotion.speed);
+  expect(records[0].after.pilotMotion.speedDelta).toBe(records[1].after.pilotMotion.speedDelta);
+  expect(records[0].after.pilotMotion.resources).toEqual(records[1].after.pilotMotion.resources);
+  expect(records[0].after.pilotMotion.loop).toEqual(records[1].after.pilotMotion.loop);
+  expect(records[0].after.pilotShared).toEqual(records[1].after.pilotShared);
+
+  // Absolute coordinates differ after the layout change; the start-position
+  // delta is kept as evidence. Bound only subtraction's unavoidable ULP error.
+  for (const axis of ['x', 'y', 'z'] as const) {
+    const startScale = Math.max(1,
+      Math.abs(records[0].initial.pilot.position[axis]), Math.abs(records[1].initial.pilot.position[axis]));
+    const displacementTolerance = Number.EPSILON * startScale * 4;
+    expect(Math.abs(records[0].after.pilotMotion.displacement[axis] - records[1].after.pilotMotion.displacement[axis]))
+      .toBeLessThanOrEqual(displacementTolerance);
+    expect(Math.abs(records[0].after.pilotMotion.velocity[axis] - records[1].after.pilotMotion.velocity[axis]))
+      .toBeLessThanOrEqual(displacementTolerance * 60);
+  }
 });
 
 

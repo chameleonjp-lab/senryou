@@ -15,6 +15,7 @@ import { GroundVisualFactory, type GroundKind } from './battle-ground-view';
 import { createFlightAircraft, readFlightAircraft, targetsForFlight } from './battle-flight';
 import { skyFragment, skyVertex } from './battle-sky';
 import { CAP } from './battle/rules';
+import { RUNTIME_CLEANUP_TICKS } from './battle/runtime-maintenance';
 import { BATTLEFIELD, bridgeAt, terrainNormal, walkableSurface } from './battle/terrain';
 import type { CapturePoint, Mission, Team, Unit, Vec3 } from './battle/types';
 import type { Projectile } from './battle/projectiles';
@@ -33,6 +34,7 @@ export type BattleLOD = 'normal' | 'low' | 'high';
 const EFFECT_CAPACITY = 128;
 const POINT_CAPACITY = EFFECT_CAPACITY + VISUAL_TRACER_CAPACITY;
 const BOMB_CAPACITY = 64;
+export const PENDING_VIEW_EVENT_CAPACITY = 4096;
 const TEAM_COLORS = { friendly: 0x27aaa4, enemy: 0xe29b55, neutral: 0xb8b995 } as const;
 const UP = new Vector3(0, 1, 0);
 const FORWARD = new Vector3(0, 0, -1);
@@ -52,6 +54,7 @@ export interface BattleCombatView {
 export interface ViewBombGuide { position: Vec3; time: number; effective?: boolean }
 interface DetailSlot {
   key: string; id: string | null; root: Group; aircraft?: AircraftVisual; armament?: Group;
+  lastUsedTick: number;
 }
 interface CaptureVisual {
   root: Group; ring: LineLoop; material: LineBasicMaterial;
@@ -147,6 +150,8 @@ export class BattleView {
   private width = 1;
   private height = 1;
   private lastTick = 0;
+  private nextCacheCleanupTick = RUNTIME_CLEANUP_TICKS;
+  private cacheCleanups = 0;
   private visualTime = 0;
   private lastActiveCount = 0;
   private renderedLowCount = 0;
@@ -301,6 +306,8 @@ export class BattleView {
     if (this.pendingMissionId !== missionId) this.pendingEvents.length = 0;
     this.pendingMissionId = missionId;
     for (const event of events) this.pendingEvents.push(event);
+    if (this.pendingEvents.length > PENDING_VIEW_EVENT_CAPACITY)
+      this.pendingEvents.splice(0, this.pendingEvents.length - PENDING_VIEW_EVENT_CAPACITY);
     if (events.length) this.viewRevision++;
   }
 
@@ -318,6 +325,10 @@ export class BattleView {
       && retained.tick === mission.tick && retained.mode === mode && retained.showHUD === showHUD
       && retained.revision === this.viewRevision) return false;
     const elapsed = mission.tick / 60;
+    if (mission.phase === 'running' && mission.tick >= this.nextCacheCleanupTick) {
+      this.clearUnusedCaches(mission.tick);
+      this.nextCacheCleanupTick = mission.tick + RUNTIME_CLEANUP_TICKS;
+    }
     const dt = Math.max(0, Math.min(.1, (mission.tick - this.lastTick) / 60));
     this.lastTick = mission.tick;
     this.visualTime = mission.phase === 'result'
@@ -362,12 +373,28 @@ export class BattleView {
     this.staticFrame = null;
     this.currentPlayerId = null; this.flightPlayer = null;
     this.lastTick = mission.tick; this.visualTime = mission.tick / 60;
+    this.nextCacheCleanupTick = mission.tick + RUNTIME_CLEANUP_TICKS;
+    this.cacheCleanups = 0;
     this.bombGuide = null;
     if (this.pendingMissionId !== mission.missionId) this.pendingEvents.length = 0;
     this.seenEvents.clear(); this.seenDeaths.clear(); this.lastEventTick = -1;
-    for (const slot of this.detailSlots) { slot.id = null; slot.root.visible = false; }
+    for (const slot of this.detailSlots) { slot.id = null; slot.root.visible = false; slot.lastUsedTick = mission.tick; }
     this.assigned.clear();
     for (const particle of this.particles) particle.active = false;
+    this.renderer.renderLists.dispose();
+  }
+
+  private clearUnusedCaches(tick: number): void {
+    for (let index = this.detailSlots.length - 1; index >= 0; index--) {
+      const slot = this.detailSlots[index];
+      if (slot.id !== null || tick - slot.lastUsedTick < RUNTIME_CLEANUP_TICKS) continue;
+      slot.root.removeFromParent();
+      this.detailSlots.splice(index, 1);
+    }
+    // Retired roots share geometry/materials with live units and the reusable
+    // factories. Release only render-list references, never those shared assets.
+    this.renderer.renderLists.dispose();
+    this.cacheCleanups++;
   }
 
   private acquireSlot(key: string): DetailSlot {
@@ -385,10 +412,10 @@ export class BattleView {
         band.rotation.x = Math.PI / 2; band.position.set(0, .04, 2.45); band.scale.z = 1.12;
         visual.root.add(band);
       }
-      slot = { key, id: null, root: visual.root, aircraft: visual };
+      slot = { key, id: null, root: visual.root, aircraft: visual, lastUsedTick: this.lastTick };
     } else {
       const root = this.ground.create(kind as GroundKind, detail as Team);
-      slot = { key, id: null, root, armament: root.getObjectByName('armament') as Group | undefined };
+      slot = { key, id: null, root, armament: root.getObjectByName('armament') as Group | undefined, lastUsedTick: this.lastTick };
     }
     slot.root.visible = false; this.detailSlots.push(slot); this.scene.add(slot.root);
     return slot;
@@ -432,6 +459,7 @@ export class BattleView {
           if (slot) { slot.id = null; slot.root.visible = false; this.assigned.delete(unit.id); }
           slot = this.acquireSlot(key); slot.id = unit.id; this.assigned.set(unit.id, slot);
         }
+        slot.lastUsedTick = mission.tick;
         slot.root.visible = true; slot.root.position.copy(this.position); slot.root.quaternion.copy(rotation);
         if (slot.armament) {
           this.aimRotation(unit, rotation, combat);
@@ -766,7 +794,7 @@ export class BattleView {
     const w = this.width, h = this.height, r = w < 360 ? 42 : 49, x = w - r - 18, y = Math.min(h * .33, 180);
     const player = mission.units.find(unit => unit.id === mission.controlledAircraftId);
     const origin = player?.position ?? { x: 0, y: 0, z: 0 }, heading = player?.heading ?? 0;
-    const cy = Math.cos(heading), sy = Math.sin(heading), range = 2400;
+    const cy = Math.cos(heading), sy = Math.sin(heading), range = 1200;
     c.save(); c.translate(x, y); c.fillStyle = 'rgba(4,24,34,.66)'; c.strokeStyle = 'rgba(150,212,211,.36)'; c.lineWidth = 1;
     c.beginPath(); c.arc(0, 0, r, 0, Math.PI * 2); c.fill(); c.stroke();
     c.beginPath(); c.arc(0, 0, r / 2, 0, Math.PI * 2); c.moveTo(-r, 0); c.lineTo(r, 0); c.moveTo(0, -r); c.lineTo(0, r); c.stroke();
@@ -794,8 +822,8 @@ export class BattleView {
     c.fillStyle = '#fff4ce'; c.beginPath(); c.moveTo(0, -5); c.lineTo(3, 4); c.lineTo(0, 2); c.lineTo(-3, 4); c.closePath(); c.fill();
     c.restore();
     c.save(); c.fillStyle = '#b8cfce'; c.font = '9px system-ui'; c.textAlign = 'center';
-    const label = overlayTextPosition(this.overlayLabels, c, '2.4km', x, y + r + 13);
-    c.fillText('2.4km', label.x, label.y); c.restore();
+    const label = overlayTextPosition(this.overlayLabels, c, '1.2km', x, y + r + 13);
+    c.fillText('1.2km', label.x, label.y); c.restore();
   }
 
   diagnostics() {
@@ -805,6 +833,7 @@ export class BattleView {
       detailedCapacity: DETAIL_CAPACITY, instances: this.renderedLowCount, active: this.lastActiveCount,
       unitViewCapacity: UNIT_VIEW_CAPACITY, particles: this.particles.filter(particle => particle.active).length,
       particleCapacity: EFFECT_CAPACITY, visualTracerCapacity: VISUAL_TRACER_CAPACITY,
+      cacheCleanups: this.cacheCleanups, pendingEvents: this.pendingEvents.length,
       bombCount: this.bombs.count, lod: this.lod, tracers: this.aircraftTracers.diagnostics() };
   }
 

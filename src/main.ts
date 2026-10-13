@@ -14,7 +14,7 @@ import { scoreSnapshot } from './battle/scoring';
 import { terrainHeight } from './battle/terrain';
 import { validateGroundRoutes } from './battle/ground-nav';
 import { predictBombImpact } from './battle/combat';
-import { opposite, KINDS } from './battle/rules';
+import { opposite, KINDS, MAX_TICKS, TICK_RATE } from './battle/rules';
 import type { Team, UnitKind } from './battle/types';
 import type { FlightInput, GameMode } from './types';
 
@@ -23,10 +23,18 @@ const el = <T extends HTMLElement=HTMLElement>(id:string):T => {
 };
 const app=el('app'), canvas=el<HTMLCanvasElement>('flight'), overlay=el<HTMLCanvasElement>('markers');
 let mode:GameMode='easy', game=createBattle(1,mode), screen:'home'|'playing'|'paused'|'result'='home';
+game.recordInputs=import.meta.env.DEV;
 game.mission.phase='paused';
 let view:BattleView|null=null, ready=false, lost=false, disposed=false;
 let accumulator=0,lastFrame=0,frameId=0,lastPilot:string|null=null, pendingLoop=false,pendingBomb=false;
 const intervals:number[]=[],updates:number[]=[];
+const DIAGNOSTIC_SAMPLE_CAPACITY=1800;
+const RECORD_DIAGNOSTICS=import.meta.env.DEV;
+function recordSample(samples:number[],value:number):void{
+  if(!RECORD_DIAGNOSTICS)return;
+  samples.push(value);
+  if(samples.length>DIAGNOSTIC_SAMPLE_CAPACITY)samples.splice(0,samples.length-DIAGNOSTIC_SAMPLE_CAPACITY);
+}
 const buttons={fire:el<HTMLButtonElement>('fire'),loop:el<HTMLButtonElement>('loop'),throttle:el<HTMLElement>('throttle'),
   bomb:el<HTMLButtonElement>('bomb')};
 for(const b of Object.values(buttons))b.dataset.flightControl='true';
@@ -69,6 +77,7 @@ function setScreen(next:typeof screen):void{
 function begin(seed=1):void{
   if(!ready||lost||document.hidden||settings.isOpen||rules.isOpen)return;
   game=createBattle(seed,mode);lastPilot=game.mission.controlledAircraftId;
+  game.recordInputs=import.meta.env.DEV;
   accumulator=0;lastFrame=0;intervals.length=0;updates.length=0;el('announcement').textContent='';
   instructions();setScreen('playing');hud();view?.render(game.mission,mode,game.combat,true);
 }
@@ -99,7 +108,7 @@ function hud():void{
   const m=game.mission,player=m.units.find(u=>u.id===m.controlledAircraftId&&u.state==='active');
   const notificationPhase=reservationPhase(!!player,m.playerStatus);
   if(app.dataset.hudReservationPhase!==notificationPhase)app.dataset.hudReservationPhase=notificationPhase;
-  el('timer').textContent=time(1200-m.tick/60);
+  el('timer').textContent=time((MAX_TICKS-m.tick)/TICK_RATE);
   for(const [key,team] of [['friendly',m.playerTeam],['enemy',opposite(m.playerTeam)]] as const){
     const f=forces(team);el(`${key}-total`).textContent=String(Object.values(f).reduce((a,b)=>a+b,0));el(`force-${key}`).textContent=forceText(f);
   }
@@ -195,14 +204,14 @@ function frame(_timestamp:number):void{
     return;
   }
   if(screen==='playing'&&game.mission.phase==='running'){
-    if(delta>0){intervals.push(delta*1000);if(intervals.length>20000)intervals.shift();}
+    if(delta>0&&RECORD_DIAGNOSTICS)recordSample(intervals,delta*1000);
     accumulator+=delta;
     if(accumulator>.5){pause('処理が遅れたため停止しました。描画負荷を下げて再開してください');return;}
     const sampled=controls.sample(false);pendingLoop ||= sampled.loop;pendingBomb ||= !!sampled.bomb;
     let ticks=0;
     while(accumulator>=1/60&&ticks<8&&game.mission.phase==='running'){
       const input={...sampled,throttle:controls.sampleThrottle(),loop:pendingLoop,bomb:pendingBomb,viewAspect:canvas.clientWidth/Math.max(1,canvas.clientHeight)};
-      const start=performance.now();stepBattle(game,input);view?.queueEvents(game.combat.events,game.mission.id);updates.push(performance.now()-start);if(updates.length>20000)updates.shift();
+      const start=RECORD_DIAGNOSTICS?performance.now():0;stepBattle(game,input);view?.queueEvents(game.combat.events,game.mission.id);if(RECORD_DIAGNOSTICS)recordSample(updates,performance.now()-start);
       pendingLoop=false;pendingBomb=false;accumulator-=1/60;ticks++;
       if(lastPilot!==game.mission.controlledAircraftId){controls.clear();lastPilot=game.mission.controlledAircraftId;sampled.turn=0;sampled.climb=0;sampled.fire=false;sampled.accelerate=false;sampled.brake=false;sampled.throttle=0;}
       if(game.mission.result){result();break;}

@@ -1,6 +1,7 @@
 import type { CapturePoint, Unit, Team } from './types';
 import { CONNECTIONS, TEAMS } from './rules';
-export function createPoints(): CapturePoint[] { return [['HA', -2400, 0, 'A'], ['P1', -1400, 0, 'A'], ['P2', 0, -900, 'N'], ['P3', 0, 0, 'N'], ['P4', 0, 900, 'N'], ['P5', 1400, 0, 'B'], ['HB', 2400, 0, 'B']].map(([id, x, z, owner]) => ({ id: String(id), position: { x: Number(x), y: 0, z: Number(z) }, owner: owner as CapturePoint['owner'], homeTeam: id === 'HA' ? 'A' : id === 'HB' ? 'B' : undefined, phase: 'stable', progressTeam: null, progress: 0, progressNumerator: 0, remainder: 0, lastEligibleTick: 0, idleTicks: 0, contested: false, stableSince: -600 })); }
+import { MAP_POINT_LAYOUT, scaleMapHorizontal } from './map-layout';
+export function createPoints(): CapturePoint[] { return MAP_POINT_LAYOUT.map(({ id, x, z, owner }) => ({ id, position: { x: scaleMapHorizontal(x), y: 0, z: scaleMapHorizontal(z) }, owner, homeTeam: id === 'HA' ? 'A' : id === 'HB' ? 'B' : undefined, phase: 'stable', progressTeam: null, progress: 0, progressNumerator: 0, remainder: 0, lastEligibleTick: 0, idleTicks: 0, contested: false, stableSince: -600 })); }
 export function supplyConnections(points: readonly CapturePoint[]): Record<Team, Set<string>> { const out = { A: new Set<string>(), B: new Set<string>() }; for (const team of TEAMS) {
     const home = points.find(p => p.homeTeam === team);
     if (!home)

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "mainSha256": "34bab9148691171013c12e64e313fc5d279d571fd469832a9671b1f06c1a0746",
-  "viewSha256": "71c0ece6450440bd84e504183792e319125094c660ba95d490c944daa19e0867",
-  "terrainSha256": "ee0f8ffbfdea1c3d5750b8d7c4542367d43cec74269bdd475c657dabd8aecf5e",
+  "mainSha256": "52b9933a1aa483e9495066b0a3955ba90bb32baaa73aa25d1d60b50f102e2479",
+  "viewSha256": "6aa4a4b17b5e9a68032604809bcce591420a7046dd0509fea2b19d101023d1ec",
+  "terrainSha256": "21413f3540566dfeb0d6bae0b2f855c1ab2be6946317273e1f007e48d442069a",
   "bounds": {
     "sha256": "2a4892998a6fe1f053a040b43f26f5467020afecbc9075703ebcbc9d4a81f581",
     "identifiers": [
@@ -98,8 +98,9 @@
     {
       "name": "begin",
       "signature": "function begin(seed=1):void",
-      "sha256": "7aff2f98ee6de319674298ab307bca5670edbd21f51e799fb2a5f09b15bc70a6",
+      "sha256": "2c4e32ec195ae7e871933ac3dd2f2c3f0f5b4055a225f7533abb3d9c994bb361",
       "identifiers": [
+        "DEV",
         "accumulator",
         "begin",
         "combat",
@@ -107,6 +108,7 @@
         "createBattle",
         "document",
         "el",
+        "env",
         "game",
         "hidden",
         "hud",
@@ -117,9 +119,11 @@
         "lastPilot",
         "length",
         "lost",
+        "meta",
         "mission",
         "mode",
         "ready",
+        "recordInputs",
         "render",
         "rules",
         "seed",
@@ -271,13 +275,15 @@
     {
       "name": "hud",
       "signature": "function hud():void",
-      "sha256": "5e09ba176b8c9686c26be1b8a2ee1b26fea6e1c442715fe62c186272b7d9215c",
+      "sha256": "1ca963e632355240d731e90db43a7355a3599176125fd5907167a929064f8a70",
       "identifiers": [
         "HTMLElement",
+        "MAX_TICKS",
         "Math",
         "Object",
         "PI",
         "String",
+        "TICK_RATE",
         "a",
         "aa",
         "aaWarnings",
@@ -837,7 +843,7 @@
     {
       "name": "drawRadar",
       "signature": "private drawRadar(c: CanvasRenderingContext2D, mission: Mission): void",
-      "sha256": "3be89f0484c674cfdebe9cfcc39a3b6798833487e3cbde01ffdb3bba40ce65be",
+      "sha256": "833f9879d73f0b77d10fe9445a551eafc3e02ef1aea0a565156606fe2ef7f358",
       "identifiers": [
         "CanvasRenderingContext2D",
         "Math",

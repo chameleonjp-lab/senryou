@@ -11,6 +11,8 @@ import { createGroundAI, updateGroundAI } from './ground-ai';
 import { createCombatState, updateCombat, DEFAULT_COMBAT_TERRAIN, type CombatState } from './combat';
 import { updateAirAI } from './air-ai';
 import { aircraftTerrainContact } from './projectiles';
+import { MAX_TICKS } from './rules';
+import { clearUnusedCombatCaches, RUNTIME_CLEANUP_TICKS } from './runtime-maintenance';
 
 export interface BattleGame {
   mission: Mission; mode: GameMode; combat: CombatState;
@@ -70,7 +72,7 @@ export function stepBattle(game: BattleGame, raw: FlightInput = NEUTRAL_INPUT, a
   if (game.mission.phase !== 'running') return;
   const input = {...raw}; game.input = input;
   // Bounded audit records consumed input, never wall-clock events.
-  if (game.recordInputs && game.inputs.length < 72000) game.inputs.push({tick:game.mission.tick+1,input});
+  if (game.recordInputs && game.inputs.length < MAX_TICKS) game.inputs.push({tick:game.mission.tick+1,input});
   stepMission(game.mission, {
     spawn:resolveBattleSpawn, surface:CAPTURE_TERRAIN, abort,
     move(m) {
@@ -92,6 +94,8 @@ export function stepBattle(game: BattleGame, raw: FlightInput = NEUTRAL_INPUT, a
         playerDirections:directions,airCommands:commands});
     },
   });
+  if (game.mission.tick % RUNTIME_CLEANUP_TICKS === 0 || game.mission.result)
+    clearUnusedCombatCaches(game.mission, game.combat);
 }
 /** Rendering state and camera are absent; projectile/controller facts are included. */
 export function battleHash(game: BattleGame): string {

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createMission } from '../src/battle/mission';
 import { updateRoster, assertRoster } from '../src/battle/roster';
 import { updateCapture } from '../src/battle/capture';
-import { CONNECTIONS } from '../src/battle/rules';
+import { CONNECTIONS, MAX_TICKS, TICK_RATE } from '../src/battle/rules';
 import {
   BATTLEFIELD, CAPTURE_TERRAIN, UNIT_RADIUS, airSpawnCandidates, airSpawnSafe, applyFlightBounds,
   groundSpawnSafe, initializeRosterPositions, resolveBattleSpawn, sweepTerrain, terrainHeight,
@@ -28,7 +28,7 @@ test('exact seven-point graph has two independently passable vehicle routes per 
   const validation = validateGroundRoutes();
   assert.equal(validation.valid, true, validation.errors.join('\n'));
   assert.deepEqual(BATTLEFIELD.points.map(p => [p.id, p.position.x, p.position.z]), [
-    ['HA', -2400, 0], ['P1', -1400, 0], ['P2', 0, -900], ['P3', 0, 0], ['P4', 0, 900], ['P5', 1400, 0], ['HB', 2400, 0],
+    ['HA', -1200, 0], ['P1', -700, 0], ['P2', 0, -450], ['P3', 0, 0], ['P4', 0, 450], ['P5', 700, 0], ['HB', 1200, 0],
   ]);
   for (const [from, to] of CONNECTIONS) {
     const routes = BATTLEFIELD.roads.filter(r => r.from === from && r.to === to);
@@ -36,8 +36,14 @@ test('exact seven-point graph has two independently passable vehicle routes per 
   }
   const straight = validation.routeLengths['P1-P3:0'] + validation.routeLengths['P3-P5:0'] + validation.routeLengths['P5-HB:0'];
   const side = validation.routeLengths['P1-P2:1'] + validation.routeLengths['P2-P5:1'] + validation.routeLengths['P5-HB:1'];
-  assert.equal(straight, 3800); assert.equal(straight / 5, 760);
-  assert.ok(side / 5 + 105 + 60 < 1200, `side route travel + capture + initial advance = ${side / 5 + 165}`);
+  assert.equal(straight, 1900); assert.equal(straight / 5, 380);
+  const initial = battlefield();
+  const approaches = initial.units.filter(u => u.team === 'A' && u.kind === 'infantry' && u.state === 'active')
+    .map(u => findGroundPath('infantry', u.position, 'P1', { seed: initial.seed, unitId: u.id, fromPointId: 'P1' }));
+  assert.ok(approaches.every(Boolean), 'initial squads must have a route to their forward point');
+  const advanceSeconds = Math.max(...approaches.map(path => path!.distance)) / 5;
+  const sideBudget = side / 5 + 105 + advanceSeconds;
+  assert.ok(sideBudget < MAX_TICKS / TICK_RATE, `side route travel + capture + initial advance = ${sideBudget}`);
   const narrowed = BATTLEFIELD.roads.map(r => ({ ...r, width: r.from === 'HA' ? 10 : r.width }));
   assert.equal(validateGroundRoutes(narrowed).valid, false);
 });
@@ -63,8 +69,8 @@ test('terrain sweep hits closed walls, bridge bottoms and sides in both directio
 });
 
 test('deep river remains impassable while real decks provide a walkable surface', () => {
-  assert.equal(terrainHeight(620, 1500), -8);
-  for (const kind of ['infantry', 'tank', 'aa'] as const) assert.equal(walkableSurface(620, 1500, kind).walkable, false);
+  assert.equal(terrainHeight(310, 750), -8);
+  for (const kind of ['infantry', 'tank', 'aa'] as const) assert.equal(walkableSurface(310, 750, kind).walkable, false);
   const bridge = BATTLEFIELD.bridges.find(b => b.yaw === 0)!;
   assert.equal(terrainHeight(bridge.center.x, bridge.center.z), -8);
   for (const kind of ['infantry', 'tank', 'aa'] as const) {
@@ -77,8 +83,8 @@ test('initial columns obey their formation counts, spacing, surfaces and air saf
   const m = battlefield();
   const ground = m.units.filter(u => u.state === 'active' && u.kind !== 'aircraft');
   for (const unit of ground) {
-    const rearDistance = Math.abs(unit.position.x) - 1400;
-    assert.ok(rearDistance >= 100 && rearDistance <= 300);
+    const rearDistance = Math.abs(unit.position.x) - 700;
+    assert.ok(rearDistance >= 50 && rearDistance <= 150);
     assert.equal(groundSpawnSafe(unit.position, unit, m), true, unit.id);
     assert.equal(unit.position.y, CAPTURE_TERRAIN.heightAt(unit.position.x, unit.position.z));
   }
@@ -107,9 +113,9 @@ test('new front requires 600 stable ticks and loss/contest changes apply to the 
 test('all ground mouths and all four air corridors may be blocked without creating a unit', () => {
   const m = battlefield(), ground = pending(m), air = pending(m, 'aircraft');
   const tanks = m.units.filter(u => u.team === 'B' && u.kind === 'tank' && u.state === 'active');
-  tanks[0].position = { x: -1600, y: 12, z: 0 }; tanks[1].position = { x: -2600, y: 12, z: 0 };
+  tanks[0].position = { x: -800, y: 12, z: 0 }; tanks[1].position = { x: -1300, y: 12, z: 0 };
   const aa = m.units.find(u => u.team === 'B' && u.kind === 'aa' && u.state === 'active')!;
-  aa.position = { x: -2900, y: 12, z: 0 };
+  aa.position = { x: -1450, y: 12, z: 0 };
   assert.equal(resolveBattleSpawn(ground, 'P1', m), null);
   assert.equal(airSpawnCandidates('A').length, 4); assert.equal(resolveBattleSpawn(air, 'HA', m), null);
   assert.equal(ground.state, 'pending'); assert.equal(air.state, 'pending');
@@ -193,9 +199,9 @@ test('a tank aligns with a narrow bridge before advancing its projected waypoint
     if (u !== tank && !escort) { u.state = 'lost'; u.hp = u.hpFixed = 0; }
     if (escort && Number(u.id.split('-').at(-1)) >= 12) u.position = { x: -400 + Number(u.id.split('-').at(-1)) * 3, y: 12, z: 150 };
   }
-  tank.position = { x: -656.141, y: 12, z: 142 };
+  tank.position = { x: -365, y: 12, z: 65 };
   const path = { targetPointId: 'P3', distance: 700,
-    waypoints: [{ ...tank.position }, { x: tank.position.x, y: 12, z: 150 }, { x: -535, y: 12, z: 150 }, { x: 0, y: 12, z: 0 }],
+    waypoints: [{ ...tank.position }, { x: tank.position.x, y: 12, z: 75 }, { x: -267.5, y: 12, z: 75 }, { x: 0, y: 12, z: 0 }],
     routes: [{ routeId: 'P1-P3:1', startIndex: 0, endIndex: 3 }] };
   state.units[tank.id] = { waypointIndex: 1, path, pathVersion: 0, targetPointId: 'P3', recovery: createRecoveryState(tank.position, 0),
     contact: null, combatStopSince: null, lastPlanTick: 0, escortSquadId: null, assignedTick: 0 };
@@ -206,7 +212,7 @@ test('a tank aligns with a narrow bridge before advancing its projected waypoint
     updateGroundAI(m, state); furthestX = Math.max(furthestX, tank.position.x);
     assert.equal(walkableSurface(tank.position.x, tank.position.z, 'tank').walkable, true);
   }
-  assert.ok(furthestX > -650, `tank stayed at the bank: ${JSON.stringify({position:tank.position, heading:tank.heading, ai:state.units[tank.id]})}`);
+  assert.ok(furthestX > -325, `tank stayed at the bank: ${JSON.stringify({position:tank.position, heading:tank.heading, ai:state.units[tank.id]})}`);
 });
 
 test('rerouting from a bridge retraces a legal road instead of cutting through deep water', () => {
@@ -296,13 +302,13 @@ test('a surviving assault squad traverses the physical supply graph and captures
     unit.state = 'lost'; unit.hp = 0; unit.hpFixed = 0;
   }
   const ownedAt: Record<string, number> = {};
-  for (let tick = 1; tick <= 72000; tick++) {
+  for (let tick = 1; tick <= MAX_TICKS; tick++) {
     m.tick = tick; updateGroundAI(m, state);
     m.points = updateCapture(m.points, m.units, tick, CAPTURE_TERRAIN);
     for (const p of m.points) if (p.owner === 'A' && ownedAt[p.id] === undefined) ownedAt[p.id] = tick;
     if (ownedAt.HB) break;
   }
-  assert.ok(ownedAt.HB && ownedAt.HB < 72000, `final points ${JSON.stringify(m.points.map(p => [p.id, p.owner, p.progress]))}`);
+  assert.ok(ownedAt.HB && ownedAt.HB < MAX_TICKS, `final points ${JSON.stringify(m.points.map(p => [p.id, p.owner, p.progress]))}`);
   assert.ok(ownedAt.P5 < ownedAt.HB);
   assert.ok(['P2', 'P3', 'P4'].some(id => ownedAt[id] && ownedAt[id] < ownedAt.P5));
   assert.equal(Object.values(state.squads).filter(s => s.role === 'defend').length, 2);

@@ -3,7 +3,7 @@ import { ControlSettings } from '/src/control-settings';
 import { reservationPhase } from '/src/hud-notification-reservations';
 import { KeyboardSettings, ControlInputPresentation } from '/src/keyboard-settings';
 import { RulesGuide } from '/src/rules-guide';
-import { opposite, KINDS } from '/src/battle/rules';
+import { opposite, KINDS, MAX_TICKS, TICK_RATE } from '/src/battle/rules';
 import { createProductOverlay } from 'virtual:senryou-canvas';
 import { makeSample, resultSample, assertFixtureId, type DisplaySample } from '/browser-tests/ui-only/samples';
 import type { GameMode } from '/src/types';
