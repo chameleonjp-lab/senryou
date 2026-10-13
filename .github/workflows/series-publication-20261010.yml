@@ -18,7 +18,7 @@ jobs:
       pages: read
     env:
       SOURCE_COMMIT: ${{ github.sha }}
-      APPROVED_PRODUCT_SOURCE: 28ec72df4b59f25e024e9668147134abc2df184b
+      APPROVED_PRODUCT_SOURCE: 3782f0834a96445fe97c883801f479a97210b1d1
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -82,7 +82,7 @@ jobs:
           manifest_path=root/'deployment.json'
           manifest=json.loads(manifest_path.read_text()) if manifest_path.exists() else {'repository':'chameleonjp-lab/senryou','commit':os.environ['SOURCE_COMMIT'],'files':{x['path']:x['sha256'] for x in files}}
           assert manifest['commit']==os.environ['SOURCE_COMMIT']
-          manifest.update({'sourceTree':os.popen('git rev-parse HEAD^{tree}').read().strip(),'workflowCommit':os.environ['WORKFLOW_COMMIT'],'publicationAuthorizationDate':'2026-10-11','publicationScope':'User-requested verification build; final physical-phone and gameplay acceptance are not claimed'})
+          manifest.update({'sourceTree':os.popen('git rev-parse HEAD^{tree}').read().strip(),'workflowCommit':os.environ['WORKFLOW_COMMIT'],'publicationAuthorizationDate':'2026-10-13','publicationScope':'User-requested ten-minute verification build; physical-phone and gameplay acceptance are not claimed'})
           manifest_path.write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
           PYVALIDATE
       - name: Preserve checks and pictures separately from the public site
