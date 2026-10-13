@@ -1544,5 +1544,5 @@ p {
     width: max(72px, calc(var(--hud-center-gap) - 24px));
     max-width: max(72px, calc(var(--hud-center-gap) - 24px));
   }
-  #app[data-mode="easy"] #hud .flight-tip { bottom: calc(78px + var(--safe-bottom)); }
+  #app[data-mode="easy"] #hud .flight-tip { bottom: calc(72px + var(--safe-bottom)); }
 }
