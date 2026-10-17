@@ -1,8 +1,11 @@
 name: Publish approved Zero Series verification build
 on:
-  push:
-    branches: [main]
-    paths: ['.github/workflows/series-publication-20261010.yml', 'docs/ZERO_SERIES_PUBLICATION_20261010.md']
+  workflow_dispatch:
+    inputs:
+      expected_sha:
+        description: 'Full latest main commit SHA approved for publication'
+        required: true
+        type: string
 permissions:
   contents: read
 concurrency:
@@ -10,7 +13,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build:
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 12
     permissions:
@@ -18,24 +21,21 @@ jobs:
       pages: read
     env:
       SOURCE_COMMIT: ${{ github.sha }}
-      APPROVED_PRODUCT_SOURCE: fe2bbaecc28f5d26c433f1cd602192cf418b2818
+      EXPECTED_SHA: ${{ inputs.expected_sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ github.sha }}
           fetch-depth: 3
           persist-credentials: false
-      - name: Verify the exact approved product source and the main publication commit
+      - name: Verify the requested exact latest main revision
         run: |
+          test "$GITHUB_REF" = "refs/heads/main"
+          [[ "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ ]]
+          test "$EXPECTED_SHA" = "$SOURCE_COMMIT"
           test "$(git rev-parse HEAD)" = "$SOURCE_COMMIT"
           test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$SOURCE_COMMIT"
           test -z "$(git status --porcelain)"
-          test "$(git rev-parse HEAD^1)" = "$APPROVED_PRODUCT_SOURCE"
-          python - <<'PYAPPROVAL'
-          import os,subprocess
-          paths=subprocess.check_output(['git','diff','--no-renames','--name-only',os.environ['APPROVED_PRODUCT_SOURCE'],'HEAD'],text=True).splitlines()
-          assert sorted(paths)==['.github/workflows/series-publication-20261010.yml','.github/workflows/throttle-lever.yml','browser-tests/ui-only/capture.mjs','browser-tests/ui-only/samples.ts','docs/ZERO_SERIES_PUBLICATION_20261010.md','src/style.css','tests/ui-only-extraction.test.ts','tsconfig.ui-only.json'], paths
-          PYAPPROVAL
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
           node-version: '24'
@@ -82,7 +82,7 @@ jobs:
           manifest_path=root/'deployment.json'
           manifest=json.loads(manifest_path.read_text()) if manifest_path.exists() else {'repository':'chameleonjp-lab/senryou','commit':os.environ['SOURCE_COMMIT'],'files':{x['path']:x['sha256'] for x in files}}
           assert manifest['commit']==os.environ['SOURCE_COMMIT']
-          manifest.update({'sourceTree':os.popen('git rev-parse HEAD^{tree}').read().strip(),'workflowCommit':os.environ['WORKFLOW_COMMIT'],'publicationAuthorizationDate':'2026-10-14','publicationScope':'User-requested ten-minute verification build; physical-phone and gameplay acceptance are not claimed'})
+          manifest.update({'sourceTree':os.popen('git rev-parse HEAD^{tree}').read().strip(),'workflowCommit':os.environ['WORKFLOW_COMMIT'],'publicationAuthorizationDate':'2026-10-18','publicationScope':'User-requested latest merged main verification build; physical-phone and gameplay acceptance are not claimed'})
           manifest_path.write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
           PYVALIDATE
       - name: Preserve checks and pictures separately from the public site
@@ -99,13 +99,15 @@ jobs:
             dist/deployment.json
           retention-days: 14
           if-no-files-found: warn
+      - name: Recheck latest main before uploading the public artifact
+        run: test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$SOURCE_COMMIT"
       - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b
         with:
           path: dist
           retention-days: 7
   deploy:
     needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
