@@ -196,6 +196,29 @@ const expectedSpawnAnchors = {
 const comparisonInput = { turn: .25, climb: .12, fire: false, loop: false, bomb: false,
   throttle: 1, accelerate: true, brake: false };
 
+// Independent one-tick oracle for this bounded manual-input comparison. Keep
+// the historical absolute-pitch contract on the pinned arm; only the candidate
+// uses the approved rate / total-camera-forward contract. No product helper is
+// called to calculate these expectations.
+function comparisonFlightContract(record: any, manualRate: boolean) {
+  const before=record.initial.pilot,after=record.after.pilot,input=record.input,dt=1/60;
+  const authority=(before.speed<=85?.92+(before.speed-65)/20*.23:before.speed<=110?1.15-(before.speed-85)/25*.15:1)
+    *Math.max(.78,Math.min(1,1-Math.max(0,before.speed-115)*.008));
+  const angularStep=.82*authority*dt,response=1+2.5*dt;
+  const pitch=manualRate?before.pitch+input.climb*angularStep
+    :before.pitch+(input.climb*.95-before.pitch)*(1-Math.exp(-4.2*dt));
+  const bank=before.bank+(input.turn*.72-before.bank)*(1-Math.exp(-5.5*dt));
+  const legacyHeading=((before.heading-input.turn*.82*authority*response*dt+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI;
+  const speed=Math.max(65,Math.min(141,before.speed+((110.3-before.speed)*.72-Math.abs(input.turn)*2.7
+    -Math.max(0,input.climb)*2.1-Math.sin(pitch)*2.6)*dt));
+  const direction=(heading:number,pitch:number)=>({x:-Math.sin(heading)*Math.cos(pitch),y:Math.sin(pitch),z:-Math.cos(heading)*Math.cos(pitch)});
+  const a=direction(before.heading,before.pitch-.19),b=direction(after.heading,after.pitch-.19);
+  const cross=Math.hypot(a.y*b.z-a.z*b.y,a.z*b.x-a.x*b.z,a.x*b.y-a.y*b.x);
+  const totalCameraAngle=Math.atan2(cross,a.x*b.x+a.y*b.y+a.z*b.z);
+  return {pitch,bank,speed,response,legacyHeading,forward:direction(after.heading,pitch),totalCameraAngle,
+    desiredCameraAngle:Math.hypot(input.climb*angularStep,input.turn*angularStep*response)};
+}
+
 for (const size of sizes) test('same-condition before-after ' + size.width + 'x' + size.height, async ({ page, browserName }, info) => {
   test.skip(browserName === 'webkit', 'WebGL baseline/candidate comparison is verified in Chromium only');
   test.skip(!process.env.THROTTLE_BASELINE_DIR, 'Pinned baseline checkout is required for real comparison');
@@ -458,29 +481,42 @@ for (const size of sizes) test('same-condition before-after ' + size.width + 'x'
       ammo: record.initial.pilot.ammo, cannonAmmo: record.initial.pilot.cannonAmmo, bombs: record.initial.pilot.bombs,
     };
     expect(record.after.pilotMotion.resources).toEqual(initialResources);
+    const contract=comparisonFlightContract(record,label==='after');
+    expect(record.after.inheritedControllerState.responseMultiplier).toBe(contract.response);
+    expect(record.after.pilotMotion.attitude.pitch).toBe(contract.pitch);
+    expect(record.after.pilotMotion.attitude.bank).toBe(contract.bank);
+    expect(record.after.pilotMotion.attitudeDelta.pitch).toBe(contract.pitch-record.initial.pilot.pitch);
+    expect(record.after.pilotMotion.attitudeDelta.bank).toBe(contract.bank-record.initial.pilot.bank);
+    if(label==='before'){
+      expect(Math.abs(record.after.pilotMotion.attitude.heading-contract.legacyHeading)).toBeLessThan(1e-12);
+    }else{
+      expect(record.after.pilotMotion.attitudeDelta.heading).toBeLessThan(0);
+      expect(Math.abs(contract.totalCameraAngle-contract.desiredCameraAngle)).toBeLessThan(1e-12);
+    }
+    // Actual speed changes with the intentionally different pitch energy. Keep
+    // the original trim/drag/energy law exact, rather than exempting speed.
+    expect(record.after.pilotMotion.speed).toBe(contract.speed);
+    expect(record.after.pilotMotion.speedDelta).toBe(contract.speed-record.initial.pilot.speed);
+    for(const axis of ['x','y','z'] as const){
+      const tolerance=Number.EPSILON*Math.max(1,Math.abs(record.initial.pilot.position[axis]))*4;
+      const displacement=contract.forward[axis]*contract.speed/60;
+      expect(Math.abs(record.after.pilotMotion.displacement[axis]-displacement)).toBeLessThanOrEqual(tolerance);
+      expect(Math.abs(record.after.pilotMotion.velocity[axis]-displacement*60)).toBeLessThanOrEqual(tolerance*60);
+    }
   }
 
   expect(records[0].initial.pilotShared).toEqual(records[1].initial.pilotShared);
   expect(records[0].after.inheritedControllerState).toEqual(records[1].after.inheritedControllerState);
-  expect(records[0].after.pilotMotion.attitude).toEqual(records[1].after.pilotMotion.attitude);
-  expect(records[0].after.pilotMotion.attitudeDelta).toEqual(records[1].after.pilotMotion.attitudeDelta);
-  expect(records[0].after.pilotMotion.speed).toBe(records[1].after.pilotMotion.speed);
-  expect(records[0].after.pilotMotion.speedDelta).toBe(records[1].after.pilotMotion.speedDelta);
+  expect(records[0].after.pilotMotion.attitude.bank).toBe(records[1].after.pilotMotion.attitude.bank);
+  expect(records[0].after.pilotMotion.attitudeDelta.bank).toBe(records[1].after.pilotMotion.attitudeDelta.bank);
   expect(records[0].after.pilotMotion.resources).toEqual(records[1].after.pilotMotion.resources);
   expect(records[0].after.pilotMotion.loop).toEqual(records[1].after.pilotMotion.loop);
-  expect(records[0].after.pilotShared).toEqual(records[1].after.pilotShared);
+  const stablePilot=(record:any)=>{
+    const {heading,pitch,speed,...unchanged}=record.after.pilotShared;
+    return unchanged;
+  };
+  expect(stablePilot(records[0])).toEqual(stablePilot(records[1]));
 
-  // Absolute coordinates differ after the layout change; the start-position
-  // delta is kept as evidence. Bound only subtraction's unavoidable ULP error.
-  for (const axis of ['x', 'y', 'z'] as const) {
-    const startScale = Math.max(1,
-      Math.abs(records[0].initial.pilot.position[axis]), Math.abs(records[1].initial.pilot.position[axis]));
-    const displacementTolerance = Number.EPSILON * startScale * 4;
-    expect(Math.abs(records[0].after.pilotMotion.displacement[axis] - records[1].after.pilotMotion.displacement[axis]))
-      .toBeLessThanOrEqual(displacementTolerance);
-    expect(Math.abs(records[0].after.pilotMotion.velocity[axis] - records[1].after.pilotMotion.velocity[axis]))
-      .toBeLessThanOrEqual(displacementTolerance * 60);
-  }
 });
 
 
