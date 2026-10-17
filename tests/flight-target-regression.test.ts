@@ -109,3 +109,30 @@ test('Easy ground avoidance remains distinct, and its status clears in safe flig
     clearBattleFlightAssistance(game);assert.equal(game.controller?.targetLock.key,null);assert.equal(game.controller?.assistClimb,0);
   }
 });
+
+import { createFlightController, updatePlayerLoop, updateQuaternion } from '../src/flight';
+import { sweepTerrain } from '../src/battle/terrain';
+
+test('terrain climb is the legacy absolute target even with manual descent on the loop cancellation tick',()=>{
+  for(const turn of [-.6,0,.6])for(const climb of [-1,-.5,0]){
+    const game=createBattle(41,'easy'),unit=game.mission.units.find(u=>u.id===game.mission.controlledAircraftId)!;
+    const plane=createFlightAircraft(unit,'A');plane.pitch=-.3;plane.bank=0;plane.yaw=0;updateQuaternion(plane);
+    const controller=createFlightController(plane);controller.loopStartSteeringRevision=1;controller.playerLoopActive=true;plane.loopProgress=.05;
+    const raw={...input,turn,climb,steeringActive:true,steeringRevision:2};
+    updatePlayerLoop(plane,controller,raw,raw,false,1/60,110,141,1,'easy',.85);
+    const expected=-.3+(.85*.95+.3)*(1-Math.exp(-4.2/60));
+    assert.ok(Math.abs(plane.pitch-expected)<1e-12);assert.equal(plane.loopProgress,0);assert.equal(plane.loopCooldown,2);
+    if(turn!==0)assert.equal(Math.sign(plane.yaw),-Math.sign(turn));
+  }
+});
+
+test('the live Easy safety boundary remains exactly three seconds ahead with a 40m radius',()=>{
+  for(const speed of [65,85,110,141])for(const pitch of [-.3,0])for(const offset of [-.001,.001]){
+    const game=createBattle(42,'easy'),unit=game.mission.units.find(u=>u.id===game.mission.controlledAircraftId)!;
+    unit.position={x:-3000,y:52-Math.sin(pitch)*speed*3+offset,z:0};unit.heading=-Math.PI/2;unit.pitch=pitch;unit.bank=0;unit.speed=speed;
+    const end={x:unit.position.x+Math.cos(pitch)*speed*3,y:unit.position.y+Math.sin(pitch)*speed*3,z:0};
+    const danger=!!sweepTerrain(unit.position,end,40);assert.equal(danger,offset<0);
+    stepBattle(game,{...input,climb:-1,steeringActive:true});assert.equal(game.terrainAvoidanceActive,danger);
+    if(danger)assert.ok(Math.abs(unit.pitch!-(pitch+(.85*.95-pitch)*(1-Math.exp(-4.2/60))))<1e-12);
+  }
+});

@@ -45,17 +45,18 @@ function movePlayer(game: BattleGame, input: FlightInput): void {
   const assist = getFlightAssist(plane, targetsForFlight(m).filter(t=>t.team==='enemy'), input, game.mode, meta.targetLock);
   const dt = 1/60;
   const adjusted = { ...input, ...smoothFlightAssistance(meta, input, assist, dt) };
+  let safetyClimb: number | undefined;
   if(game.mode==='easy'){
     const direction=forwardOf(plane);
     const lookAhead={x:unit.position.x+direction.x*plane.speed*3,y:unit.position.y+direction.y*plane.speed*3,z:unit.position.z+direction.z*plane.speed*3};
     if(sweepTerrain(unit.position,lookAhead,40)){
       game.terrainAvoidanceActive = true;
       // Ground assistance must give terrain clearance priority over pulling at a target.
-      adjusted.climb=Math.max(.85,adjusted.climb);meta.assistClimb=Math.max(0,meta.assistClimb);
+      safetyClimb=Math.max(.85,adjusted.climb);meta.assistClimb=Math.max(0,meta.assistClimb);
     }
   }
   const pressed = input.loop && !meta.loopHeld; meta.loopHeld = input.loop;
-  updatePlayerLoop(plane,meta,adjusted,input,pressed,dt,advanceThrottle(meta,input,game.mode,dt),MAX_SPEED,meta.responseMultiplier);
+  updatePlayerLoop(plane,meta,adjusted,input,pressed,dt,advanceThrottle(meta,input,game.mode,dt),MAX_SPEED,meta.responseMultiplier,game.mode,safetyClimb);
   writeFlightAircraft(unit,plane);
   // World bounds remove only the outward component; no wrap or invisible death.
   unit.position.x = clamp(unit.position.x,-4500,4500); unit.position.z = clamp(unit.position.z,-3000,3000);
