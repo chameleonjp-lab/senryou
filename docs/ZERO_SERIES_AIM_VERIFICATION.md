@@ -48,3 +48,19 @@
 射撃時の上下ずれは次のように切り分ける。ボタンfireだけではこの短いNormal対照でpitch/camera差を再現しない。1指持替えは操縦release→climb=0→既存水平復帰が起きるのでfire起因と断定しない。Easy標的補助の不一致とゲキチンNormal固定照準/衝突cameraは別の確認済み経路として修正。センリョウの危険時自動上昇は射撃とは別の保護。実iPhone特有のpointer capture/イベント順序は引き続き未確認。
 
 マージ前iPhone手順：(1)Normalで操縦指の微上下を維持し別指で射撃、射撃指のみ離す/移動。(2)操縦指を離して同じ指で射撃し、release時の水平復帰と比較。(3)Easyの円内A/画面端B・遮蔽・微入力で標的/発射を確認。(4)ゲキチン母艦近傍・bank/上昇、センリョウ安全高度/危険接近で照準/回避表示を見る。(5)回転→停止→設定Save/Cancel→明示再開、速度目標とfresh inputを確認。上下ずれが残れば作品/mode/iPhone・iOS/指操作/場面を記録。実機受入とmergeは利用者が行う。
+
+## 2026-10-18 Easy追尾開始時の上下反転対策
+
+確認日時：2026-10-18 12:31 JST。比較元mainは `c3cba7f89d9628e4d0231aab7c420dcd2ac1fafa`。本節より前の検査・画像は各記載時点の記録で、今回の実機確認を意味しない。
+
+Easyの両軸無入力時だけ、追尾pitchの平滑化をゼロではなく現在姿勢から開始する。新規捕捉・対象切替・再捕捉・ゼロ通過を区別し、微小手動入力へ戻るときは絶対姿勢の履歴を相対角速度へ持ち越さない。turnだけの入力でも、任意の `steeringActive` が省略されても手動経路へ戻る。既存の対象選択、yaw、地形回避の優先順位、Normal制御は変更しない。
+
+今回の変更は既存5ファイルに限定：`src/flight-target.ts`、`src/battle/simulation.ts`、`tests/flight-target-regression.test.ts`、`tests/battle-integration.test.ts`、本書。
+
+- 変更前sourceで新規helper回帰と実battle捕捉回帰が失敗することを確認。実battle回帰は画面内の上下標的・現在pitch正負・安全高度を使い、terrainAvoidanceActive=falseで逆向きの初動を検出する。
+- 変更後 `npm test`：251件合格、失敗0、skip0。捕捉後turn-onlyの任意flag省略ケースも含む。
+- `npm run build`：TypeScriptとVite成功。既存の500kB超bundle警告あり。
+- 独立読取レビューでsourceと回帰検査を確認。旧helperとの相対入力比較も一致。
+- 今回はローカル論理・build検査まで。CIの最新head結果はPRへ記録する。ブラウザー描画・iPhone実機での体感改善、マージ、本番反映は未実施。
+
+旧版は上記固定main commitに保持。復元はこの差分のrevertで可能。公開先は同じ公開リポジトリのDraft PRで、追加素材・依存・workflowの変更は含まない。

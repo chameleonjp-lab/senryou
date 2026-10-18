@@ -1,7 +1,7 @@
 import { clearFlightAssistance, smoothFlightAssistance } from '../flight-target';
 import type { Aircraft, FlightInput, GameMode } from '../types';
 import { advanceThrottle, clamp, createFlightController, forwardOf, MAX_SPEED, updatePlayerLoop, type FlightController } from '../flight';
-import { autoFireTarget, applyEasyShotCorrection, getFlightAssist, predictedShotDirection } from '../flight-assist';
+import { autoFireTarget, applyEasyShotCorrection, getFlightAssist, PLAYER_MAX_PITCH, predictedShotDirection } from '../flight-assist';
 import { createFlightAircraft, readFlightAircraft, writeFlightAircraft, targetsForFlight } from '../battle-flight';
 import { createMission, stepMission, logicalHash } from './mission';
 import { markLost } from './scoring';
@@ -44,7 +44,10 @@ function movePlayer(game: BattleGame, input: FlightInput): void {
   const previousAttitude={heading:unit.heading,pitch:unit.pitch,bank:unit.bank};
   const assist = getFlightAssist(plane, targetsForFlight(m).filter(t=>t.team==='enemy'), input, game.mode, meta.targetLock);
   const dt = 1/60;
-  const adjusted = { ...input, ...smoothFlightAssistance(meta, input, assist, dt) };
+  const automaticPitch = game.mode === 'easy' && !input.steeringActive
+    && Math.max(Math.abs(input.turn), Math.abs(input.climb)) <= 1e-8;
+  const pitchOrigin = automaticPitch ? clamp(plane.pitch / PLAYER_MAX_PITCH, -1, 1) : undefined;
+  const adjusted = { ...input, ...smoothFlightAssistance(meta, input, assist, dt, pitchOrigin) };
   let safetyClimb: number | undefined;
   if(game.mode==='easy'){
     const direction=forwardOf(plane);

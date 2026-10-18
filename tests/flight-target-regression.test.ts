@@ -136,3 +136,21 @@ test('the live Easy safety boundary remains exactly three seconds ahead with a 4
     if(danger)assert.ok(Math.abs(unit.pitch!-(pitch+(.85*.95-pitch)*(1-Math.exp(-4.2/60))))<1e-12);
   }
 });
+
+
+test('Easy pitch origin survives acquisition, switch, release and zero crossing', () => {
+  const state: any = { assistTurn: 0, assistClimb: 0, responseMultiplier: 1, targetLock: createFlightTargetLock() };
+  const pull = { turn: 0, climb: .9, responseMultiplier: 1, hasVisibleTarget: true };
+  assert.ok(smoothFlightAssistance(state, input, pull, 1/60, .6).climb > .6);
+  state.targetLock.changed = true;
+  assert.ok(smoothFlightAssistance(state, input, {...pull, climb:-.9}, 1/60, -.6).climb < -.6);
+  smoothFlightAssistance(state, input, {...pull, hasVisibleTarget:false}, 1/60, -.6);
+  assert.equal(state.assistClimb, 0);
+  assert.ok(smoothFlightAssistance(state, input, pull, 1/60, .6).climb > .6);
+  const manual = {...input, climb:.1};
+  const rate = smoothFlightAssistance(state, manual, {...pull, climb:.2}, 1/60);
+  assert.ok(Math.abs(rate.climb - .1) <= .025 + 1e-12, 'absolute history must not leak into manual rates');
+  state.targetLock.changed = true;
+  assert.equal(smoothFlightAssistance(state, input, {...pull, climb:-.5}, 1/60, .025).climb, 0);
+  assert.equal(smoothFlightAssistance(state, input, {...pull, climb:-.5}, 1/60, .025).climb, -.025);
+});
