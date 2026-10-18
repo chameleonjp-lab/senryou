@@ -64,3 +64,9 @@ Easyの両軸無入力時だけ、追尾pitchの平滑化をゼロではなく�
 - 今回はローカル論理・build検査まで。CIの最新head結果はPRへ記録する。ブラウザー描画・iPhone実機での体感改善、マージ、本番反映は未実施。
 
 旧版は上記固定main commitに保持。復元はこの差分のrevertで可能。公開先は同じ公開リポジトリのDraft PRで、追加素材・依存・workflowの変更は含まない。
+
+### 同日12:39 JST：初回CIのcontroller構造差分を修正
+
+初回head `e1322196216f3a6388e324713d9620ff0ac2035b` の[CI run 39094036295](https://github.com/chameleonjp-lab/senryou/actions/runs/39094036295)で、単体/buildは成功、必須browserは31合格・10既存skip・4失敗。4失敗はNormalのcontrollerキー比較に `assistClimbMode: undefined` が現れる同一原因だった。製品smoke3件は合格したが、CI全体は失敗として保持する。
+
+inactive・clear・対象変更時には不要になった任意modeキー自体を取り除き、既存Normal controllerの形を維持する。active状態ではmodeを保持し、ゼロ通過時の再初期化はしない。browser側の期待値・skip・時間制限は変更していない。既存承認済みファイル内で、初期inactive、activeから対象喪失・manual release・clearのキー一致回帰を追加した。修正後ローカル `npm test` は252/252合格、build成功、最終helper回帰16/16合格。再提出headのCIは別途照合する。
