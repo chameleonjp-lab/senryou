@@ -198,13 +198,13 @@ const comparisonInput = { turn: .25, climb: .12, fire: false, loop: false, bomb:
 
 // Independent one-tick oracle for this bounded manual-input comparison. Keep
 // the historical absolute-pitch contract on the pinned arm; only the candidate
-// uses the approved rate / total-camera-forward contract. No product helper is
+// uses the approved manual rate / response-one camera contract. No product helper is
 // called to calculate these expectations.
 function comparisonFlightContract(record: any, manualRate: boolean) {
   const before=record.initial.pilot,after=record.after.pilot,input=record.input,dt=1/60;
   const authority=(before.speed<=85?.92+(before.speed-65)/20*.23:before.speed<=110?1.15-(before.speed-85)/25*.15:1)
     *Math.max(.78,Math.min(1,1-Math.max(0,before.speed-115)*.008));
-  const angularStep=.82*authority*dt,response=1+2.5*dt;
+  const angularStep=.82*authority*dt,response=manualRate?1:1+2.5*dt;
   const pitch=manualRate?before.pitch+input.climb*angularStep
     :before.pitch+(input.climb*.95-before.pitch)*(1-Math.exp(-4.2*dt));
   const bank=before.bank+(input.turn*.72-before.bank)*(1-Math.exp(-5.5*dt));
@@ -506,7 +506,9 @@ for (const size of sizes) test('same-condition before-after ' + size.width + 'x'
   }
 
   expect(records[0].initial.pilotShared).toEqual(records[1].initial.pilotShared);
-  expect(records[0].after.inheritedControllerState).toEqual(records[1].after.inheritedControllerState);
+  // Enemy-dependent response was removed; every other inherited controller field stays exact.
+  const stableController=(record:any)=>{const {responseMultiplier,...unchanged}=record.after.inheritedControllerState;return unchanged;};
+  expect(stableController(records[0])).toEqual(stableController(records[1]));
   expect(records[0].after.pilotMotion.attitude.bank).toBe(records[1].after.pilotMotion.attitude.bank);
   expect(records[0].after.pilotMotion.attitudeDelta.bank).toBe(records[1].after.pilotMotion.attitudeDelta.bank);
   expect(records[0].after.pilotMotion.resources).toEqual(records[1].after.pilotMotion.resources);

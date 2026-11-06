@@ -77,7 +77,9 @@ test('queue observations retain before/after timing and missing queue is an evid
 });
 
 test('guard instrumentation preserves the complete gameplay body, captures and guard install', () => {
-  const source = readFileSync(new URL('../browser-tests/smoke.spec.ts', import.meta.url), 'utf8');
+  // The runtime pair loads GUARD with git show; keep that historical blob immutable
+  // while the current candidate smoke capture setup can receive reviewed fixes.
+  const source = readFileSync(new URL('./fixtures/paired-guard-smoke.spec.ts.txt', import.meta.url), 'utf8');
   assert.equal(gitBlob(source), BLOBS.guard);
   const generated = instrument(source, 'guard');
   assert.equal(gameplayBody(source), gameplayBody(generated));

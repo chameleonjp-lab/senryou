@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { FlightControls } from '../src/input';
 
 // Handler-level coverage adapted from the fixed Kaisen ownership/recovery tests.
@@ -162,4 +163,26 @@ test('resize, rotation, blur, pagehide and visibility loss release every owned c
       f.win.dispatchEvent(key('keyup', 'KeyZ'));
     }
   } finally { f.dispose(); }
+});
+
+test('height-only viewport changes keep ownership and rebase the next movement',()=>{
+ const f=fixture();try{
+  Object.assign(f.win,{innerWidth:402,innerHeight:874});f.controls.dispose();const c=new FlightControls(f.surface as any,f.buttons as any,()=>true);
+  const resize=readFileSync(new URL('../src/main.ts',import.meta.url),'utf8').split('\n').find(line=>line.startsWith("window.addEventListener('resize'"))!;assert.ok(resize);const pending=new Function('window','controls','view',`let viewportWidth=window.innerWidth,pendingLoop=true,pendingBomb=true;${resize};return()=>({loop:pendingLoop,bomb:pendingBomb});`)(f.win,c,{resize(){}});
+  f.surface.dispatchEvent(pointer('pointerdown',11));f.win.dispatchEvent(pointer('pointermove',11,118,190));f.buttons.fire.dispatchEvent(pointer('pointerdown',12));const held=c.sample();
+  Object.assign(f.win,{innerHeight:820});f.win.dispatchEvent(new Event('resize'));f.win.visualViewport.dispatchEvent(new Event('resize'));
+  assert.equal(c.peek().steerPointer,11);assert.equal(c.sample().fire,true);assert.deepEqual(pending(),{loop:true,bomb:true});
+  f.win.dispatchEvent(pointer('pointermove',11,118,136));assert.equal(c.sample().turn,held.turn);assert.equal(c.sample().climb,held.climb);
+  f.win.dispatchEvent(pointer('pointermove',11,124,136));assert.ok(c.sample().turn>held.turn);
+  f.win.dispatchEvent(pointer('pointercancel',12));assert.equal(c.peek().steerPointer,11);assert.equal(c.sample().fire,false);
+  Object.assign(f.win,{innerWidth:874,innerHeight:402});f.win.dispatchEvent(new Event('resize'));assert.equal(c.peek().steerPointer,null);assert.deepEqual(pending(),{loop:false,bomb:false});c.dispose();
+ }finally{f.dispose();}
+});
+
+test('height-only crossing of a square viewport preserves input until a real orientation event',()=>{
+ const f=fixture();try{Object.assign(f.win,{innerWidth:402,innerHeight:874});f.controls.dispose();const c=new FlightControls(f.surface as any,f.buttons as any,()=>true);
+  f.surface.dispatchEvent(pointer('pointerdown',11));f.win.dispatchEvent(pointer('pointermove',11,118,190));f.buttons.fire.dispatchEvent(pointer('pointerdown',12));const held=c.sample();
+  f.win.innerHeight=380;f.win.dispatchEvent(new Event('resize'));assert.equal(c.peek().steerPointer,11);assert.equal(c.sample().fire,true);assert.equal(c.sample().turn,held.turn);
+  f.win.dispatchEvent(new Event('orientationchange'));assert.equal(c.peek().steerPointer,null);assert.equal(c.sample().fire,false);c.dispose();
+ }finally{f.dispose();}
 });

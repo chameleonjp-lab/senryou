@@ -37,7 +37,20 @@ async function healthy(page: Page, stage: string) {
 }
 
 async function screenshot(page: Page, id: string, state: string) {
+  await healthy(page, `before ${state} screenshot`);
+  if (state === 'pause') {
+    // Capture the completed static paused scene, rather than adding screenshot
+    // work while its final fenced frame is still pending on software WebGL.
+    await page.waitForFunction(() => {
+      const current = (window as any).__senryou?.snapshot?.();
+      if (!current?.ready || current.diagnostics?.queue?.failure)
+        throw new Error(`Renderer stopped before paused screenshot: ${JSON.stringify(current?.diagnostics?.queue)}`);
+      return current.screen === 'paused' && current.mission?.phase === 'paused'
+        && current.diagnostics?.queue?.status === 'ready';
+    }, null, { timeout: 5000 });
+  }
   await page.screenshot({ path: path.join(OUT, `${id}-${state}.png`), animations: "disabled" });
+  await healthy(page, `after ${state} screenshot`);
 }
 
 for (const vp of VIEWPORTS) {

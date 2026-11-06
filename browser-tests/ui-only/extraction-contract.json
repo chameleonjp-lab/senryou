@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "mainSha256": "52b9933a1aa483e9495066b0a3955ba90bb32baaa73aa25d1d60b50f102e2479",
+  "mainSha256": "8c2e813dc18ab14fcd97eada371cf24647bb0532cfa7e39a1a4bfcdbe1bafcf9",
   "viewSha256": "6aa4a4b17b5e9a68032604809bcce591420a7046dd0509fea2b19d101023d1ec",
   "terrainSha256": "21413f3540566dfeb0d6bae0b2f855c1ab2be6946317273e1f007e48d442069a",
   "bounds": {
@@ -69,7 +69,7 @@
     {
       "name": "setScreen",
       "signature": "function setScreen(next:typeof screen):void",
-      "sha256": "4db6b0c5bf72915d27389fb01fc8f7e161758e8cc52aafe87854ac02da9367a5",
+      "sha256": "ebe0dd7b2c30542f46e045e864b36868d067490758811cb68c66177df801f3b0",
       "identifiers": [
         "app",
         "audio",
@@ -79,6 +79,7 @@
         "controls",
         "dataset",
         "el",
+        "flightPresentation",
         "focus",
         "game",
         "hidden",
@@ -86,6 +87,7 @@
         "pendingBomb",
         "pendingLoop",
         "preventScroll",
+        "reset",
         "rules",
         "screen",
         "setScreen",
@@ -923,7 +925,7 @@
     }
   ],
   "events": {
-    "sha256": "e4de7be0d7ae6d5247296c03d69665063e90280e68c1e0c31caebc83778f232e",
+    "sha256": "1cbe36ed03fa94fdb4e6844c89022803756b629d9f06a8af693009bda4473754",
     "identifiers": [
       "HTMLButtonElement",
       "HTMLInputElement",
@@ -954,6 +956,7 @@
       "i",
       "id",
       "indexOf",
+      "innerWidth",
       "instructions",
       "isOpen",
       "items",
@@ -985,6 +988,7 @@
       "unlock",
       "value",
       "view",
+      "viewportWidth",
       "window"
     ],
     "thisMembers": []
