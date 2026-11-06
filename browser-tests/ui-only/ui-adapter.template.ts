@@ -14,6 +14,7 @@ export function mountProductUi(){
  let mode:GameMode='easy',sample:DisplaySample=makeSample('ready'),game=sample.game,screen:'home'|'playing'|'paused'|'result'='home';
  let ready=true,lost=false,accumulator=0,lastFrame=0,lastPilot:string|null=null,pendingLoop=false,pendingBomb=false;
  const intervals:number[]=[],updates:number[]=[],commands:string[]=[];
+ const flightPresentation={reset(){}};
  // Fixed-data boundaries substitute only unavailable game/audio dependencies, never DOM/CSS/listeners.
  const clearBattleFlightAssistance=(displayGame:DisplaySample['game'])=>{displayGame.terrainAvoidanceActive=false;};
  const createBattle=(_seed=1,_mode=mode)=>{sample=makeSample('ready');return sample.game;};

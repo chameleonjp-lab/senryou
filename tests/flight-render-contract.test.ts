@@ -160,10 +160,10 @@ test('manual total camera-forward angle matches all eight directions, modes, spe
   }
 });
 
-test('offscreen response changes horizontal rate only; keyboard diagonals and neutral recovery stay bounded',()=>{
+test('manual rate, keyboard diagonals and held neutral stay bounded',()=>{
   for(const mode of ['easy','normal'] as const)for(const speed of [65,85,110,141])for(const pitch of [-.9,0,.9])for(const sign of [-1,1]){
     const step=.82*cameraAuthority(speed)*dt;
-    for(const axis of ['turn','climb'] as const){const p=cameraPlane(pitch,0,0,speed),before=cameraPose(p,mode).forward;cameraStep(p,{...neutral,[axis]:sign*.45,steeringActive:true},mode,1.65);assert.ok(Math.abs(opticalAngle(before,cameraPose(p,mode).forward)-step*.45*(axis==='turn'?1.65:1))<1e-12);}
+    for(const axis of ['turn','climb'] as const){const p=cameraPlane(pitch,0,0,speed),before=cameraPose(p,mode).forward;cameraStep(p,{...neutral,[axis]:sign*.45,steeringActive:true},mode,1);assert.ok(Math.abs(opticalAngle(before,cameraPose(p,mode).forward)-step*.45)<1e-12);}
     const diagonal=cameraPlane(pitch,0,0,speed),before=cameraPose(diagonal,mode).forward;cameraStep(diagonal,{...neutral,turn:sign,climb:sign,steeringActive:true},mode);assert.ok(Math.abs(opticalAngle(before,cameraPose(diagonal,mode).forward)-step)<1e-12);
     const p=cameraPlane(pitch,0,0,speed);cameraStep(p,{...neutral,turn:sign*.6,steeringActive:true},mode);assert.equal(p.pitch,pitch);
     const neutralStep=.82*cameraAuthority(p.speed)*dt;cameraStep(p,{...neutral,steeringActive:true},mode);assert.ok(Math.abs(p.pitch-pitch)<=neutralStep+1e-12);
@@ -176,7 +176,7 @@ test('bank is optical-axis roll; legacy offset, real projection and 500m bore si
     const p=cameraPlane(pitch,bank,yaw),pose=cameraPose(p,mode),unbanked=cameraPose(cameraPlane(pitch,0,yaw),mode);
     const expected=new Vector3(0,11,29).applyQuaternion(p.quaternion.clone().multiply(new Quaternion().setFromAxisAngle(new Vector3(0,0,1),bank*.55))).add(p.position);
     assert.equal(pose.position.distanceTo(expected),0);assert.ok(opticalAngle(pose.forward,unbanked.forward)<1e-12);
-    // A renderer can interpolate quaternion independently of current scalar Euler.
+    // An explicitly supplied sampled quaternion keeps its numeric camera composition.
     p.quaternion.slerp(new Quaternion().setFromEuler(new Euler(.25,-.8,.2,'YXZ')),.37);
     const interpolated=cameraPose(p,mode);
     for(const [width,height]of [[393,852],[393,648],[568,320],[852,393],[1280,720]]){

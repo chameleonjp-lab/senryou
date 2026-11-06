@@ -43,7 +43,7 @@ test('pilot loss reserves one finite replacement and handoff does not regenerate
 import { Vector3, Quaternion } from 'three';
 import { createFlightAircraft } from '../src/battle-flight';
 import { FLIGHT_FOV, getFlightCameraPose } from '../src/flight-view';
-test('battle Easy acquisition starts from live pitch while terrain safety stays separate', () => {
+test('battle Easy held attitude ignores target acquisition while terrain safety stays separate', () => {
   for(const pitch of [-.6,.6]) {
     const game=createBattle(73,'easy'), m=game.mission;
     const player=m.units.find(u=>u.id===m.controlledAircraftId)!;
@@ -54,9 +54,9 @@ test('battle Easy acquisition starts from live pitch while terrain safety stays 
     const point=new Vector3(0,Math.sign(pitch)*.6*500*Math.tan(FLIGHT_FOV*Math.PI/360),-500).applyQuaternion(rotation).add(position);
     for (const unit of m.units) if (unit.team !== m.playerTeam && unit.kind === 'aircraft') unit.position={x:4000,y:300,z:2500};
     enemy.position={x:point.x,y:point.y,z:point.z};
-    stepBattle(game,{...NEUTRAL_INPUT,viewAspect:393/852});
+    stepBattle(game,{...NEUTRAL_INPUT,steeringActive:true,viewAspect:393/852});
     assert.equal(game.terrainAvoidanceActive,false);
-    assert.ok((player.pitch-pitch)*pitch>0,'must not pitch toward horizontal before tracking');
+    assert.equal(player.pitch,pitch);
     const beforeManual = player.pitch;
     stepBattle(game,{...NEUTRAL_INPUT,turn:.1,viewAspect:393/852});
     assert.equal(game.terrainAvoidanceActive,false);

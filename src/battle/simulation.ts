@@ -1,7 +1,7 @@
-import { clearFlightAssistance, smoothFlightAssistance } from '../flight-target';
+import { clearFlightAssistance } from '../flight-target';
 import type { Aircraft, FlightInput, GameMode } from '../types';
 import { advanceThrottle, clamp, createFlightController, forwardOf, MAX_SPEED, updatePlayerLoop, type FlightController } from '../flight';
-import { autoFireTarget, applyEasyShotCorrection, getFlightAssist, PLAYER_MAX_PITCH, predictedShotDirection } from '../flight-assist';
+import { autoFireTarget } from '../flight-assist';
 import { createFlightAircraft, readFlightAircraft, writeFlightAircraft, targetsForFlight } from '../battle-flight';
 import { createMission, stepMission, logicalHash } from './mission';
 import { markLost } from './scoring';
@@ -42,12 +42,9 @@ function movePlayer(game: BattleGame, input: FlightInput): void {
   readFlightAircraft(plane, unit, m.playerTeam);
   const previous = {...unit.position};
   const previousAttitude={heading:unit.heading,pitch:unit.pitch,bank:unit.bank};
-  const assist = getFlightAssist(plane, targetsForFlight(m).filter(t=>t.team==='enemy'), input, game.mode, meta.targetLock);
+  clearFlightAssistance(meta);
   const dt = 1/60;
-  const automaticPitch = game.mode === 'easy' && !input.steeringActive
-    && Math.max(Math.abs(input.turn), Math.abs(input.climb)) <= 1e-8;
-  const pitchOrigin = automaticPitch ? clamp(plane.pitch / PLAYER_MAX_PITCH, -1, 1) : undefined;
-  const adjusted = { ...input, ...smoothFlightAssistance(meta, input, assist, dt, pitchOrigin) };
+  const adjusted = input;
   let safetyClimb: number | undefined;
   if(game.mode==='easy'){
     const direction=forwardOf(plane);
@@ -87,15 +84,8 @@ export function stepBattle(game: BattleGame, raw: FlightInput = NEUTRAL_INPUT, a
       const commands = updateAirAI(m,game.combat.air,DEFAULT_COMBAT_TERRAIN);
       const plane = game.pilot;
       const target = game.mode==='easy' && plane && m.controlledAircraftId ? autoFireTarget(plane,targetsForFlight(m).filter(t=>t.team==='enemy'),game.mode,input.viewAspect,game.controller!.targetLock) : null;
-      const directions: Partial<Record<'mg'|'cannon',{x:number;y:number;z:number}>> = {};
-      if (plane && target) for (const kind of ['mg','cannon'] as const) {
-        const forward = forwardOf(plane);
-        const predicted = predictedShotDirection(plane.position,forward,target,plane.speed+(kind==='mg'?820:700),1.5);
-        const corrected = applyEasyShotCorrection(forward,predicted);
-        directions[kind] = {x:corrected.x,y:corrected.y,z:corrected.z};
-      }
       updateCombat(m,game.combat,{playerFire:game.mode==='easy'?!!target:input.fire,playerBomb:!!input.bomb,
-        playerDirections:directions,airCommands:commands});
+        airCommands:commands});
     },
   });
   if (game.mission.tick % RUNTIME_CLEANUP_TICKS === 0 || game.mission.result)

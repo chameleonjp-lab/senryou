@@ -6,6 +6,7 @@ import {reservationPhase} from './hud-notification-reservations';
 import { KeyboardSettings, ControlInputPresentation } from './keyboard-settings';
 import { RulesGuide } from './rules-guide';
 import { BattleView } from './battle-view';
+import { BattlePresentation } from './battle-presentation';
 import { BattleAudio } from './battle-audio';
 import { clearBattleFlightAssistance, createBattle, stepBattle, battleHash, NEUTRAL_INPUT, type BattleGame } from './battle/simulation';
 import { rosterCounts } from './battle/roster';
@@ -28,6 +29,7 @@ game.mission.phase='paused';
 let view:BattleView|null=null, ready=false, lost=false, disposed=false;
 let accumulator=0,lastFrame=0,frameId=0,lastPilot:string|null=null, pendingLoop=false,pendingBomb=false;
 const intervals:number[]=[],updates:number[]=[];
+const flightPresentation=new BattlePresentation();
 const DIAGNOSTIC_SAMPLE_CAPACITY=1800;
 const RECORD_DIAGNOSTICS=import.meta.env.DEV;
 function recordSample(samples:number[],value:number):void{
@@ -66,6 +68,7 @@ function sound():void{
   }
 }
 function setScreen(next:typeof screen):void{
+  flightPresentation.reset();
   clearBattleFlightAssistance(game);
   settings.close();rules.close();controls.clear();pendingLoop=false;pendingBomb=false;audio.stop();
   screen=next;app.dataset.screen=next;
@@ -187,7 +190,9 @@ document.addEventListener('keydown',event=>{
 });
 window.addEventListener('blur',()=>pause('画面の操作が離れたため停止しました'));
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pause('画面が非表示になったため停止しました');});
-window.addEventListener('resize',()=>{controls.clear();pendingLoop=false;pendingBomb=false;view?.resize();});
+let viewportWidth=window.innerWidth;
+window.addEventListener('resize',()=>{if(window.innerWidth!==viewportWidth){pendingLoop=false;pendingBomb=false;}viewportWidth=window.innerWidth;view?.resize();});
+window.addEventListener('orientationchange',()=>{pendingLoop=false;pendingBomb=false;});
 canvas.addEventListener('webglcontextlost',event=>{
   event.preventDefault();lost=true;graphicsFailure('描画が停止しました。再読み込みしてください');
 });
@@ -211,14 +216,18 @@ function frame(_timestamp:number):void{
     let ticks=0;
     while(accumulator>=1/60&&ticks<8&&game.mission.phase==='running'){
       const input={...sampled,throttle:controls.sampleThrottle(),loop:pendingLoop,bomb:pendingBomb,viewAspect:canvas.clientWidth/Math.max(1,canvas.clientHeight)};
-      const start=RECORD_DIAGNOSTICS?performance.now():0;stepBattle(game,input);view?.queueEvents(game.combat.events,game.mission.id);if(RECORD_DIAGNOSTICS)recordSample(updates,performance.now()-start);
+      const start=RECORD_DIAGNOSTICS?performance.now():0;flightPresentation.capture(game.mission);stepBattle(game,input);view?.queueEvents(game.combat.events,game.mission.id);if(RECORD_DIAGNOSTICS)recordSample(updates,performance.now()-start);
       pendingLoop=false;pendingBomb=false;accumulator-=1/60;ticks++;
       if(lastPilot!==game.mission.controlledAircraftId){controls.clear();lastPilot=game.mission.controlledAircraftId;sampled.turn=0;sampled.climb=0;sampled.fire=false;sampled.accelerate=false;sampled.brake=false;sampled.throttle=0;}
       if(game.mission.result){result();break;}
     }
     hud();sound();
   }
-  try { view?.render(game.mission,mode,game.combat,screen==='playing'||screen==='paused',delta); }
+  try {
+    const displayed=flightPresentation.sample(game.mission,accumulator*60);
+    const combat=displayed===game.mission?game.combat:{...game.combat,projectiles:flightPresentation.sampleProjectiles(game.combat.projectiles,accumulator*60)};
+    view?.render(displayed,mode,combat,screen==='playing'||screen==='paused',delta);
+  }
   catch(error){
     graphicsFailure('描画に失敗しました。再読み込みしてください');el('announcement').textContent=error instanceof Error?error.message:'描画エラー';
   }

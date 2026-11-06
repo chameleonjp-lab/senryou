@@ -77,8 +77,7 @@ export function targetsForFlight(mission: Mission, source?: Aircraft): CombatTar
       health: unit.hp, maxHealth: HP[unit.kind], aimHeight: AIM_HEIGHT[unit.kind],
     };
     const aim = targetAimPoint(target);
-    // Distant units still preserve the source's offscreen response condition.
-    // They cannot pass its 1500m projection gate, so LOS work is unnecessary.
+    // Distant contacts cannot pass the 1500m projection gate, so LOS work is unnecessary.
     if (!player || player.position.distanceToSquared(aim) > 1500 ** 2
       || terrainLineOfSight(player.position, aim)) targets.push(target);
   }
