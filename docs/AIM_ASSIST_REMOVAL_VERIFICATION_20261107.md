@@ -52,3 +52,15 @@ throttleの独立比較oracleは候補の敵由来倍率だけを1へ更新し�
 当該開始版の数値再現では、右105・前500と背後500でEasy約2.5452度、Normal約0.50917度のcamera差、中央保持0.2秒で両モード約9.38618度のpitch復帰があった。別作品の測定値ではない。
 
 本人のマージ・公開後の新しい配信ファイル照合は未実施。新規タブと古いタブのreloadでHTML／JS／CSSを候補版から作った全バイトと比較し、実機受入とは別に追記する。
+
+## CI追補：PCの停止画面capture（2026-11-06 UTC）
+
+最初のDraft PR26 head `eb4f2628d950eb3b4844a2bc75748bd38acbc92b` のCI run `42280471542` はunit261・build合格、browser34合格・既存10skip・PC smoke1失敗。実flightは正常に進んだ後、手動停止画面のscreenshot約1085msの間に既存1000ms GPU watchdogが動作し、非表示になったResumeを待つ形でtimeoutした。historical baselineもPCのGPU watchdogで失敗（smoke2合格・1失敗）しており、その失敗は診断結果として保存する。baselineの失敗は候補の失敗を免除しない。
+
+検査側だけを修正し、停止画面の実queueがreadyになるまで既存5秒の上限内で待ってから同じscreenshotを撮る。application readyがfalse／queue failureなら失敗させ、全captureの前後にも段階付きhealth診断を追加する。全screenshot、Easy/Normal、停止再開、結果、networkの既存assertionを保持し、製品・watchdog・timeout・retry・workflowは変更しない。
+
+このホストのfocused PC検査は2回とも失敗／paused-capture修正の実証には不十分。初回は誤って並行した全unitの負荷が重なり、HUD capture後にGPU pending約3838msで停止した。unit完了後の単独再生でもpause前のEasy実行中に約2067ms pendingで停止した。いずれも失敗としてtrace・診断を保持し、合格に数えない。paused-capture経路のGREENは提出版と同treeの隔離CIで確認する。
+
+historical paired harnessのruntimeは`git show GUARD:browser-tests/smoke.spec.ts`のまま維持する。以前はその単体検査だけが現在のsmokeをhistorical sourceとして読んでいたため、承認されたcapture helper修正で旧blob SHA検査が失敗した。完全に同じ旧blob `823181876a78d2ddf3106e9801d30b19d3b74181`をtest fixtureへ置き、historical instrumentation検査がそれを読むように修正した。BLOBS定数・runtime参照・SHA照合・全body/guard/capture/negative assertionは保持する。
+
+追補候補ではhistorical instrumentation 10/10、全unit 261/261、buildに合格。製品build JS hashは既存候補と同じ。paused capture修正のbrowser合格はまだ主張せず、同じPRの更新headでCIを再検証する。
